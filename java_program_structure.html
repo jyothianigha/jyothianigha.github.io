@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Structure of a Simple Java Program</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 30px 20px;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: #1a5f7a;
+            border-bottom: 3px solid #1a5f7a;
+            padding-bottom: 12px;
+            margin-top: 0;
+        }
+        p {
+            font-size: 1.1rem;
+            color: #555;
+        }
+        .code-container {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px 25px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            font-size: 1rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 25px 0;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+            white-space: pre; /* Keeps custom spaces intact */
+        }
+        /* Basic syntax highlighting */
+        .comments { color: #6a9955; font-style: italic; }
+        .keyword { color: #569cd6; font-weight: bold; }
+        .class-name { color: #4ec9b0; }
+        .string { color: #ce9178; }
+        
+        h2 {
+            color: #e07a5f;
+            margin-top: 35px;
+            border-left: 4px solid #e07a5f;
+            padding-left: 10px;
+        }
+        .structure-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .structure-table th, .structure-table td {
+            text-align: left;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .structure-table th {
+            background-color: #f8fafc;
+            color: #1a5f7a;
+            font-weight: 600;
+        }
+        .structure-table tr:hover {
+            background-color: #f8fafc;
+        }
+        .code-inline {
+            background-color: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #c53030;
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Structure of a Simple Java Program</h1>
+    <p>Understanding the fundamental building blocks of a Java application is essential. Below is the breakdown of a simple introductory program layout.</p>
+
+    <div class="code-container"><span class="keyword">import</span> java.io.*;
+
+<span class="keyword">class</span> <span class="class-name">Example</span> {
+    <span class="comments">/*
+       This is a simple Java program. 
+       Save this file as "Example.java".
+    */</span>
+    
+    <span class="comments">// Your program begins with a call to main().</span>
+    <span class="keyword">public static void</span> main(String args[]) {
+        System.out.println(<span class="string">"This is a simple Java program."</span>);
+    }
+}</div>
+
+    <h2>Component Breakdown</h2>
+    <table class="structure-table">
+        <thead>
+            <tr>
+                <th style="width: 30%;">Code Component</th>
+                <th style="width: 70%;">Purpose & Explanation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="comments">/* Multi-line Comment */</span></td>
+                <td><strong>Multi-line Comments:</strong> Begins with <span class="code-inline">/*</span> and ends with <span class="code-inline">*/</span>. Everything written inside these boundaries is ignored by the compiler. It is ideal for writing multi-line explanations, headers, or author documentation.</td>
+            </tr>
+            <tr>
+                <td><span class="comments">// Single-line Comment</span></td>
+                <td><strong>Single-line Comments:</strong> Starts with <span class="code-inline">//</span>. The compiler ignores everything from the double slashes to the end of that specific line. It is best used for brief, quick notes describing a line of code.</td>
+            </tr>
+            <tr>
+                <td><span class="code-inline">import java.io.*;</span></td>
+                <td>
+                    <strong>Import Statement:</strong> Tells the compiler to look into the <span class="code-inline">java.io</span> package for classes needed for input and output operations.
+                    <br><br>
+                    <strong>What is a Package?</strong> A package in Java is a mechanism used to group related classes, interfaces, and sub-packages together. Think of it like a folder directory structure on your computer that organizes your files and prevents naming conflicts.
+                </td>
+            </tr>
+            <tr>
+                <td><span class="code-inline">class Example</span></td>
+                <td><strong>Class Declaration:</strong> Every statement in Java must exist inside a class. The name <span class="code-inline">Example</span> defines the class name. Note that the filename should match this class name exactly (<span class="code-inline">Example.java</span>).</td>
+            </tr>
+            <tr>
+                <td><span class="code-inline">public static void main(...)</span></td>
+                <td><strong>The main() Method:</strong> This is the entry point of any Java standalone application. Execution starts directly from this line.
+                    <ul>
+                        <li><span class="keyword">public</span>: Makes it accessible globally.</li>
+                        <li><span class="keyword">static</span>: Allows the method to run without creating an object instantiation of the class.</li>
+                        <li><span class="keyword">void</span>: Indicates the method returns no value.</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td><span class="code-inline">System.out.println(...)</span></td>
+                <td><strong>Output Statement:</strong> Standard console printer that prints the text inside the quotations followed by a newline.</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
