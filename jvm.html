@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding JVM Architecture - Study Guide</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e67e22;
+            --bg-light: #f8f9fa;
+            --text-dark: #333333;
+            --border-color: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: #f5f6fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #1a252f);
+            color: white;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .intro {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 5px solid var(--secondary);
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Diagram Component Styling */
+        .diagram-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .diagram-container h3 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .jvm-diagram {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .full-width {
+                grid-column: span 2;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        .card h3 {
+            color: var(--accent);
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        ul {
+            padding-left: 1.2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+        }
+
+        .summary-table th, .summary-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        .summary-table th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .summary-table tr:nth-child(even) {
+            background-color: var(--bg-light);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            background-color: var(--primary);
+            color: white;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Java Virtual Machine (JVM) Architecture</h1>
+        
+    </header>
+
+    <div class="container">
+        
+        <section class="intro">
+            <h2>What is the JVM?</h2>
+            <p>The <strong>JVM (Java Virtual Machine)</strong> is an abstract computing machine that enables a computer to run a Java program. It acts as a runtime engine that calls the <code>main</code> method inherent in Java code. The JVM is the core reason behind Java's famous slogan: <em>"Write Once, Run Anywhere" (WORA)</em>, as it compiles source code into platform-independent bytecode.</p>
+        </section>
+
+        <section class="diagram-container">
+            <h3>JVM Architecture Reference Diagram</h3>
+            <p>Use this flowchart to see how subsystems connect and pass runtime data:</p>
+            <img src="Jvm.webp" alt="JVM Architecture Flowchart" class="jvm-diagram">
+        </section>
+
+        <div class="grid">
+            
+            <div class="card">
+                <h2>1. Class Loader Subsystem</h2>
+                <p>Responsible for loading, linking, and initializing the class files (<code>.class</code>) into the JVM memory. It operates in three main phases:</p>
+                
+                <h3>A. Loading</h3>
+                <p>Reads the binary data of the class and stores it in the method area. There are three built-in class loaders:</p>
+                <ul>
+                    <li><span class="highlight">Bootstrap Class Loader:</span> Loads core Java API classes (from <code>rt.jar</code>).</li>
+                    <li><span class="highlight">Extension Class Loader:</span> Loads classes from the extension directories (<code>jre/lib/ext</code>).</li>
+                    <li><span class="highlight">Application/System Class Loader:</span> Loads classes from the application classpath.</li>
+                </ul>
+
+                <h3>B. Linking</h3>
+                <ul>
+                    <li><strong>Verification:</strong> Ensures the correctness of the <code>.class</code> file structure against JVM rules.</li>
+                    <li><strong>Preparation:</strong> Allocates memory for class variables (static fields) and initializes them to default values.</li>
+                    <li><strong>Resolution:</strong> Replaces symbolic references in the code with direct references.</li>
+                </ul>
+
+                <h3>C. Initialization</h3>
+                <p>The final phase where all static variables are assigned their actual defined values, and static blocks are executed.</p>
+            </div>
+
+            <div class="card">
+                <h2>2. Runtime Data Areas (Memory)</h2>
+                <p>This is the memory allocated by the JVM to run programs. It is divided into five distinct components:</p>
+                
+                <h3>Shared Across All Threads:</h3>
+                <ul>
+                    <li><span class="highlight">Method Area:</span> Stores class-level data such as runtime constant pools, field/method data, and code for methods and constructors.</li>
+                    <li><span class="highlight">Heap Area:</span> The runtime data area from which memory for all class instances and arrays is allocated. This is the primary target for Garbage Collection.</li>
+                </ul>
+
+                <h3>Per-Thread (Private to Each Thread):</h3>
+                <ul>
+                    <li><span class="highlight">JVM Stack:</span> Stores local variables and partial results. Each thread has its own stack, and a new "Frame" is pushed onto the stack every time a method is called.</li>
+                    <li><span class="highlight">PC (Program Counter) Registers:</span> Contains the address of the JVM instruction currently being executed by the thread.</li>
+                    <li><span class="highlight">Native Method Stack:</span> Holds native method information (written in languages like C/C++) used in the application.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>3. Execution Engine</h2>
+                <p>Once the bytecode is loaded into memory, the Execution Engine executes the instructions line by line. It contains three main components:</p>
+                
+                <h3>A. Interpreter</h3>
+                <p>Reads the bytecode instructions and executes them sequentially. While quick to start up, it can be slow when executing repeated blocks of code (like loops), as it re-interprets the code every time.</p>
+
+                <h3>B. JIT (Just-In-Time) Compiler</h3>
+                <p>Counterbalances the interpreter's speed issue. It monitors code execution and compiles frequently repeated bytecode ("hot spots") into native machine code, boosting execution speeds significantly.</p>
+
+                <h3>C. Garbage Collector (GC)</h3>
+                <p>An automated program that runs in the background. It tracks live objects and automatically destroys unreferenced, unreachable objects to reclaim heap memory.</p>
+            </div>
+
+            <div class="card">
+                <h2>4. Native Interfaces & Libraries</h2>
+                <p>The bridge between Java code and external operating system resources.</p>
+                
+                <h3>Java Native Interface (JNI)</h3>
+                <p>An API wrapper framework that allows Java code running inside the JVM to interact and call applications/libraries written in native hardware-level languages like C, C++, or Assembly.</p>
+
+                <h3>Native Method Libraries</h3>
+                <p>A collection of the actual native libraries (e.g., <code>.dll</code> files on Windows or <code>.so</code> files on Linux) required by the execution engine during code operation.</p>
+            </div>
+
+            <div class="card full-width">
+                <h2>Quick Reference: Memory Lifetime & Sharing</h2>
+                <p>A breakdown of how memory regions manage data scope and accessibility:</p>
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Memory Area</th>
+                            <th>Scope / Access</th>
+                            <th>Primary Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Method Area</strong></td>
+                            <td>Shared by all threads</td>
+                            <td>Class structures, metadata, static variables</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Heap Area</strong></td>
+                            <td>Shared by all threads</td>
+                            <td>Instantiated objects and arrays</td>
+                        </tr>
+                        <tr>
+                            <td><strong>JVM Stack</strong></td>
+                            <td>Per thread private</td>
+                            <td>Local variables, method execution frames</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PC Register</strong></td>
+                            <td>Per thread private</td>
+                            <td>Tracks next instruction to execute</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Native Stack</strong></td>
+                            <td>Per thread private</td>
+                            <td>C/C++ native method execution data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 JVM Student Study Portal | Designed for Quick Revision</p>
+    </footer>
+
+</body>
+</html>
