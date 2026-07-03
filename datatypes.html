@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Core Concepts: Primitives, Wrappers, Casting & Autoboxing</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --code-bg: #2d3748;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1a252f);
+            color: white;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        header p {
+            margin: 0.5rem 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        nav {
+            background-color: #fff;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            text-align: center;
+        }
+
+        nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--secondary-color);
+        }
+
+        main {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            background: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: var(--secondary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        code {
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            background-color: #e8e8e8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d63384;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+            font-size: inherit;
+        }
+
+        .note {
+            background-color: #e8f4fd;
+            border-left: 5px solid var(--secondary-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .warning {
+            background-color: #fdf2f2;
+            border-left: 5px solid var(--accent-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background-color: var(--primary-color);
+            color: white;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            nav a {
+                display: block;
+                margin: 10px 0;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mastering Java Core Fundamentals</h1>
+        <p>A B.Tech Guide to Primitives, Wrappers, Type Casting, and Autoboxing</p>
+    </header>
+
+    <nav>
+        <a href="#primitives-deep-dive">Primitive Types Deep-Dive</a>
+        <a href="#primitives-wrappers">Primitives vs. Wrappers</a>
+        <a href="#type-casting">Type Casting</a>
+        <a href="#autoboxing-unboxing">Autoboxing & Unboxing</a>
+    </nav>
+
+    <main>
+        <section id="primitives-deep-dive">
+            <h2>1. Deep Dive: The 8 Primitive Data Types</h2>
+            <p>Java defines <strong>eight primitive data types</strong>. They are predefined by the language and named by a reserved keyword. Primitives represent raw values and do not share state like objects do. They can be broken down into four distinct categories:</p>
+            
+            <h3>A. Integer Types (
