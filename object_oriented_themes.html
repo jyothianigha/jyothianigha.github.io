@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Object-Oriented Themes</title>
+<style>
+    :root {
+        --primary: #1e3a5f;
+        --accent: #2f80c4;
+        --bg: #f7f9fb;
+        --card-bg: #ffffff;
+        --text: #22303f;
+        --muted: #5b6b7a;
+        --border: #dbe4ec;
+    }
+    * { box-sizing: border-box; }
+    body {
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.65;
+    }
+    header {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #fff;
+        padding: 48px 20px;
+        text-align: center;
+    }
+    header h1 { margin: 0 0 8px; font-size: 2.2rem; }
+    header p { margin: 4px 0; opacity: 0.92; font-size: 1rem; }
+    nav {
+        background: #17293e;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        padding: 10px;
+    }
+    nav a {
+        color: #cfe2f3;
+        text-decoration: none;
+        font-size: 0.82rem;
+        padding: 8px 10px;
+        border-radius: 6px;
+        transition: background 0.2s;
+    }
+    nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    main {
+        max-width: 940px;
+        margin: 0 auto;
+        padding: 30px 20px 60px;
+    }
+    section {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 26px 30px;
+        margin-bottom: 26px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    h2 {
+        color: var(--primary);
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 8px;
+        margin-top: 0;
+    }
+    h3 { color: var(--accent); margin-top: 22px; }
+    p { margin: 10px 0; }
+    ul, ol { margin: 10px 0; padding-left: 24px; }
+    li { margin: 6px 0; }
+    .theme-num {
+        display: inline-block;
+        background: var(--primary);
+        color: #fff;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        text-align: center;
+        border-radius: 50%;
+        font-size: 0.85rem;
+        margin-right: 10px;
+    }
+    .sub-label {
+        font-size: 0.78rem;
+        color: var(--muted);
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        margin-bottom: 2px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font-size: 0.92rem;
+    }
+    th, td {
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+    }
+    th { background: var(--primary); color: #fff; }
+    tr:nth-child(even) { background: #f2f6fa; }
+    .diagram-box {
+        background: #fbfcfd;
+        border: 1px dashed var(--border);
+        border-radius: 8px;
+        padding: 18px;
+        margin: 16px 0;
+        overflow-x: auto;
+    }
+    .diagram-box svg { display: block; margin: 0 auto; }
+    .note {
+        background: #fff8e6;
+        border-left: 4px solid #e6b800;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 0.92rem;
+        margin: 14px 0;
+    }
+    .key-term {
+        background: #eef4fa;
+        border-left: 4px solid var(--accent);
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 0.92rem;
+        margin: 14px 0;
+    }
+    footer {
+        text-align: center;
+        padding: 24px;
+        color: var(--muted);
+        font-size: 0.85rem;
+        border-top: 1px solid var(--border);
+        background: #eef2f6;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Object-Oriented Themes</h1>
+    <p>Chapter 1, Section 1.3</p>
+    <p style="font-size:0.85rem;">Based on <em>Object-Oriented Modeling and Design</em> (Rumbaugh, Blaha, Premerlani, Eddy &amp; Lorensen), Prentice Hall</p>
+</header>
+
+<nav>
+    <a href="#intro">Introduction</a>
+    <a href="#abstraction">1.3.1 Abstraction</a>
+    <a href="#encapsulation">1.3.2 Encapsulation</a>
+    <a href="#combining">1.3.3 Combining Data &amp; Behavior</a>
+    <a href="#sharing">1.3.4 Sharing</a>
+    <a href="#emphasis">1.3.5 Emphasis on Object Structure</a>
+    <a href="#synergy">1.3.6 Synergy</a>
+    <a href="#summary">Summary</a>
+    <a href="#reference">Reference</a>
+</nav>
+
+<main>
+
+<section id="intro">
+    <h2>Introduction</h2>
+    <p>
+        Beyond specific notations and diagrams, the object-oriented approach rests on a small set of
+        underlying themes that give it its distinctive character. This section works through six of them
+        in turn — abstraction, encapsulation, combining data and behavior, sharing, an emphasis on object
+        structure, and synergy — each describing a different way in which object-oriented thinking departs
+        from, and improves on, more traditional approaches to software development.
+    </p>
+</section>
+
+<section id="abstraction">
+    <h2><span class="theme-num">1</span>1.3.1 Abstraction</h2>
+    <p>
+        Abstraction means concentrating on the essential characteristics of an object relative to the
+        perspective of the viewer, while ignoring characteristics that are not relevant to that purpose.
+        A single real-world thing can be abstracted in different, equally valid ways depending on why the
+        model is being built — a vehicle looked at by a traffic-planning system and the same vehicle looked
+        at by an insurance system will end up represented very differently, because each cares about
+        different aspects of it.
+    </p>
+    <p>
+        This selective focus is what makes complex problems tractable. By deliberately setting aside
+        detail that doesn't matter for the task at hand, a designer keeps a model small and understandable
+        enough to reason about, while still capturing what genuinely drives the behavior of the system.
+    </p>
+</section>
+
+<section id="encapsulation">
+    <h2><span class="theme-num">2</span>1.3.2 Encapsulation</h2>
+    <p>
+        Encapsulation, also called information hiding, separates the external, observable behavior of an
+        object from the internal details of how that behavior is implemented. Other parts of a system
+        interact with an object only through its defined interface — its operations — without needing to
+        know, or being allowed to depend on, how those operations are actually carried out internally.
+    </p>
+    <p>
+        This separation gives a system resilience to change: because the internal representation of an
+        object is hidden behind its interface, that representation can later be modified or optimized
+        without breaking any of the other code that uses the object, so long as the interface itself stays
+        the same.
+    </p>
+</section>
+
+<section id="combining">
+    <h2><span class="theme-num">3</span>1.3.3 Combining Data and Behavior</h2>
+    <p>
+        Traditional programming techniques tend to treat data structures and the procedures that act on
+        them as two separate things, connected only loosely and often maintained in different parts of a
+        program. The object-oriented approach instead bundles data and the operations that manipulate that
+        data together into a single unit — the object — so that an object's behavior and its state are
+        never far apart.
+    </p>
+    <p>
+        This combination keeps a system's logic organized around the things it models rather than around a
+        sequence of isolated functions, making it easier to locate the code responsible for a given piece
+        of behavior and reducing the risk that data gets modified by code that doesn't properly understand
+        its meaning or constraints.
+    </p>
+</section>
+
+<section id="sharing">
+    <h2><span class="theme-num">4</span>1.3.4 Sharing</h2>
+    <p>
+        Sharing refers to the way object-oriented techniques let common structure and behavior be factored
+        out and reused rather than duplicated. This happens at more than one level: classes that are
+        related through inheritance share the attributes and operations of a common ancestor, and separate
+        objects can share access to common data or services without each needing its own private copy.
+    </p>
+    <p>
+        By avoiding needless duplication, sharing keeps a system smaller and more consistent — a
+        correction or improvement made in one shared place automatically benefits everything that depends
+        on it, instead of having to be repeated by hand wherever similar logic was copied.
+    </p>
+</section>
+
+<section id="emphasis">
+    <h2><span class="theme-num">5</span>1.3.5 Emphasis on Object Structure</h2>
+    <p>
+        Object-oriented development places the structure of objects — what they are and how they relate to
+        one another — at the center of the design process, rather than starting from the functions a
+        system must perform. Because the functions a system needs to support tend to change more often
+        than the underlying things the system is about, building around object structure tends to produce
+        a more stable foundation to design on.
+    </p>
+    <p>
+        Starting with structure also gives developers a natural, shared vocabulary for talking about a
+        problem, since the objects and their relationships are usually much closer to how domain experts
+        already describe the real-world situation than a list of processing steps would be.
+    </p>
+</section>
+
+<section id="synergy">
+    <h2><span class="theme-num">6</span>1.3.6 Synergy</h2>
+    <p>
+        Synergy is the theme that ties the others together: abstraction, encapsulation, the combination of
+        data and behavior, sharing, and an emphasis on object structure are far more powerful used together
+        than any one of them would be on its own. Applied jointly, they tend to produce software that is
+        cleaner, more general, and more robust than software built using only some of these ideas.
+    </p>
+    <div class="note">
+        Object-oriented technology is not simply a checklist of individually useful features — its real
+        strength lies in how these themes reinforce one another throughout the life of a system's design,
+        from early analysis through to final implementation.
+    </div>
+</section>
+
+<section id="summary">
+    <h2>Summary</h2>
+    <table>
+        <tr><th>Subsection</th><th>Theme</th><th>Core Idea</th></tr>
+        <tr><td>1.3.1</td><td><strong>Abstraction</strong></td><td>Focus on what matters for the purpose at hand; ignore the rest</td></tr>
+        <tr><td>1.3.2</td><td><strong>Encapsulation</strong></td><td>Hide internal implementation behind a defined interface</td></tr>
+        <tr><td>1.3.3</td><td><strong>Combining Data and Behavior</strong></td><td>Bundle state and operations together in a single object</td></tr>
+        <tr><td>1.3.4</td><td><strong>Sharing</strong></td><td>Reuse common structure and behavior instead of duplicating it</td></tr>
+        <tr><td>1.3.5</td><td><strong>Emphasis on Object Structure</strong></td><td>Design around stable real-world structure rather than transient functions</td></tr>
+        <tr><td>1.3.6</td><td><strong>Synergy</strong></td><td>The themes together are more powerful than any one alone</td></tr>
+    </table>
+    <div class="key-term">
+        <strong>Key terms introduced in this section:</strong> abstraction, encapsulation, information
+        hiding, interface, sharing, object structure, synergy.
+    </div>
+</section>
+
+<section id="reference">
+    <h2>Reference</h2>
+    <p>
+        Rumbaugh, J., Blaha, M., Premerlani, W., Eddy, F., &amp; Lorensen, W. (1991).
+        <em>Object-Oriented Modeling and Design</em>, Chapter 1, Section 1.3: Object-Oriented Themes.
+        Prentice Hall International / Prentice Hall India.
+    </p>
+    <p style="font-size:0.9rem; color:var(--muted);">
+        This page follows the subsection structure of 1.3.1&ndash;1.3.6 as provided, with explanations
+        written in original language for study purposes rather than reproduced from the source text.
+    </p>
+</section>
+
+</main>
+
+<footer>
+    Object-Oriented Themes — Study Notes &middot; Prepared for educational use
+</footer>
+
+</body>
+</html>
