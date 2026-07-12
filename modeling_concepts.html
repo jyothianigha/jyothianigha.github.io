@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modeling Concepts — Modeling as a Design Technique (OMT)</title>
+<style>
+    :root {
+        --primary: #1e3a5f;
+        --accent: #2f80c4;
+        --bg: #f7f9fb;
+        --card-bg: #ffffff;
+        --text: #22303f;
+        --muted: #5b6b7a;
+        --border: #dbe4ec;
+    }
+    * { box-sizing: border-box; }
+    body {
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.65;
+    }
+    header {
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+        color: #fff;
+        padding: 48px 20px;
+        text-align: center;
+    }
+    header h1 { margin: 0 0 8px; font-size: 2.2rem; }
+    header p { margin: 4px 0; opacity: 0.92; font-size: 1rem; }
+    nav {
+        background: #17293e;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px;
+        padding: 10px;
+    }
+    nav a {
+        color: #cfe2f3;
+        text-decoration: none;
+        font-size: 0.88rem;
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background 0.2s;
+    }
+    nav a:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    main {
+        max-width: 940px;
+        margin: 0 auto;
+        padding: 30px 20px 60px;
+    }
+    section {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 26px 30px;
+        margin-bottom: 26px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    h2 {
+        color: var(--primary);
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 8px;
+        margin-top: 0;
+    }
+    h3 { color: var(--accent); margin-top: 22px; }
+    p { margin: 10px 0; }
+    ul, ol { margin: 10px 0; padding-left: 24px; }
+    li { margin: 6px 0; }
+    .purpose-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 14px;
+        margin-top: 16px;
+    }
+    .purpose-card {
+        background: #eef4fa;
+        border-left: 4px solid var(--accent);
+        border-radius: 6px;
+        padding: 14px 16px;
+    }
+    .purpose-card h4 { margin: 0 0 6px; color: var(--primary); font-size: 0.98rem; }
+    .purpose-card p { margin: 0; font-size: 0.88rem; color: var(--muted); }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font-size: 0.93rem;
+    }
+    th, td {
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        text-align: left;
+        vertical-align: top;
+    }
+    th { background: var(--primary); color: #fff; }
+    tr:nth-child(even) { background: #f2f6fa; }
+    .diagram-box {
+        background: #fbfcfd;
+        border: 1px dashed var(--border);
+        border-radius: 8px;
+        padding: 18px;
+        margin: 16px 0;
+        overflow-x: auto;
+    }
+    .diagram-box svg { display: block; margin: 0 auto; }
+    .note {
+        background: #fff8e6;
+        border-left: 4px solid #e6b800;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 0.92rem;
+        margin: 14px 0;
+    }
+    .key-term {
+        background: #eef4fa;
+        border-left: 4px solid var(--accent);
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 0.92rem;
+        margin: 14px 0;
+    }
+    .key-term strong { color: var(--primary); }
+    .stage-flow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        margin: 18px 0;
+    }
+    .stage {
+        background: var(--primary);
+        color: #fff;
+        padding: 12px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        text-align: center;
+        flex: 1 1 140px;
+    }
+    .arrow { font-size: 1.3rem; color: var(--accent); }
+    footer {
+        text-align: center;
+        padding: 24px;
+        color: var(--muted);
+        font-size: 0.85rem;
+        border-top: 1px solid var(--border);
+        background: #eef2f6;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Modeling Concepts</h1>
+    <p>Chapter 2 &mdash; Modeling as a Design Technique</p>
+    <p style="font-size:0.85rem;">Based on <em>Object-Oriented Modeling and Design</em> (Rumbaugh, Blaha, Premerlani, Eddy &amp; Lorensen), Prentice Hall</p>
+</header>
+
+<nav>
+    <a href="#intro">Introduction</a>
+    <a href="#modeling">2.1 Modeling</a>
+    <a href="#omt">2.2 The Object Modeling Technique</a>
+    <a href="#objectmodel">Object Model</a>
+    <a href="#dynamicmodel">Dynamic Model</a>
+    <a href="#functionalmodel">Functional Model</a>
+    <a href="#summary">Chapter Summary</a>
+    <a href="#reference">Reference</a>
+</nav>
+
+<main>
+
+<section id="intro">
+    <h2>Introduction</h2>
+    <p>
+        Before software is built, it helps to first build a model of it — a simplified representation that
+        can be examined, discussed, and refined at far lower cost than the finished system. This chapter
+        explains what modeling means as a design technique, and introduces the Object Modeling Technique
+        (OMT), which describes a system through three complementary views: the object model, the dynamic
+        model, and the functional model.
+    </p>
+</section>
+
+<section id="modeling">
+    <h2>2.1 Modeling</h2>
+    <p>
+        A model is an abstraction of something, built for the purpose of understanding it before building
+        it for real. Because a model deliberately leaves out nonessential detail, it is far easier to work
+        with, question, and change than the actual system it stands in for. People have relied on models —
+        architectural mock-ups, engineering blueprints, storyboards, scale replicas — for centuries to try
+        out ideas before committing to them, and software development benefits from the same discipline.
+    </p>
+    <p>Models earn their place in the development process for several reasons:</p>
+    <div class="purpose-grid">
+        <div class="purpose-card">
+            <h4>Testing Before Building</h4>
+            <p>A model can be examined and evaluated before a system is actually constructed, so design
+            flaws surface — and get fixed — while they are still inexpensive to fix.</p>
+        </div>
+        <div class="purpose-card">
+            <h4>Communicating With Others</h4>
+            <p>A model gives customers, users, and domain experts something concrete to react to, review,
+            and correct, closing gaps in understanding early.</p>
+        </div>
+        <div class="purpose-card">
+            <h4>Visualizing Structure</h4>
+            <p>A model lets a designer see how the pieces of a system relate before the details of
+            implementation obscure the bigger picture.</p>
+        </div>
+        <div class="purpose-card">
+            <h4>Managing Complexity</h4>
+            <p>The human mind can only track a limited amount of detail at once. A model reduces a large,
+            tangled problem to a smaller number of essential ideas that can be reasoned about directly.</p>
+        </div>
+    </div>
+    <div class="note">
+        A model is never a complete or perfectly accurate picture of reality — that isn't its job. Its job
+        is to be adequate for the purpose it was built for, keeping what matters and setting aside what
+        doesn't.
+    </div>
+</section>
+
+<section id="omt">
+    <h2>2.2 The Object Modeling Technique</h2>
+    <p>
+        The Object Modeling Technique (OMT) is the approach this book presents for carrying object-oriented
+        thinking through the entire software life cycle — from understanding a problem, through designing a
+        solution, to writing the code. Because the same underlying concepts (objects, classes, and their
+        relationships) are used at every stage, a system does not need to be re-expressed in a new notation
+        each time development moves forward; models simply accumulate more detail as they go.
+    </p>
+    <div class="stage-flow">
+        <div class="stage">Analysis</div>
+        <div class="arrow">&rarr;</div>
+        <div class="stage">System Design</div>
+        <div class="arrow">&rarr;</div>
+        <div class="stage">Object Design</div>
+        <div class="arrow">&rarr;</div>
+        <div class="stage">Implementation</div>
+    </div>
+    <p>
+        At the heart of OMT is the idea that no single diagram can describe a system completely. A system
+        has structure, it has behavior that unfolds over time, and it performs transformations on data —
+        three different concerns that are best understood separately before being related back to one
+        another. OMT therefore builds three distinct models, each capturing one of these concerns.
+    </p>
+
+    <div class="diagram-box">
+        <svg viewBox="0 0 640 230" width="100%" height="230">
+            <circle cx="140" cy="115" r="85" fill="#2f80c4" opacity="0.15" stroke="#2f80c4" stroke-width="2"/>
+            <circle cx="330" cy="115" r="85" fill="#1e3a5f" opacity="0.15" stroke="#1e3a5f" stroke-width="2"/>
+            <circle cx="520" cy="115" r="85" fill="#e6b800" opacity="0.15" stroke="#e6b800" stroke-width="2"/>
+            <text x="140" y="85" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a5f">Object Model</text>
+            <text x="140" y="115" text-anchor="middle" font-size="11" fill="#333">Objects, classes,</text>
+            <text x="140" y="132" text-anchor="middle" font-size="11" fill="#333">attributes, and</text>
+            <text x="140" y="149" text-anchor="middle" font-size="11" fill="#333">relationships</text>
+
+            <text x="330" y="85" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a5f">Dynamic Model</text>
+            <text x="330" y="115" text-anchor="middle" font-size="11" fill="#333">Events, states,</text>
+            <text x="330" y="132" text-anchor="middle" font-size="11" fill="#333">and sequences</text>
+            <text x="330" y="149" text-anchor="middle" font-size="11" fill="#333">of behavior</text>
+
+            <text x="520" y="85" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a5f">Functional Model</text>
+            <text x="520" y="115" text-anchor="middle" font-size="11" fill="#333">Processes and</text>
+            <text x="520" y="132" text-anchor="middle" font-size="11" fill="#333">transformations</text>
+            <text x="520" y="149" text-anchor="middle" font-size="11" fill="#333">of data values</text>
+        </svg>
+    </div>
+
+    <h3 id="objectmodel">2.2.1 The Object Model</h3>
+    <p>
+        The object model describes the static structure of the objects in a system: what they are, what
+        attributes and operations they carry, and how they relate to one another through associations and
+        generalization. It answers the question "what exists?" and provides the vocabulary that the other
+        two models depend on — behavior and transformation only make sense once there is something defined
+        to behave or be transformed. Object diagrams, built from classes connected by relationship lines,
+        are the notation used to express this model.
+    </p>
+
+    <h3 id="dynamicmodel">2.2.2 The Dynamic Model</h3>
+    <p>
+        The dynamic model describes how a system changes over time — the events that occur, the states an
+        object moves through, and the conditions that govern the transitions between those states. It
+        answers the question "when does something happen, and in what order?" without concerning itself
+        with what data is being changed or how a given step is carried out internally. State diagrams,
+        showing states linked by event-triggered transitions, express this model.
+    </p>
+
+    <h3 id="functionalmodel">2.2.3 The Functional Model</h3>
+    <p>
+        The functional model describes the transformations that values undergo as they flow through a
+        system, independent of when those transformations happen or how they are sequenced. It answers the
+        question "what computation takes place?" and is expressed using data flow diagrams, which show
+        processes, the data that flows between them, and the external sources and destinations of that
+        data.
+    </p>
+
+    <h3>2.2.4 How the Three Models Relate</h3>
+    <p>
+        None of the three models stands completely on its own. The object model supplies the structural
+        context — the objects and data — that the dynamic and functional models act upon. Operations named
+        in the object model correspond to processes in the functional model and to actions triggered by
+        events in the dynamic model. Because a real system always has structure, sequencing, and
+        transformation happening together, a full description of it requires all three models, cross-linked
+        to one another.
+    </p>
+    <table>
+        <tr><th>Model</th><th>Answers</th><th>Notation</th></tr>
+        <tr>
+            <td><strong>Object Model</strong></td>
+            <td>What exists, and how is it structured?</td>
+            <td>Object diagrams (classes and relationships)</td>
+        </tr>
+        <tr>
+            <td><strong>Dynamic Model</strong></td>
+            <td>When does something happen, and in what order?</td>
+            <td>State diagrams</td>
+        </tr>
+        <tr>
+            <td><strong>Functional Model</strong></td>
+            <td>What transformation is being performed on the data?</td>
+            <td>Data flow diagrams</td>
+        </tr>
+    </table>
+    <div class="note">
+        The object model is generally treated as the most fundamental of the three, since it makes little
+        sense to describe when something changes, or how it is transformed, before first describing what
+        that something actually is.
+    </div>
+</section>
+
+<section id="summary">
+    <h2>2.3 Chapter Summary</h2>
+    <ul>
+        <li>A <strong>model</strong> is a simplified stand-in for a system, built to support understanding,
+        communication, and complexity management before the real system is built.</li>
+        <li>The <strong>Object Modeling Technique (OMT)</strong> carries the same object-oriented concepts
+        across analysis, design, and implementation, avoiding repeated translation between notations.</li>
+        <li>OMT describes a system using three complementary models:</li>
+        <ul>
+            <li>The <strong>object model</strong> — static structure of objects, classes, and relationships.</li>
+            <li>The <strong>dynamic model</strong> — the sequencing of events and states over time.</li>
+            <li>The <strong>functional model</strong> — the transformations performed on data values.</li>
+        </ul>
+        <li>The three models are cross-linked but can largely be understood on their own; together they give
+        a complete picture of a system.</li>
+    </ul>
+    <div class="key-term">
+        <strong>Key terms introduced in this chapter:</strong> modeling, abstraction, Object Modeling
+        Technique (OMT), object model, dynamic model, functional model.
+    </div>
+</section>
+
+<section id="reference">
+    <h2>Reference</h2>
+    <p>
+        Rumbaugh, J., Blaha, M., Premerlani, W., Eddy, F., &amp; Lorensen, W. (1991).
+        <em>Object-Oriented Modeling and Design</em>, Chapter 2: Modeling as a Design Technique.
+        Prentice Hall International / Prentice Hall India.
+    </p>
+    <p style="font-size:0.9rem; color:var(--muted);">
+        This page presents an explanation of the modeling concepts introduced in the cited chapter,
+        reorganized and reworded in original language for study purposes rather than reproduced verbatim
+        from the source text.
+    </p>
+</section>
+
+</main>
+
+<footer>
+    Modeling Concepts — Study Notes &middot; Prepared for educational use
+</footer>
+
+</body>
+</html>
