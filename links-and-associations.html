@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.2 Links and Associations — Object-Oriented Modeling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF2F8;
+    --paper-line:#c9d5e6;
+    --ink:#132238;
+    --ink-soft:#3d5170;
+    --blue:#1E5C97;
+    --blue-deep:#0E3A63;
+    --amber:#C4841F;
+    --amber-soft:#f2e2c4;
+    --green:#3E7A5B;
+    --red-note:#9C3B2E;
+    --card:#ffffff;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--paper-line) 1px, transparent 1px) 0 0/100% 32px,
+      linear-gradient(90deg, var(--paper-line) 1px, transparent 1px) 0 0/32px 100%,
+      var(--paper);
+    background-blend-mode:normal;
+    color:var(--ink);
+    font-family:'Source Sans 3', sans-serif;
+    font-size:17px;
+    line-height:1.65;
+  }
+  /* faint grid only in background, foreground content on solid cards */
+  .page{max-width:960px;margin:0 auto;padding:0 24px 100px;}
+
+  header.hero{
+    padding:64px 0 40px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:48px;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--blue-deep);
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    display:inline-block;
+    width:28px;height:1px;background:var(--blue-deep);
+  }
+  h1{
+    font-family:'Newsreader', serif;
+    font-weight:600;
+    font-size:clamp(2.2rem, 5vw, 3.4rem);
+    line-height:1.05;
+    margin:14px 0 10px;
+    color:var(--blue-deep);
+    letter-spacing:-0.01em;
+  }
+  .subtitle{
+    font-family:'Newsreader', serif;
+    font-style:italic;
+    font-size:1.25rem;
+    color:var(--ink-soft);
+    max-width:640px;
+  }
+  nav.toc{
+    margin-top:28px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 18px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13.5px;
+  }
+  nav.toc a{
+    color:var(--blue);
+    text-decoration:none;
+    border-bottom:1px dashed var(--blue);
+    padding-bottom:1px;
+  }
+  nav.toc a:hover{color:var(--amber);border-color:var(--amber);}
+
+  section.topic{margin-bottom:72px;}
+  .topic-head{
+    display:flex;
+    align-items:baseline;
+    gap:16px;
+    margin-bottom:18px;
+  }
+  .topic-num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    color:#fff;
+    background:var(--blue-deep);
+    padding:3px 9px;
+    border-radius:2px;
+    flex-shrink:0;
+  }
+  h2{
+    font-family:'Newsreader', serif;
+    font-weight:600;
+    font-size:1.9rem;
+    margin:0;
+    color:var(--ink);
+  }
+  h3{
+    font-family:'Newsreader', serif;
+    font-weight:600;
+    font-size:1.25rem;
+    color:var(--blue-deep);
+    margin:30px 0 10px;
+  }
+  p{margin:0 0 16px;}
+  .lead{font-size:1.08rem;color:var(--ink-soft);}
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--paper-line);
+    border-radius:var(--radius);
+    padding:28px 30px;
+    box-shadow:0 1px 0 rgba(19,34,56,0.04);
+    margin:22px 0;
+  }
+  .diagram-card{
+    background:var(--card);
+    border:1px solid var(--paper-line);
+    padding:22px;
+    margin:26px 0;
+  }
+  .diagram-caption{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-top:10px;
+    letter-spacing:.02em;
+  }
+  .diagram-caption b{color:var(--blue-deep);}
+
+  ul.clean{padding-left:1.2em; margin:0 0 16px;}
+  ul.clean li{margin-bottom:8px;}
+
+  .def{
+    border-left:3px solid var(--amber);
+    background:var(--amber-soft);
+    padding:14px 18px;
+    margin:20px 0;
+    font-size:.98rem;
+  }
+  .def .term{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:600;
+    text-transform:uppercase;
+    font-size:12px;
+    letter-spacing:.08em;
+    color:#7a5311;
+    display:block;
+    margin-bottom:6px;
+  }
+
+  table.mult{
+    width:100%;
+    border-collapse:collapse;
+    font-size:.95rem;
+    margin:18px 0;
+  }
+  table.mult th, table.mult td{
+    border:1px solid var(--paper-line);
+    padding:10px 14px;
+    text-align:left;
+    vertical-align:top;
+  }
+  table.mult th{
+    background:var(--blue-deep);
+    color:#fff;
+    font-family:'JetBrains Mono', monospace;
+    font-weight:500;
+    font-size:12.5px;
+    letter-spacing:.04em;
+  }
+  table.mult td.code{
+    font-family:'JetBrains Mono', monospace;
+    color:var(--blue-deep);
+    font-weight:600;
+    white-space:nowrap;
+  }
+  table.mult tr:nth-child(even) td{background:#f7f9fc;}
+
+  .grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+  }
+  @media(max-width:720px){.grid-2{grid-template-columns:1fr;}}
+
+  .margin-note{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--red-note);
+    border:1px dashed var(--red-note);
+    padding:10px 14px;
+    margin:18px 0;
+    background:#fff8f6;
+  }
+  .margin-note::before{content:"note — "; font-weight:700;}
+
+  .pillbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:0 0 22px;
+  }
+  .pill{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    padding:5px 11px;
+    border:1px solid var(--blue);
+    color:var(--blue);
+    border-radius:20px;
+  }
+
+  footer{
+    margin-top:90px;
+    padding-top:24px;
+    border-top:2px solid var(--ink);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+
+  svg text{font-family:'JetBrains Mono', monospace;}
+  .svg-label{font-family:'Newsreader', serif; font-size:16px; font-weight:600;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">Chapter 3 · Modeling Concepts</div>
+    <h1>3.2 Links and Associations</h1>
+    <p class="subtitle">How individual objects connect to one another, and how those connections are generalized into a structural relationship at the class level.</p>
+    <nav class="toc">
+      <a href="#general">3.2.1 General Concepts</a>
+      <a href="#multiplicity">3.2.2 Multiplicity</a>
+      <a href="#importance">3.2.3 Importance of Associations</a>
+    </nav>
+  </header>
+
+  <!-- 3.2.1 -->
+  <section class="topic" id="general">
+    <div class="topic-head">
+      <span class="topic-num">3.2.1</span>
+      <h2>General Concepts</h2>
+    </div>
+
+    <p class="lead">Objects rarely exist in isolation. A <em>Person</em> works for a <em>Company</em>; an <em>Order</em> is placed by a <em>Customer</em>; a <em>Student</em> enrolls in a <em>Course</em>. Object-oriented modeling gives these connections two related names, depending on the level at which we're looking at them.</p>
+
+    <div class="def">
+      <span class="term">Link</span>
+      A link is a physical or conceptual connection between two (or more) specific object instances. If a particular person, <em>Rina</em>, works for a particular company, <em>Acolyte Systems</em>, then a link exists between those two exact objects — not between the classes <code>Person</code> and <code>Company</code> in general.
+    </div>
+
+    <div class="def">
+      <span class="term">Association</span>
+      An association is the description of a group of links that share common structure and meaning. Where a link connects two objects, an association connects two classes. "A Person works for a Company" is an association; every individual employment relationship — Rina at Acolyte, Sam at Blythe Corp — is a link that is an instance of that association.
+    </div>
+
+    <p>The relationship between a link and an association is exactly the relationship between an object and a class: a link is an <strong>instance</strong> of an association, in the same way an object is an instance of a class. This is why associations are drawn once on a class diagram but may be realized as many links on an object diagram.</p>
+
+    <div class="diagram-card">
+      <div id="svg-class-vs-object"></div>
+      <div class="diagram-caption">Fig. 3.2.1 — <b>One association</b> on the class diagram (left) generalizes <b>many links</b> between actual objects (right).</div>
+    </div>
+
+    <h3>Notation</h3>
+    <ul class="clean">
+      <li>An association is drawn as a solid line between two class boxes.</li>
+      <li>The association may carry a <strong>name</strong>, usually a verb phrase, sometimes with a small triangle indicating the direction it should be read.</li>
+      <li>Each end of the line is a <strong>role</strong> — the way the class at the other end is seen from this end (e.g. from Company's side, a Person plays the role of "employee").</li>
+      <li>A line ending in an arrowhead instead of a plain end indicates <strong>navigability</strong> — that the association can be traversed efficiently in that direction (e.g. a Company object can be asked for its employees, but not necessarily the reverse).</li>
+      <li>An association may itself have <strong>attributes</strong> when the data belongs to the relationship rather than to either class — for example, a <em>start-date</em> belongs to the employment, not to the Person or the Company alone. Such attributes are attached to the association line, sometimes via an <em>association class</em>.</li>
+    </ul>
+
+    <div class="diagram-card">
+      <div id="svg-notation"></div>
+      <div class="diagram-caption">Fig. 3.2.2 — Anatomy of an association: name, roles, navigability, and an association-class attribute.</div>
+    </div>
+
+    <div class="margin-note">A link is not merely a "pointer" — it is a semantic fact about the domain. Whether it is later implemented as a pointer, a foreign key, or a join table is an implementation decision made much later, in design, not in analysis.</div>
+  </section>
+
+  <!-- 3.2.2 -->
+  <section class="topic" id="multiplicity">
+    <div class="topic-head">
+      <span class="topic-num">3.2.2</span>
+      <h2>Multiplicity</h2>
+    </div>
+
+    <p class="lead">Multiplicity states <strong>how many objects</strong> on one end of an association may be linked to a single object on the other end, at any given moment. It is written as a number or range placed near the class end it constrains, and it is one of the most important pieces of information an association carries — it directly shapes how the relationship will later be implemented (a single reference versus a collection).</p>
+
+    <table class="mult">
+      <tr><th>Notation</th><th>Meaning</th><th>Typical example</th></tr>
+      <tr><td class="code">1</td><td>Exactly one</td><td>Every <em>Order</em> is placed by exactly one <em>Customer</em></td></tr>
+      <tr><td class="code">0..1</td><td>Zero or one (optional, single)</td><td>A <em>Person</em> has at most one current <em>Passport</em></td></tr>
+      <tr><td class="code">0..*  (or *)</td><td>Zero or more</td><td>A <em>Customer</em> may place zero or more <em>Orders</em></td></tr>
+      <tr><td class="code">1..*</td><td>One or more (at least one)</td><td>An <em>Order</em> must contain one or more <em>LineItems</em></td></tr>
+      <tr><td class="code">3..7</td><td>A bounded range</td><td>A <em>Committee</em> has 3 to 7 <em>Members</em></td></tr>
+    </table>
+
+    <h3>Reading a multiplicity pair</h3>
+    <p>Multiplicity is always read from the perspective of a single object at the <em>opposite</em> end. The number placed next to <code>Company</code> answers: <em>"for one Person, how many Companies?"</em> — not the reverse. Mixing this up is the single most common modeling error involving associations.</p>
+
+    <div class="pillbar">
+      <span class="pill">1-to-1</span>
+      <span class="pill">1-to-many</span>
+      <span class="pill">many-to-many</span>
+    </div>
+
+    <div class="diagram-card">
+      <div id="svg-multiplicity"></div>
+      <div class="diagram-caption">Fig. 3.2.3 — The three structural shapes of an association, distinguished purely by multiplicity.</div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="margin-top:0;">One-to-one</h3>
+        <p style="margin-bottom:0;">Each object on either side corresponds to exactly one on the other. Example: a <em>Person</em> and their current <em>Passport</em>. These are relatively rare in practice, since most real relationships are more flexible.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">One-to-many</h3>
+        <p style="margin-bottom:0;">The most common shape. One <em>Company</em> links to many <em>Employees</em>, but each <em>Employee</em> links back to only one <em>Company</em>. This is what eventually becomes a collection attribute on one side and a single reference on the other.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">Many-to-many</h3>
+        <p style="margin-bottom:0;">Objects on both sides may be linked to several objects on the other side — e.g. <em>Students</em> and <em>Courses</em>. Many-to-many associations often carry their own attributes (like a grade) and are frequently resolved into an explicit association class during design.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">Optional vs mandatory</h3>
+        <p style="margin-bottom:0;">Whether a "0" is allowed at the low end of the range distinguishes an optional participant from a mandatory one — e.g. a <em>Book</em> may exist with <code>0..1</code> reviews, but an <em>Order</em> requires <code>1..*</code> line items to be valid at all.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3.2.3 -->
+  <section class="topic" id="importance">
+    <div class="topic-head">
+      <span class="topic-num">3.2.3</span>
+      <h2>Importance of Associations</h2>
+    </div>
+
+    <p class="lead">Associations are not a cosmetic addition to a class diagram — they capture as much meaning about a domain as the classes themselves. A model made only of classes, with no associations, says nothing about how the domain actually behaves.</p>
+
+    <ul class="clean">
+      <li><strong>They record structural facts about the domain.</strong> Before any code is written, an association like "a Policy insures a Vehicle" states a rule of the business itself, independent of any particular implementation.</li>
+      <li><strong>They define access paths.</strong> An association tells you which objects can be reached from which — given a <em>Customer</em>, can you get to their <em>Orders</em>? This determines what queries and navigations the eventual system must support.</li>
+      <li><strong>They drive implementation structure.</strong> Multiplicity on an association is what later becomes a single attribute reference (multiplicity of 1) or a collection — a list, set, or map (multiplicity of many). Getting the association right in analysis prevents costly restructuring in design.</li>
+      <li><strong>They surface hidden concepts.</strong> When data or behavior clearly belongs to the relationship rather than to either class alone (like a <em>start-date</em> of employment, or a <em>grade</em> for an enrollment), the association reveals the need for an association class — a concept easy to miss if only classes are considered.</li>
+      <li><strong>They constrain integrity.</strong> Multiplicity such as <code>1..*</code> versus <code>0..*</code> encodes business rules directly into the model — e.g. an <em>Order</em> without at least one <em>LineItem</em> is not a valid order — which later becomes a validation rule in the system.</li>
+      <li><strong>They support incremental discovery.</strong> Associations are usually found early, in general terms, and refined over successive passes: first "Person works for Company," then role names, then multiplicity, then whether the relationship needs its own attributes. This mirrors how understanding of a real domain typically deepens.</li>
+    </ul>
+
+    <div class="diagram-card">
+      <div id="svg-importance"></div>
+      <div class="diagram-caption">Fig. 3.2.4 — An association is the seed from which roles, multiplicity, navigability, and — where needed — an association class all grow.</div>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--green);">
+      <h3 style="margin-top:0; color:var(--green);">Takeaway</h3>
+      <p style="margin-bottom:0;">A link is a fact about two specific objects; an association is the general rule that produces many such facts. Multiplicity tells you the shape of that rule, and together these ideas turn a set of isolated classes into a connected, navigable model of the domain — the structural backbone the rest of the design builds on.</p>
+    </div>
+  </section>
+
+  <footer>
+    <span>Object-Oriented Modeling and Design — Chapter 3</span>
+    <span>§3.2 Links and Associations</span>
+  </footer>
+
+</div>
+
+<script>
+function el(id, svg){ document.getElementById(id).innerHTML = svg; }
+
+/* Fig 3.2.1 — class vs object diagram */
+el('svg-class-vs-object', `
+<svg viewBox="0 0 860 260" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- left: class diagram -->
+  <rect x="30" y="90" width="140" height="50" fill="#fff" stroke="#0E3A63" stroke-width="2"/>
+  <text x="100" y="120" text-anchor="middle" class="svg-label" fill="#0E3A63">Person</text>
+  <rect x="330" y="90" width="140" height="50" fill="#fff" stroke="#0E3A63" stroke-width="2"/>
+  <text x="400" y="120" text-anchor="middle" class="svg-label" fill="#0E3A63">Company</text>
+  <line x1="170" y1="115" x2="330" y2="115" stroke="#1E5C97" stroke-width="2"/>
+  <text x="250" y="106" text-anchor="middle" font-size="12" fill="#C4841F" font-weight="600">works for</text>
+  <text x="250" y="230" text-anchor="middle" font-size="13" fill="#3d5170" font-style="italic">class diagram — one association</text>
+
+  <!-- arrow -->
+  <line x1="500" y1="115" x2="560" y2="115" stroke="#132238" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#132238"/>
+    </marker>
+  </defs>
+
+  <!-- right: object diagram, several links -->
+  <rect x="600" y="30" width="110" height="34" rx="16" fill="#fff" stroke="#1E5C97" stroke-width="1.5"/>
+  <text x="655" y="52" text-anchor="middle" font-size="12" fill="#1E5C97">Rina : Person</text>
+
+  <rect x="600" y="110" width="110" height="34" rx="16" fill="#fff" stroke="#1E5C97" stroke-width="1.5"/>
+  <text x="655" y="132" text-anchor="middle" font-size="12" fill="#1E5C97">Sam : Person</text>
+
+  <rect x="600" y="190" width="110" height="34" rx="16" fill="#fff" stroke="#1E5C97" stroke-width="1.5"/>
+  <text x="655" y="212" text-anchor="middle" font-size="12" fill="#1E5C97">Lee : Person</text>
+
+  <rect x="760" y="110" width="150" height="40" rx="16" fill="#fff" stroke="#0E3A63" stroke-width="1.8"/>
+  <text x="835" y="134" text-anchor="middle" font-size="12" fill="#0E3A63">Acolyte : Company</text>
+
+  <line x1="710" y1="47" x2="800" y2="120" stroke="#C4841F" stroke-width="1.5"/>
+  <line x1="710" y1="127" x2="760" y2="130" stroke="#C4841F" stroke-width="1.5"/>
+  <line x1="710" y1="207" x2="800" y2="140" stroke="#C4841F" stroke-width="1.5"/>
+  <text x="770" y="230" text-anchor="middle" font-size="13" fill="#3d5170" font-style="italic">object diagram — three links</text>
+</svg>
+`);
+
+/* Fig 3.2.2 — notation anatomy */
+el('svg-notation', `
+<svg viewBox="0 0 860 220" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <rect x="40" y="80" width="150" height="52" fill="#fff" stroke="#0E3A63" stroke-width="2"/>
+  <text x="115" y="112" text-anchor="middle" class="svg-label" fill="#0E3A63">Person</text>
+
+  <rect x="640" y="80" width="150" height="52" fill="#fff" stroke="#0E3A63" stroke-width="2"/>
+  <text x="715" y="112" text-anchor="middle" class="svg-label" fill="#0E3A63">Company</text>
+
+  <line x1="190" y1="106" x2="640" y2="106" stroke="#1E5C97" stroke-width="2"/>
+  <path d="M628,100 L642,106 L628,112 Z" fill="#1E5C97"/>
+
+  <text x="415" y="90" text-anchor="middle" font-size="13" fill="#C4841F" font-weight="600">employs &#9656;</text>
+
+  <text x="230" y="130" font-size="12" fill="#3d5170">role: employee</text>
+  <text x="600" y="130" font-size="12" fill="#3d5170" text-anchor="end">role: employer</text>
+
+  <text x="230" y="70" font-size="13" font-family="'JetBrains Mono', monospace" fill="#0E3A63">1</text>
+  <text x="600" y="70" font-size="13" font-family="'JetBrains Mono', monospace" fill="#0E3A63" text-anchor="end">1</text>
+
+  <!-- association class -->
+  <line x1="415" y1="106" x2="415" y2="170" stroke="#9C3B2E" stroke-width="1.4" stroke-dasharray="4,3"/>
+  <rect x="345" y="170" width="140" height="40" fill="#fff8f6" stroke="#9C3B2E" stroke-width="1.4"/>
+  <text x="415" y="194" text-anchor="middle" font-size="12" fill="#9C3B2E">start-date</text>
+
+  <text x="115" y="150" text-anchor="middle" font-size="11" fill="#3d5170" font-style="italic">navigable →</text>
+</svg>
+`);
+
+/* Fig 3.2.3 — multiplicity shapes */
+el('svg-multiplicity', `
+<svg viewBox="0 0 880 300" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- 1 to 1 -->
+  <g>
+    <rect x="30" y="20" width="120" height="42" fill="#fff" stroke="#0E3A63" stroke-width="1.6"/>
+    <text x="90" y="46" text-anchor="middle" font-size="12" fill="#0E3A63">Person</text>
+    <rect x="230" y="20" width="120" height="42" fill="#fff" stroke="#0E3A63" stroke-width="1.6"/>
+    <text x="290" y="46" text-anchor="middle" font-size="12" fill="#0E3A63">Passport</text>
+    <line x1="150" y1="41" x2="230" y2="41" stroke="#1E5C97" stroke-width="1.8"/>
+    <text x="162" y="34" font-size="11" font-family="'JetBrains Mono', monospace" fill="#C4841F">1</text>
+    <text x="205" y="34" font-size="11" font-family="'JetBrains Mono', monospace" fill="#C4841F" text-anchor="end">1</text>
+    <text x="190" y="90" text-anchor="middle" font-size="12" fill="#3d5170" font-style="italic">one-to-one</text>
+  </g>
+
+  <!-- 1 to many -->
+  <g>
+    <rect x="470" y="20" width="120" height="42" fill="#fff" stroke="#0E3A63" stroke-width="1.6"/>
+    <text x="530" y="46" text-anchor="middle" font-size="12" fill="#0E3A63">Company</text>
+    <rect x="680" y="20" width="140" height="42" fill="#fff" stroke="#0E3A63" stroke-width="1.6"/>
+    <text x="750" y="46" text-anchor="middle" font-size="12" fill="#0E3A63">Employee</text>
+    <line x1="590" y1="41" x2="680" y2="41" stroke="#1E5C97" stroke-width="1.8"/>
+    <text x="602" y="34" font-size="11" font-family="'JetBrains Mono', monospace" fill="#C4841F">1</text>
+    <text x="655" y="34" font-size="11" font-family="'JetBrains Mono', monospace" fill="#C4841F" text-anchor="end">0..*</text>
+    <text x="645" y="90" text-anchor="middle" font-size="12" fill="#3d5170" font-style="italic">one-to-many</text>
+  </g>
+
+  <!-- many to many -->
+  <g>
+    <rect x="250" y="180" width="120" height="42" fill="#fff" stroke="#0E3A63" stroke-width="1.6"/>
+    <text x="310" y="206" text-anchor="middle" font-size="12" fill="#0E3A63">Student</text>
+    <rect x="500" y="180" width="120" height="42" fill="#fff" stroke="#0E3A63" stroke-width="1.6"/>
+    <text x="560" y="206" text-anchor="middle" font-size="12" fill="#0E3A63">Course</text>
+    <line x1="370" y1="201" x2="500" y2="201" stroke="#1E5C97" stroke-width="1.8"/>
+    <text x="382" y="194" font-size="11" font-family="'JetBrains Mono', monospace" fill="#C4841F">0..*</text>
+    <text x="488" y="194" font-size="11" font-family="'JetBrains Mono', monospace" fill="#C4841F" text-anchor="end">1..*</text>
+    <text x="435" y="250" text-anchor="middle" font-size="12" fill="#3d5170" font-style="italic">many-to-many</text>
+  </g>
+</svg>
+`);
+
+/* Fig 3.2.4 — importance web */
+el('svg-importance', `
+<svg viewBox="0 0 860 300" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <rect x="360" y="128" width="140" height="46" fill="#0E3A63" stroke="#0E3A63" stroke-width="2"/>
+  <text x="430" y="156" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">Association</text>
+
+  <!-- spokes -->
+  <g stroke="#1E5C97" stroke-width="1.4">
+    <line x1="360" y1="150" x2="140" y2="60"/>
+    <line x1="360" y1="150" x2="140" y2="150"/>
+    <line x1="360" y1="150" x2="140" y2="240"/>
+    <line x1="500" y1="150" x2="720" y2="60"/>
+    <line x1="500" y1="150" x2="720" y2="150"/>
+    <line x1="500" y1="150" x2="720" y2="240"/>
+  </g>
+
+  <g font-size="12" fill="#132238">
+    <rect x="30" y="38" width="220" height="42" fill="#fff" stroke="#c9d5e6"/>
+    <text x="140" y="63" text-anchor="middle">Roles</text>
+
+    <rect x="30" y="128" width="220" height="42" fill="#fff" stroke="#c9d5e6"/>
+    <text x="140" y="153" text-anchor="middle">Multiplicity</text>
+
+    <rect x="30" y="218" width="220" height="42" fill="#fff" stroke="#c9d5e6"/>
+    <text x="140" y="243" text-anchor="middle">Navigability</text>
+
+    <rect x="610" y="38" width="220" height="42" fill="#fff" stroke="#c9d5e6"/>
+    <text x="720" y="63" text-anchor="middle">Access paths</text>
+
+    <rect x="610" y="128" width="220" height="42" fill="#fff" stroke="#c9d5e6"/>
+    <text x="720" y="153" text-anchor="middle">Implementation shape</text>
+
+    <rect x="610" y="218" width="220" height="42" fill="#fff" stroke="#c9d5e6"/>
+    <text x="720" y="243" text-anchor="middle">Association classes</text>
+  </g>
+</svg>
+`);
+</script>
+</body>
+</html>
