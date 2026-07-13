@@ -364,9 +364,6 @@
     public static void main(String[] args) {
         int primitiveInt = 25;
         
-        // Explicit conversion (Old way)
-        Integer oldWay = Integer.valueOf(primitiveInt);
-        
         // Autoboxing (Modern Java automatically handles this)
         Integer modernWay = primitiveInt; 
     }
@@ -379,8 +376,7 @@
     public static void main(String[] args) {
         Integer objectInteger = new Integer(100);
         
-        // Explicit conversion (Old way)
-        int oldWay = objectInteger.intValue();
+        
         
         // Unboxing (Modern Java)
         int modernWay = objectInteger; 
