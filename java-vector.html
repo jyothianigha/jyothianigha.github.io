@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Vector — Growth Under Lock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EBEEF1;
+    --paper-edge:#D2D9DF;
+    --ink:#1B242C;
+    --ink-soft:#5A6670;
+    --card:#FFFFFF;
+    --panel:#141C22;
+    --panel-edge:#37454F;
+    --brass:#B8863B;
+    --brass-soft:#F0E3CB;
+    --brass-deep:#8A621F;
+    --steel:#4F7C93;
+    --steel-soft:#DCE9EE;
+    --red:#B4453A;
+    --line:#D2D9DF;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    font-size:16.5px;
+    line-height:1.65;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+
+  header.hero{background:var(--panel);color:#eef1f3;padding:64px 0 0;
+    background-image:
+      linear-gradient(var(--panel), var(--panel)),
+      repeating-linear-gradient(135deg, rgba(184,134,59,0.05) 0 2px, transparent 2px 16px);
+  }
+  .hero-inner{max-width:980px;margin:0 auto;padding:0 24px;}
+  .kicker{
+    font-family:'JetBrains Mono', monospace;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--brass);display:flex;align-items:center;gap:10px;
+  }
+  .kicker::before{content:"";width:22px;height:1px;background:var(--brass);display:inline-block;}
+  h1.title{
+    font-family:'Big Shoulders Display', sans-serif;
+    font-weight:800;
+    font-size:clamp(2.8rem,7.5vw,4.8rem);
+    margin:12px 0 8px;
+    letter-spacing:-0.01em;
+    text-transform:uppercase;
+  }
+  .hero-sub{font-size:1.1rem;color:#c3cdd3;max-width:620px;margin:0 0 34px;}
+  nav.toc{display:flex;flex-wrap:wrap;gap:8px 6px;padding-bottom:34px;}
+  nav.toc a{
+    font-family:'JetBrains Mono', monospace;font-size:12.5px;color:#dbe2e6;text-decoration:none;
+    border:1px solid var(--panel-edge);padding:6px 12px;border-radius:3px;transition:.2s;
+  }
+  nav.toc a:hover{border-color:var(--brass);color:var(--brass);}
+
+  /* signature: capacity gauge */
+  .gauge-row{display:flex;align-items:flex-end;gap:10px;padding-bottom:6px;flex-wrap:wrap;}
+  .tank{
+    background:#0d1418;border:1px solid var(--panel-edge);border-radius:4px;
+    padding:10px 14px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  }
+  .tank .label{font-family:'JetBrains Mono', monospace;font-size:10.5px;color:#8fa0aa;}
+  .tank .fill{
+    width:64px;background:#1a232b;border:1px solid var(--panel-edge);border-radius:3px;
+    display:flex;align-items:flex-end;overflow:hidden;
+  }
+  .tank .fill-bar{width:100%;background:linear-gradient(180deg,var(--brass),var(--brass-deep));}
+  .tank .cap{font-family:'JetBrains Mono', monospace;font-size:11px;color:var(--brass);}
+  .gauge-arrow{color:#5a6a72;font-size:20px;padding-bottom:36px;}
+  .strand-cap{
+    font-family:'JetBrains Mono', monospace;font-size:11.5px;color:#aab6bd;
+    padding:12px 0 32px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;
+  }
+  .strand-cap b{color:var(--brass);}
+  .seal{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:'JetBrains Mono', monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--brass-deep);background:var(--brass-soft);border:1px solid var(--brass);
+    padding:3px 9px;border-radius:20px;
+  }
+
+  main{padding:50px 0 20px;}
+  section.topic{margin-bottom:56px;scroll-margin-top:20px;}
+  .topic-head{display:flex;align-items:baseline;gap:14px;margin-bottom:6px;}
+  .num{
+    font-family:'JetBrains Mono', monospace;font-size:13px;
+    background:#0d1418;color:var(--brass);padding:3px 9px;border-radius:3px;
+  }
+  h2{font-family:'Big Shoulders Display', sans-serif;font-weight:700;font-size:1.9rem;margin:0;text-transform:uppercase;letter-spacing:.01em;}
+  .topic-dek{color:var(--ink-soft);max-width:660px;margin:10px 0 22px;}
+  h3{font-family:'Big Shoulders Display', sans-serif;font-weight:700;font-size:1.25rem;margin:26px 0 10px;color:var(--ink);text-transform:uppercase;letter-spacing:.01em;}
+  p{margin:0 0 15px;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:24px 26px;margin:18px 0;}
+
+  pre{
+    background:var(--panel);color:#e9edf0;padding:18px 20px;border-radius:6px;
+    overflow-x:auto;font-family:'JetBrains Mono', monospace;font-size:13.5px;line-height:1.6;
+    border:1px solid var(--panel-edge);margin:14px 0;
+  }
+  pre .c{color:#758791;}
+  pre .kw{color:var(--brass);}
+  pre .ty{color:#8fc3d9;}
+  pre .st{color:#c9dce2;}
+
+  code.inline{
+    font-family:'JetBrains Mono', monospace;background:#dfe4e8;color:#1f2c33;
+    padding:2px 6px;border-radius:4px;font-size:.9em;
+  }
+
+  ul.clean{padding-left:1.2em;margin:0 0 14px;}
+  ul.clean li{margin-bottom:7px;}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:700px){.grid-2{grid-template-columns:1fr;} .hero-sub{max-width:100%;}}
+
+  .callout{border-left:3px solid var(--brass);background:var(--brass-soft);padding:14px 18px;margin:18px 0;border-radius:0 6px 6px 0;}
+  .callout.warn{border-left-color:var(--red);background:#f7e6e3;}
+  .callout .tag{
+    font-family:'JetBrains Mono', monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+    color:var(--brass-deep);display:block;margin-bottom:6px;font-weight:700;
+  }
+  .callout.warn .tag{color:var(--red);}
+
+  table.ref{width:100%;border-collapse:collapse;margin:16px 0;font-size:.94rem;}
+  table.ref th,table.ref td{border:1px solid var(--line);padding:10px 13px;text-align:left;vertical-align:top;}
+  table.ref th{background:var(--panel);color:var(--brass);font-family:'JetBrains Mono', monospace;font-weight:500;font-size:12px;letter-spacing:.03em;}
+  table.ref tr:nth-child(even) td{background:#f4f6f8;}
+
+  /* single-lane sync diagram */
+  .lane-wrap{background:#0d1418;border:1px solid var(--panel-edge);border-radius:6px;padding:22px 20px;margin:16px 0;}
+  .lane{display:flex;align-items:center;gap:0;position:relative;}
+  .thread-chip{
+    font-family:'JetBrains Mono', monospace;font-size:11.5px;color:#0d1418;
+    background:var(--steel);padding:6px 10px;border-radius:20px;white-space:nowrap;
+  }
+  .lane-gate{
+    flex:1;height:2px;background:repeating-linear-gradient(90deg, var(--panel-edge) 0 6px, transparent 6px 12px);
+    position:relative;margin:0 10px;
+  }
+  .gate-lock{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    background:var(--brass);color:#1b1206;font-family:'JetBrains Mono', monospace;font-size:10.5px;font-weight:700;
+    padding:4px 9px;border-radius:3px;white-space:nowrap;
+  }
+  .lane-caption{font-family:'JetBrains Mono', monospace;font-size:11px;color:#8fa0aa;margin-top:14px;}
+
+  footer{
+    margin-top:60px;padding:30px 0 60px;border-top:1px solid var(--line);
+    font-family:'JetBrains Mono', monospace;font-size:12px;color:var(--ink-soft);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    
+    <h1 class="title">Vector</h1>
+    
+    </nav>
+  </div>
+
+  
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 1 -->
+  <section class="topic" id="what">
+    <div class="topic-head"><span class="num">01</span><h2>What is a Vector?</h2></div>
+    <p class="topic-dek">Vector is a resizable array</p>
+    <div class="card">
+      <ul class="clean">
+        <li><strong>Dynamic array.</strong>  Grows automatically as elements are added — no fixed size like a plain array.</li>
+        <li><strong>Ordered &amp; index-based,</strong>  elements keep insertion order and are reachable by position.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="creating">
+    <div class="topic-head"><span class="num">02</span><h2>Creating a Vector</h2></div>
+    <p class="topic-dek">Vector offers four constructors — the extra two exist so you can tune exactly how it grows.</p>
+    <div class="card">
+      <pre><code><span class="ty">Vector</span>&lt;<span class="ty">String</span>&gt; v1 = <span class="kw">new</span> <span class="ty">Vector</span>&lt;&gt;();                 <span class="c">// default capacity: 10</span>
+<span class="ty">Vector</span>&lt;<span class="ty">String</span>&gt; v2 = <span class="kw">new</span> <span class="ty">Vector</span>&lt;&gt;(<span class="st">50</span>);               <span class="c">// initial capacity: 50</span>
+<span class="ty">Vector</span>&lt;<span class="ty">String</span>&gt; v3 = <span class="kw">new</span> <span class="ty">Vector</span>&lt;&gt;(<span class="st">50</span>, <span class="st">20</span>);           <span class="c">// capacity 50, grows by exactly 20 each time it's full</span>
+<span class="ty">Vector</span>&lt;<span class="ty">String</span>&gt; v4 = <span class="kw">new</span> <span class="ty">Vector</span>&lt;&gt;(existingList);     <span class="c">// pre-filled from another Collection</span></code></pre>
+      <p style="margin-bottom:0;">Choosing an initial capacity close to the expected final size avoids repeated internal resizing — useful when you already know roughly how many elements are coming.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="growth">
+    <div class="topic-head"><span class="num">03</span><h2>Growth &amp; Capacity</h2></div>
+    <p class="topic-dek">A Vector always has more room than it's using. <code class="inline">size()</code> is how many elements are actually stored; <code class="inline">capacity()</code> is how many it can hold before it needs to resize.</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="margin-top:0;">Default growth: doubles</h3>
+        <pre><code><span class="ty">Vector</span>&lt;<span class="ty">Integer</span>&gt; v = <span class="kw">new</span> <span class="ty">Vector</span>&lt;&gt;();  <span class="c">// capacity 10</span>
+<span class="c">// add 11 elements...</span>
+v.capacity();  <span class="c">// 20 — capacity doubled once full</span></code></pre>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0;">Fixed growth: capacityIncrement</h3>
+        <pre><code><span class="ty">Vector</span>&lt;<span class="ty">Integer</span>&gt; v = <span class="kw">new</span> <span class="ty">Vector</span>&lt;&gt;(<span class="st">10</span>, <span class="st">5</span>);
+<span class="c">// once full, capacity grows by exactly 5 each time</span>
+<span class="c">// instead of doubling: 10 → 15 → 20 → 25 ...</span></code></pre>
+      </div>
+    </div>
+    <div class="callout">
+      <span class="tag">Why this matters</span>
+      Every resize copies every existing element into a new, bigger array — an O(n) operation. Sizing the initial capacity sensibly is the cheapest performance win available for a Vector that's going to hold a lot of data.
+    </div>
+  </section>
+
+  <!-- 4 -->
+  
+  <!-- 5 -->
+  <section class="topic" id="methods">
+    <div class="topic-head"><span class="num">05</span><h2>Common Methods</h2></div>
+    <p class="topic-dek">Vector supports the standard <code class="inline">List</code> operations, plus a set of older, Vector-specific method names left over from before the Collections Framework existed.</p>
+    <table class="ref">
+      <tr><th>Method</th><th>What it does</th></tr>
+      <tr><td><code class="inline">add(x)</code> / <code class="inline">addElement(x)</code></td><td>Appends an element to the end</td></tr>
+      <tr><td><code class="inline">get(i)</code> / <code class="inline">elementAt(i)</code></td><td>Returns the element at index <code class="inline">i</code></td></tr>
+      <tr><td><code class="inline">set(i, x)</code></td><td>Replaces the element at index <code class="inline">i</code></td></tr>
+      <tr><td><code class="inline">remove(i)</code> / <code class="inline">removeElement(x)</code></td><td>Removes by index, or by matching value</td></tr>
+      <tr><td><code class="inline">firstElement()</code> / <code class="inline">lastElement()</code></td><td>Convenience access to the first / last element</td></tr>
+      <tr><td><code class="inline">insertElementAt(x, i)</code></td><td>Inserts <code class="inline">x</code> at index <code class="inline">i</code>, shifting later elements right</td></tr>
+      <tr><td><code class="inline">contains(x)</code> / <code class="inline">indexOf(x)</code></td><td>Membership check / position lookup</td></tr>
+      <tr><td><code class="inline">size()</code> / <code class="inline">capacity()</code></td><td>Elements stored / total room before the next resize</td></tr>
+      <tr><td><code class="inline">isEmpty()</code></td><td>True if size is 0</td></tr>
+    </table>
+    <div class="card">
+      <pre><code><span class="ty">Vector</span>&lt;<span class="ty">String</span>&gt; cities = <span class="kw">new</span> <span class="ty">Vector</span>&lt;&gt;();
+cities.add(<span class="st">"Chennai"</span>);
+cities.add(<span class="st">"Pune"</span>);
+cities.insertElementAt(<span class="st">"Delhi"</span>, <span class="st">0</span>);
+cities.firstElement();   <span class="c">// "Delhi"</span>
+cities.size();            <span class="c">// 3</span></code></pre>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  
+
+  <!-- 7 -->
+  
+  <!-- 8 -->
+  
+
+</main>
+
+<footer class="wrap">
+  <span>Java Fundamentals · Vector</span>
+  <span>dynamic array · synchronized · legacy since JDK 1.0</span>
+</footer>
+
+</body>
+</html>
