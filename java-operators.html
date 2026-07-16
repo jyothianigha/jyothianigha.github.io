@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Operators — Field Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* page (light) palette */
+    --page-bg: #ffffff;
+    --surface: #f5f6fb;
+    --surface-2: #ecedf7;
+    --border: #e2e4f0;
+    --ink: #171922;
+    --ink-dim: #676b83;
+    --brand: #2f5fd6;
+    --amber: #b4700f;
+    --keyword: #d9531e;
+    --line-num: #c9cbdc;
+
+    /* code editor (dark) palette */
+    --ed-bg: #1d1f2b;
+    --ed-bg-2: #232538;
+    --ed-border: #2c2e42;
+    --ed-text: #c7cbe0;
+    --ed-text-dim: #7a7e9c;
+    --ed-linenum: #3b3e58;
+    --syn-keyword: #ff9e64;
+    --syn-string: #9ece6a;
+    --syn-number: #ff9ecd;
+    --syn-func: #7dcfff;
+    --syn-type: #bb9af7;
+    --syn-comment: #7a7fa0;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background: var(--page-bg);
+    color: var(--ink);
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  code, .mono{ font-family:'JetBrains Mono', monospace; }
+
+  /* ambient grid backdrop */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 42px 42px;
+    opacity:0.6;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap{ position:relative; z-index:1; max-width:980px; margin:0 auto; padding: 0 24px 100px; }
+
+  /* HERO */
+  header.hero{
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .eyebrow{
+    display:flex; align-items:center; gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px; color: var(--brand);
+    letter-spacing: 0.04em;
+    margin-bottom:22px;
+  }
+  .dot-row{ display:flex; gap:6px; }
+  .dot{ width:10px; height:10px; border-radius:50%; }
+  .dot.red{ background:#f7768e;} .dot.amber{ background:#e0af68;} .dot.green{ background:#9ece6a;}
+
+  h1.title{
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    line-height:1.05;
+    margin:0 0 18px;
+    font-weight:700;
+    color: var(--ink);
+  }
+  h1.title .brace{ color: var(--keyword); }
+  h1.title .accent{ color: var(--brand); }
+
+  p.lede{
+    font-size:1.08rem; line-height:1.65;
+    color: var(--ink-dim);
+    max-width: 640px;
+    margin:0 0 28px;
+  }
+
+  nav.jumplinks{
+    display:flex; flex-wrap:wrap; gap:10px;
+  }
+  nav.jumplinks a{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color: var(--ink-dim);
+    text-decoration:none;
+    padding:7px 12px;
+    border:1px solid var(--border);
+    border-radius:6px;
+    background: var(--surface);
+    transition: all .15s ease;
+  }
+  nav.jumplinks a:hover{ color: var(--ink); border-color: var(--brand); }
+
+  /* SECTIONS */
+  section.op-group{
+    padding: 46px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .group-head{
+    display:flex; align-items:baseline; gap:14px;
+    margin-bottom: 22px;
+  }
+  .group-index{
+    font-family:'JetBrains Mono', monospace;
+    color: var(--line-num);
+    font-size: 1.6rem;
+    font-weight:700;
+  }
+  h2.group-title{
+    font-size:1.5rem;
+    margin:0;
+    color: var(--ink);
+    font-weight:700;
+  }
+  p.group-desc{
+    color:var(--ink-dim);
+    line-height:1.6;
+    margin: 0 0 20px;
+    max-width: 680px;
+  }
+
+  table.op-table{
+    width:100%;
+    border-collapse: collapse;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius:10px;
+    overflow:hidden;
+  }
+  table.op-table th{
+    text-align:left;
+    background: var(--surface-2);
+    color: var(--amber);
+    font-weight:600;
+    padding:11px 16px;
+    border-bottom:1px solid var(--border);
+    font-size:12px;
+    letter-spacing:.03em;
+    text-transform:uppercase;
+  }
+  table.op-table td{
+    padding:10px 16px;
+    border-bottom:1px solid var(--border);
+    color: var(--ink);
+  }
+  table.op-table tr:last-child td{ border-bottom:none; }
+  table.op-table td.opsym{ color: var(--brand); font-weight:600; }
+  table.op-table td.rank{ color: var(--ink-dim); font-weight:600; width:56px; }
+
+  /* CODE PANEL — deliberately stays a dark "terminal" card against the white page */
+  .editor{
+    margin-top:26px;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid var(--ed-border);
+    background: var(--ed-bg);
+    color: var(--ed-text);
+    box-shadow: 0 24px 44px -22px rgba(23,25,34,0.35);
+  }
+  .editor-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 16px;
+    background: var(--ed-bg-2);
+    border-bottom:1px solid var(--ed-border);
+  }
+  .editor-bar .fname{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color: var(--ed-text-dim);
+  }
+  .editor-body{
+    display:grid;
+    grid-template-columns: 42px 1fr;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13.5px;
+    line-height:1.75;
+    padding: 16px 0;
+    overflow-x:auto;
+  }
+  .gutter{
+    text-align:right;
+    padding-right:14px;
+    color: var(--ed-linenum);
+    user-select:none;
+    border-right:1px solid var(--ed-border);
+  }
+  .code-lines{ padding-left:16px; white-space:pre; color: var(--ed-text); }
+  .kw{ color: var(--syn-keyword); }
+  .str{ color: var(--syn-string); }
+  .num{ color: var(--syn-number); }
+  .fn{ color: var(--syn-func); }
+  .ty{ color: var(--syn-type); }
+  .cm{ color: var(--syn-comment); font-style:italic; }
+
+  .console{
+    border-top:1px solid var(--ed-border);
+    background:#131420;
+    padding:14px 20px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+  }
+  .console .prompt{ color:#9ece6a; }
+  .console .out{ color:#e0e0f0; }
+  .console .label{ color: var(--ed-text-dim); font-size:11px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; display:block; }
+
+  /* Ternary visual */
+  .ternary-flow{
+    margin-top:26px;
+    display:grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap:14px;
+    align-items:center;
+  }
+  .branch{
+    background: var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:18px;
+  }
+  .branch .cond-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    color: var(--ink-dim);
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    margin-bottom:8px;
+    display:block;
+  }
+  .branch.true{ border-color: rgba(64,145,87,0.5); }
+  .branch.false{ border-color: rgba(214,75,101,0.5); }
+  .branch .val{ font-family:'JetBrains Mono', monospace; font-size:15px; color: var(--ink); }
+  .fork{
+    font-family:'JetBrains Mono', monospace;
+    color: var(--amber);
+    font-size:22px;
+    text-align:center;
+  }
+
+  /* SHIFT visualizer */
+  .bit-viz{
+    margin-top:22px;
+    background: var(--surface);
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:22px;
+  }
+  .bit-row{ display:flex; align-items:center; gap:16px; margin-bottom:14px; }
+  .bit-row:last-child{ margin-bottom:0; }
+  .bit-row .bit-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color: var(--ink-dim);
+    width:120px;
+    flex-shrink:0;
+  }
+  .bits{ display:flex; gap:4px; }
+  .bit{
+    width:26px; height:32px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    border-radius:4px;
+    background: var(--surface-2);
+    border:1px solid var(--border);
+    color: var(--ink-dim);
+  }
+  .bit.on{ color:#ffffff; background: var(--brand); border-color: var(--brand); font-weight:700; }
+  .bit.shifted{ color:#ffffff; background: var(--amber); border-color: var(--amber); font-weight:700; }
+  .bit.filled{ color: var(--ink-dim); background:transparent; border-style:dashed; }
+  .arrow-note{ font-family:'JetBrains Mono', monospace; font-size:12px; color: var(--amber); margin-top:10px; }
+
+  .note{
+    margin-top:18px;
+    padding:12px 16px;
+    background: rgba(180,112,15,0.08);
+    border-left:3px solid var(--amber);
+    border-radius: 0 6px 6px 0;
+    font-size:13.5px;
+    color: var(--ink);
+    line-height:1.6;
+  }
+  .note b{ color: var(--amber); }
+
+  /* Precedence table */
+  .prec-note{ display:flex; gap:10px; align-items:flex-start; margin-top:14px; }
+  .prec-note .chip{
+    flex-shrink:0;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:5px;
+    background: var(--surface-2);
+    color: var(--ink-dim);
+    border:1px solid var(--border);
+  }
+
+  footer{
+    padding:40px 0 0;
+    text-align:center;
+    color: var(--ink-dim);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+  }
+
+  @media (max-width:640px){
+    .editor-body{ grid-template-columns: 32px 1fr; font-size:12px; }
+    .ternary-flow{ grid-template-columns: 1fr; }
+    .fork{ transform: rotate(90deg); padding: 6px 0; }
+    table.op-table{ font-size:12px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">
+      <span class="dot-row"><span class="dot red"></span><span class="dot amber"></span><span class="dot green"></span></span>
+      Operators.java
+    </div>
+    <h1 class="title"><span class="brace"></span> Java Operators <span class="accent"></span>  <span class="brace"></span></h1>
+    <p class="lede">A working reference for the symbols that make Java code compute — with a closer look at bit-shifting and the ternary shortcut, worked out like they'd run in a console.</p>
+    <nav class="jumplinks">
+      <a href="#arithmetic">Arithmetic</a>
+      <a href="#assignment">Assignment</a>
+      <a href="#relational">Relational</a>
+      <a href="#logical">Logical</a>
+      <a href="#unary">Unary</a>
+      <a href="#bitwise">Bitwise</a>
+      <a href="#shifts">Shift operators →</a>
+      <a href="#ternary">Ternary →</a>
+      <a href="#precedence">Precedence →</a>
+    </nav>
+  </header>
+
+  <section class="op-group" id="arithmetic">
+    <div class="group-head"><span class="group-index">01</span><h2 class="group-title">Arithmetic Operators</h2></div>
+    <p class="group-desc">Standard math on numeric values.</p>
+    <table class="op-table">
+      <tr><th>Op</th><th>Meaning</th><th>Example</th><th>Result</th></tr>
+      <tr><td class="opsym">+</td><td>Addition</td><td>5 + 3</td><td>8</td></tr>
+      <tr><td class="opsym">-</td><td>Subtraction</td><td>5 - 3</td><td>2</td></tr>
+      <tr><td class="opsym">*</td><td>Multiplication</td><td>5 * 3</td><td>15</td></tr>
+      <tr><td class="opsym">/</td><td>Division</td><td>5 / 2</td><td>2 (int)</td></tr>
+      <tr><td class="opsym">%</td><td>Modulus</td><td>5 % 2</td><td>1</td></tr>
+    </table>
+  </section>
+
+  <section class="op-group" id="assignment">
+    <div class="group-head"><span class="group-index">02</span><h2 class="group-title">Assignment Operators</h2></div>
+    <p class="group-desc">Store or update a value in a variable.</p>
+    <table class="op-table">
+      <tr><th>Op</th><th>Meaning</th><th>Equivalent to</th></tr>
+      <tr><td class="opsym">=</td><td>Assign</td><td>x = 5</td></tr>
+      <tr><td class="opsym">+=</td><td>Add & assign</td><td>x = x + 3</td></tr>
+      <tr><td class="opsym">-=</td><td>Subtract & assign</td><td>x = x - 3</td></tr>
+      <tr><td class="opsym">*=</td><td>Multiply & assign</td><td>x = x * 3</td></tr>
+      <tr><td class="opsym">/=</td><td>Divide & assign</td><td>x = x / 3</td></tr>
+      <tr><td class="opsym">%=</td><td>Modulus & assign</td><td>x = x % 3</td></tr>
+    </table>
+  </section>
+
+  <section class="op-group" id="relational">
+    <div class="group-head"><span class="group-index">03</span><h2 class="group-title">Relational Operators</h2></div>
+    <p class="group-desc">Compare two values; always evaluate to a boolean.</p>
+    <table class="op-table">
+      <tr><th>Op</th><th>Meaning</th></tr>
+      <tr><td class="opsym">==</td><td>Equal to</td></tr>
+      <tr><td class="opsym">!=</td><td>Not equal to</td></tr>
+      <tr><td class="opsym">&gt;</td><td>Greater than</td></tr>
+      <tr><td class="opsym">&lt;</td><td>Less than</td></tr>
+      <tr><td class="opsym">&gt;=</td><td>Greater than or equal to</td></tr>
+      <tr><td class="opsym">&lt;=</td><td>Less than or equal to</td></tr>
+    </table>
+    <div class="note">Use <code>.equals()</code> to compare object content (like Strings) — <code>==</code> on objects compares references, not values.</div>
+  </section>
+
+  <section class="op-group" id="logical">
+    <div class="group-head"><span class="group-index">04</span><h2 class="group-title">Logical Operators</h2></div>
+    <p class="group-desc">Combine boolean expressions.</p>
+    <table class="op-table">
+      <tr><th>Op</th><th>Meaning</th></tr>
+      <tr><td class="opsym">&amp;&amp;</td><td>Logical AND (short-circuits)</td></tr>
+      <tr><td class="opsym">||</td><td>Logical OR (short-circuits)</td></tr>
+      <tr><td class="opsym">!</td><td>Logical NOT</td></tr>
+    </table>
+  </section>
+
+  <section class="op-group" id="unary">
+    <div class="group-head"><span class="group-index">05</span><h2 class="group-title">Unary Operators</h2></div>
+    <p class="group-desc">Act on a single operand.</p>
+    <table class="op-table">
+      <tr><th>Op</th><th>Meaning</th></tr>
+      <tr><td class="opsym">+ / -</td><td>Unary plus / minus</td></tr>
+      <tr><td class="opsym">++</td><td>Increment (pre or post)</td></tr>
+      <tr><td class="opsym">--</td><td>Decrement (pre or post)</td></tr>
+      <tr><td class="opsym">!</td><td>Logical NOT</td></tr>
+    </table>
+  </section>
+
+  <section class="op-group" id="bitwise">
+    <div class="group-head"><span class="group-index">06</span><h2 class="group-title">Bitwise Operators</h2></div>
+    <p class="group-desc">Operate directly on the binary representation of integers.</p>
+    <table class="op-table">
+      <tr><th>Op</th><th>Meaning</th></tr>
+      <tr><td class="opsym">&amp;</td><td>Bitwise AND</td></tr>
+      <tr><td class="opsym">|</td><td>Bitwise OR</td></tr>
+      <tr><td class="opsym">^</td><td>Bitwise XOR</td></tr>
+      <tr><td class="opsym">~</td><td>Bitwise complement</td></tr>
+      <tr><td class="opsym">&lt;&lt;</td><td>Left shift — covered below</td></tr>
+      <tr><td class="opsym">&gt;&gt;</td><td>Right shift — covered below</td></tr>
+      <tr><td class="opsym">&gt;&gt;&gt;</td><td>Unsigned right shift</td></tr>
+    </table>
+  </section>
+
+  <!-- LEFT SHIFT -->
+  <section class="op-group" id="shifts">
+    <div class="group-head"><span class="group-index">07</span><h2 class="group-title">Left Shift Operator <code class="mono" style="color:var(--brand); font-size:1.2rem;">&lt;&lt;</code></h2></div>
+    <p class="group-desc">Shifts every bit to the left by <em>n</em> places, filling the vacated positions on the right with zero. Each left shift by one place doubles the value — it's the bitwise equivalent of multiplying by 2ⁿ.</p>
+
+    <div class="bit-viz">
+      <div class="bit-row">
+        <span class="bit-label">5 (before)</span>
+        <div class="bits">
+          <div class="bit">0</div><div class="bit">0</div><div class="bit">0</div><div class="bit">0</div>
+          <div class="bit on">0</div><div class="bit on">1</div><div class="bit on">0</div><div class="bit on">1</div>
+        </div>
+      </div>
+      <div class="bit-row">
+        <span class="bit-label">5 &lt;&lt; 2</span>
+        <div class="bits">
+          <div class="bit shifted">0</div><div class="bit shifted">1</div><div class="bit shifted">0</div><div class="bit shifted">1</div>
+          <div class="bit filled">0</div><div class="bit filled">0</div><div class="bit filled">·</div><div class="bit filled">·</div>
+        </div>
+      </div>
+      <div class="arrow-note">bits move two places left → 5 becomes 20 (5 × 2²)</div>
+    </div>
+
+    <div class="editor">
+      <div class="editor-bar"><span class="fname">LeftShiftDemo.java</span><span class="fname">JDK 17</span></div>
+      <div class="editor-body">
+        <div class="gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</div>
+        <div class="code-lines"><span class="kw">public</span> <span class="ty">class</span> <span class="fn">LeftShiftDemo</span> {
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> <span class="fn">main</span>(<span class="ty">String</span>[] args) {
+        <span class="kw">int</span> num = <span class="num">5</span>;         <span class="cm">// binary: 0000 0101</span>
+
+        <span class="kw">int</span> shiftedBy1 = num &lt;&lt; <span class="num">1</span>;   <span class="cm">// 5 * 2^1 = 10</span>
+        <span class="kw">int</span> shiftedBy2 = num &lt;&lt; <span class="num">2</span>;   <span class="cm">// 5 * 2^2 = 20</span>
+
+        <span class="ty">System</span>.out.println(<span class="str">"5 &lt;&lt; 1 = "</span> + shiftedBy1);
+        <span class="ty">System</span>.out.println(<span class="str">"5 &lt;&lt; 2 = "</span> + shiftedBy2);
+    }
+}</div>
+      </div>
+      <div class="console">
+        <span class="label">Console output</span>
+        <span class="prompt">$</span> <span class="out">5 &lt;&lt; 1 = 10</span><br>
+        <span class="prompt">$</span> <span class="out">5 &lt;&lt; 2 = 20</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT SHIFT -->
+  <section class="op-group">
+    <div class="group-head"><span class="group-index">08</span><h2 class="group-title">Right Shift Operator <code class="mono" style="color:var(--brand); font-size:1.2rem;">&gt;&gt;</code></h2></div>
+    <p class="group-desc">Shifts every bit to the right by <em>n</em> places, refilling from the left with the sign bit (0 for positive numbers, 1 for negative). It's the bitwise equivalent of dividing by 2ⁿ, rounding toward negative infinity.</p>
+
+    <div class="bit-viz">
+      <div class="bit-row">
+        <span class="bit-label">20 (before)</span>
+        <div class="bits">
+          <div class="bit">0</div><div class="bit">0</div>
+          <div class="bit on">0</div><div class="bit on">1</div><div class="bit on">0</div><div class="bit on">1</div>
+          <div class="bit">0</div><div class="bit">0</div>
+        </div>
+      </div>
+      <div class="bit-row">
+        <span class="bit-label">20 &gt;&gt; 2</span>
+        <div class="bits">
+          <div class="bit filled">0</div><div class="bit filled">0</div>
+          <div class="bit shifted">0</div><div class="bit shifted">0</div>
+          <div class="bit shifted">0</div><div class="bit shifted">1</div><div class="bit shifted">0</div><div class="bit shifted">1</div>
+        </div>
+      </div>
+      <div class="arrow-note">bits move two places right, sign bit (0) fills in → 20 becomes 5 (20 ÷ 2²)</div>
+    </div>
+
+    <div class="editor">
+      <div class="editor-bar"><span class="fname">RightShiftDemo.java</span><span class="fname">JDK 17</span></div>
+      <div class="editor-body">
+        <div class="gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10</div>
+        <div class="code-lines"><span class="kw">public</span> <span class="ty">class</span> <span class="fn">RightShiftDemo</span> {
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> <span class="fn">main</span>(<span class="ty">String</span>[] args) {
+        <span class="kw">int</span> num = <span class="num">20</span>;        <span class="cm">// binary: 0001 0100</span>
+
+        <span class="kw">int</span> shiftedBy1 = num &gt;&gt; <span class="num">1</span>;   <span class="cm">// 20 / 2^1 = 10</span>
+        <span class="kw">int</span> shiftedBy2 = num &gt;&gt; <span class="num">2</span>;   <span class="cm">// 20 / 2^2 = 5</span>
+
+        <span class="ty">System</span>.out.println(<span class="str">"20 &gt;&gt; 1 = "</span> + shiftedBy1);
+        <span class="ty">System</span>.out.println(<span class="str">"20 &gt;&gt; 2 = "</span> + shiftedBy2);
+    }
+}</div>
+      </div>
+      <div class="console">
+        <span class="label">Console output</span>
+        <span class="prompt">$</span> <span class="out">20 &gt;&gt; 1 = 10</span><br>
+        <span class="prompt">$</span> <span class="out">20 &gt;&gt; 2 = 5</span>
+      </div>
+    </div>
+
+    <div class="note"><b>Note:</b> <code>&gt;&gt;</code> is an arithmetic shift and preserves the sign of negative numbers. If you need the vacated bits filled with 0 regardless of sign, use the unsigned right shift <code>&gt;&gt;&gt;</code> instead.</div>
+  </section>
+
+  <!-- TERNARY -->
+  <section class="op-group" id="ternary">
+    <div class="group-head"><span class="group-index">09</span><h2 class="group-title">Ternary Operator <code class="mono" style="color:var(--brand); font-size:1.2rem;">?:</code></h2></div>
+    <p class="group-desc">A compact stand-in for an if-else statement that returns a value in a single expression: <code class="mono">condition ? valueIfTrue : valueIfFalse</code>.</p>
+
+    <div class="ternary-flow">
+      <div class="branch true">
+        <span class="cond-label">if condition is true</span>
+        <span class="val">age &gt;= 18 → "Adult"</span>
+      </div>
+      <div class="fork">?  :</div>
+      <div class="branch false">
+        <span class="cond-label">if condition is false</span>
+        <span class="val">age &lt; 18 → "Minor"</span>
+      </div>
+    </div>
+
+    <div class="editor">
+      <div class="editor-bar"><span class="fname">TernaryDemo.java</span><span class="fname">JDK 17</span></div>
+      <div class="editor-body">
+        <div class="gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12</div>
+        <div class="code-lines"><span class="kw">public</span> <span class="ty">class</span> <span class="fn">TernaryDemo</span> {
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> <span class="fn">main</span>(<span class="ty">String</span>[] args) {
+        <span class="kw">int</span> age = <span class="num">20</span>;
+
+        <span class="cm">// condition ? valueIfTrue : valueIfFalse</span>
+        <span class="ty">String</span> category = (age &gt;= <span class="num">18</span>) ? <span class="str">"Adult"</span> : <span class="str">"Minor"</span>;
+
+        <span class="ty">System</span>.out.println(<span class="str">"Category: "</span> + category);
+
+        <span class="cm">// ternary can also be nested</span>
+        <span class="kw">int</span> marks = <span class="num">76</span>;
+        <span class="ty">String</span> grade = (marks &gt;= <span class="num">90</span>) ? <span class="str">"A"</span> : (marks &gt;= <span class="num">75</span>) ? <span class="str">"B"</span> : <span class="str">"C"</span>;
+        <span class="ty">System</span>.out.println(<span class="str">"Grade: "</span> + grade);
+    }
+}</div>
+      </div>
+      <div class="console">
+        <span class="label">Console output</span>
+        <span class="prompt">$</span> <span class="out">Category: Adult</span><br>
+        <span class="prompt">$</span> <span class="out">Grade: B</span>
+      </div>
+    </div>
+
+    <div class="note"><b>Tip:</b> Nesting ternaries (as with <code>grade</code> above) works, but keep it to one or two levels — beyond that, an if-else chain reads far more clearly.</div>
+  </section>
+
+  <!-- PRECEDENCE -->
+  <section class="op-group" id="precedence">
+    <div class="group-head"><span class="group-index">10</span><h2 class="group-title">Operator Precedence</h2></div>
+    <p class="group-desc">When an expression mixes several operators, Java doesn't evaluate left to right — it follows a fixed pecking order. Higher rows bind tighter and run first; operators on the same row run according to their associativity.</p>
+
+    <table class="op-table">
+      <tr><th>Rank</th><th>Operators</th><th>Category</th><th>Associativity</th></tr>
+      <tr><td class="rank">1</td><td class="opsym">expr++&nbsp;&nbsp;expr--</td><td>Postfix</td><td>Left → Right</td></tr>
+      <tr><td class="rank">2</td><td class="opsym">++expr&nbsp;&nbsp;--expr&nbsp;&nbsp;+expr&nbsp;&nbsp;-expr&nbsp;&nbsp;!&nbsp;&nbsp;~</td><td>Unary</td><td>Right → Left</td></tr>
+      <tr><td class="rank">3</td><td class="opsym">*&nbsp;&nbsp;/&nbsp;&nbsp;%</td><td>Multiplicative</td><td>Left → Right</td></tr>
+      <tr><td class="rank">4</td><td class="opsym">+&nbsp;&nbsp;-</td><td>Additive</td><td>Left → Right</td></tr>
+      <tr><td class="rank">5</td><td class="opsym">&lt;&lt;&nbsp;&nbsp;&gt;&gt;&nbsp;&nbsp;&gt;&gt;&gt;</td><td>Shift</td><td>Left → Right</td></tr>
+      <tr><td class="rank">6</td><td class="opsym">&lt;&nbsp;&nbsp;&gt;&nbsp;&nbsp;&lt;=&nbsp;&nbsp;&gt;=</td><td>Relational</td><td>Left → Right</td></tr>
+      <tr><td class="rank">7</td><td class="opsym">==&nbsp;&nbsp;!=</td><td>Equality</td><td>Left → Right</td></tr>
+      <tr><td class="rank">8</td><td class="opsym">&amp;</td><td>Bitwise AND</td><td>Left → Right</td></tr>
+      <tr><td class="rank">9</td><td class="opsym">^</td><td>Bitwise XOR</td><td>Left → Right</td></tr>
+      <tr><td class="rank">10</td><td class="opsym">|</td><td>Bitwise OR</td><td>Left → Right</td></tr>
+      <tr><td class="rank">11</td><td class="opsym">&amp;&amp;</td><td>Logical AND</td><td>Left → Right</td></tr>
+      <tr><td class="rank">12</td><td class="opsym">||</td><td>Logical OR</td><td>Left → Right</td></tr>
+      <tr><td class="rank">13</td><td class="opsym">?&nbsp;&nbsp;:</td><td>Ternary</td><td>Right → Left</td></tr>
+      <tr><td class="rank">14</td><td class="opsym">=&nbsp;&nbsp;+=&nbsp;&nbsp;-=&nbsp;&nbsp;*=&nbsp;&nbsp;/=&nbsp;&nbsp;%=&nbsp;&nbsp;&amp;=&nbsp;&nbsp;^=&nbsp;&nbsp;|=&nbsp;&nbsp;&lt;&lt;=&nbsp;&nbsp;&gt;&gt;=&nbsp;&nbsp;&gt;&gt;&gt;=</td><td>Assignment</td><td>Right → Left</td></tr>
+    </table>
+
+    <div class="prec-note">
+      <span class="chip">rank 1 = highest</span>
+      <span style="color:var(--ink-dim); font-size:13.5px; line-height:1.6;">Rows are ordered from tightest-binding (evaluated first) to loosest-binding (evaluated last). Use parentheses to override the default order whenever it makes an expression clearer.</span>
+    </div>
+
+    <div class="editor">
+      <div class="editor-bar"><span class="fname">PrecedenceDemo.java</span><span class="fname">JDK 17</span></div>
+      <div class="editor-body">
+        <div class="gutter">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12</div>
+        <
+
+    <div class="note"><b>Tip:</b> Assignment sits at the very bottom of the table, which is why <code>x = y = 5</code> works — the rightmost assignment happens first, then its result feeds the next one going left.</div>
+  </section>
+
+  <footer>
+    // instanceof intentionally omitted from this reference
+  </footer>
+
+</div>
+</body>
+</html>
