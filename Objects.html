@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.1 Object and Class Concepts — Object-Oriented Modeling and Design with UML</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --paper:#f4f1e8;
+    --paper-line: rgba(27,38,59,0.09);
+    --ink:#1b263b;
+    --ink-soft:#3c4a63;
+    --class-navy:#1b263b;
+    --class-navy-tint:#e7eaf1;
+    --object-amber:#b5651d;
+    --object-amber-tint:#f6e9db;
+    --teal:#2f6f5e;
+    --teal-tint:#e2ede9;
+    --rule:#c9c2ad;
+    --white:#fffdf7;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--paper-line) 1px, transparent 1px) 0 0/100% 42px,
+      var(--paper);
+    color:var(--ink);
+    font-family:'Source Serif 4', Georgia, serif;
+    line-height:1.7;
+    font-size:18px;
+  }
+
+  h1,h2,h3, .kicker, .box-title, nav a, .stamp{
+    font-family:'Space Grotesk', sans-serif;
+  }
+
+  code, .mono, .attr, .op, .val{
+    font-family:'IBM Plex Mono', monospace;
+  }
+
+  a{color:var(--teal);}
+
+  /* ============ HEADER ============ */
+  header.hero{
+    position:relative;
+    padding:5rem 6vw 4rem;
+    border-bottom:3px solid var(--ink);
+    overflow:hidden;
+  }
+  .kicker{
+    text-transform:uppercase;
+    letter-spacing:0.18em;
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    font-weight:600;
+    margin-bottom:1rem;
+  }
+  h1.title{
+    font-size:clamp(2.2rem, 5vw, 3.6rem);
+    margin:0 0 0.6rem;
+    line-height:1.05;
+    letter-spacing:-0.01em;
+    max-width:16ch;
+  }
+  h1.title em{
+    font-style:normal;
+    color:var(--teal);
+  }
+  .subtitle{
+    max-width:56ch;
+    color:var(--ink-soft);
+    font-size:1.15rem;
+  }
+  .source-tag{
+    margin-top:2rem;
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    border-left:3px solid var(--rule);
+    padding-left:0.8rem;
+  }
+
+  /* floating class-box motif in hero */
+  .hero-diagram{
+    position:absolute;
+    right:6vw;
+    top:4.5rem;
+    width:230px;
+    opacity:0.95;
+    transform:rotate(-3deg);
+  }
+  .hero-diagram .uml-box{ box-shadow: 8px 8px 0 rgba(27,38,59,0.12); }
+  @media (max-width: 900px){ .hero-diagram{ display:none; } }
+
+  /* ============ NAV ============ */
+  nav.toc{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0;
+    border-bottom:1px solid var(--ink);
+    background:var(--white);
+    position:sticky;
+    top:0;
+    z-index:10;
+  }
+  nav.toc a{
+    text-decoration:none;
+    color:var(--ink);
+    font-size:0.82rem;
+    font-weight:500;
+    padding:0.85rem 1.1rem;
+    border-right:1px solid var(--paper-line);
+    white-space:nowrap;
+  }
+  nav.toc a:hover{ background:var(--class-navy-tint); }
+
+  /* ============ SECTIONS ============ */
+  main{
+    max-width:920px;
+    margin:0 auto;
+    padding:0 6vw;
+  }
+  section.topic{
+    padding:4rem 0;
+    border-bottom:1px solid var(--paper-line);
+  }
+  section.topic:last-of-type{ border-bottom:none; }
+
+  .sect-num{
+    font-family:'IBM Plex Mono', monospace;
+    color:var(--teal);
+    font-size:0.95rem;
+    font-weight:600;
+    letter-spacing:0.05em;
+  }
+  h2{
+    font-size:clamp(1.5rem, 3vw, 2.1rem);
+    margin:0.3rem 0 1.3rem;
+    letter-spacing:-0.01em;
+  }
+  h3.sub{
+    font-size:1.1rem;
+    margin-top:2.2rem;
+    color:var(--teal);
+    font-weight:600;
+  }
+  p{ margin:1rem 0; }
+  .lede{ font-size:1.15rem; color:var(--ink-soft); }
+
+  .callout{
+    background:var(--teal-tint);
+    border-left:4px solid var(--teal);
+    padding:1rem 1.3rem;
+    margin:1.6rem 0;
+    font-size:0.98rem;
+  }
+  .callout strong{ color:var(--teal); }
+
+  .example-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:0.5rem;
+    margin:1rem 0 0.5rem;
+  }
+  .chip{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.82rem;
+    background:var(--object-amber-tint);
+    color:var(--object-amber);
+    border:1px solid var(--object-amber);
+    border-radius:2px;
+    padding:0.2rem 0.6rem;
+  }
+  .chip.class-chip{
+    background:var(--class-navy-tint);
+    color:var(--class-navy);
+    border-color:var(--class-navy);
+  }
+
+  /* ============ UML BOX SYSTEM ============ */
+  .diagram{
+    margin:2rem 0;
+    padding:2rem;
+    background:var(--white);
+    border:1px solid var(--rule);
+    display:flex;
+    flex-wrap:wrap;
+    gap:2.5rem;
+    align-items:flex-start;
+    justify-content:center;
+  }
+  figcaption, .fig-caption{
+    text-align:center;
+    font-size:0.85rem;
+    color:var(--ink-soft);
+    margin-top:1rem;
+    font-style:italic;
+  }
+  .fig-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-style:normal;
+    color:var(--ink);
+  }
+
+  .uml-box{
+    background:var(--white);
+    border:1.6px solid var(--ink);
+    min-width:170px;
+  }
+  .uml-box .compartment{
+    padding:0.55rem 0.8rem;
+    border-bottom:1.2px solid var(--ink);
+    font-size:0.86rem;
+  }
+  .uml-box .compartment:last-child{ border-bottom:none; }
+  .uml-box .cname{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    text-align:center;
+    background:var(--class-navy-tint);
+  }
+  .uml-box.object .cname{
+    background:var(--object-amber-tint);
+    text-decoration:underline;
+  }
+  .uml-box .attr, .uml-box .op{ display:block; padding:0.1rem 0; }
+  .uml-box .attr .type, .uml-box .op .type{ color:var(--ink-soft); }
+  .uml-box .val{ display:block; padding:0.1rem 0; color:var(--object-amber); }
+
+  .diagram-col{ display:flex; flex-direction:column; align-items:center; gap:0.6rem; }
+  .diagram-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--ink-soft);
+  }
+
+  .arrow-note{
+    align-self:center;
+    font-family:'Space Grotesk', sans-serif;
+    color:var(--rule);
+    font-size:1.6rem;
+  }
+
+  .versus{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1.5rem;
+    margin:1.6rem 0;
+  }
+  .versus .panel{
+    padding:1.2rem;
+    border:1px dashed var(--rule);
+  }
+  .versus .panel.bad{ border-color:#a3372f; background:#fbeceb;}
+  .versus .panel.good{ border-color:var(--teal); background:var(--teal-tint);}
+  .versus .tag{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:0.8rem;
+    text-transform:uppercase;
+    margin-bottom:0.7rem;
+  }
+  .versus .bad .tag{ color:#a3372f; }
+  .versus .good .tag{ color:var(--teal); }
+  @media (max-width:640px){ .versus{ grid-template-columns:1fr; } }
+
+  /* Notation legend / arg syntax */
+  .legend-strip{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:1.05rem;
+    padding:1.4rem 1.6rem;
+    text-align:center;
+    margin:1.6rem 0;
+    letter-spacing:0.01em;
+  }
+  .legend-strip .part{ padding:0 0.15rem; border-radius:2px; }
+  .legend-strip .p1{ background:#3d8361; }
+  .legend-strip .p2{ background:#c9622d; }
+  .legend-strip .p3{ background:#5c7cba; }
+  .legend-keys{
+    display:flex; gap:1.4rem; flex-wrap:wrap; justify-content:center;
+    margin-top:1rem; font-family:'Space Grotesk',sans-serif; font-size:0.78rem;
+  }
+  .legend-keys span{ display:flex; align-items:center; gap:0.4rem; }
+  .swatch{ width:12px; height:12px; display:inline-block; border-radius:2px; }
+
+  /* summary key-points */
+  .keypoints{
+    list-style:none;
+    margin:1.5rem 0;
+    padding:0;
+    display:grid;
+    gap:0.8rem;
+  }
+  .keypoints li{
+    padding:0.9rem 1.1rem;
+    background:var(--white);
+    border:1px solid var(--paper-line);
+    border-left:4px solid var(--class-navy);
+    font-size:0.96rem;
+  }
+
+  footer{
+    padding:3rem 6vw 4rem;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.85rem;
+    border-top:3px solid var(--ink);
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker"> Class Modeling</div>
+  <h1 class="title"> Object and <em>Class</em> Concepts</h1>
+  
+  <
+</header>
+
+
+
+<main>
+
+  <!-- 3.1.1 OBJECTS -->
+  <section class="topic" id="objects">
+    
+    <h2>Objects</h2>
+    <p class="lede">The purpose of class modeling is to describe objects. An <strong>object</strong> is a concept, abstraction, or thing with identity that has meaning for an application.</p>
+
+    <p>Objects usually surface as proper nouns or specific references when you talk to users about a problem. Not every object has to exist physically:</p>
+
+    <div class="example-row">
+      <span class="chip">Joe Smith</span>
+      <span class="chip">Simplex Company</span>
+      <span class="chip">process #7648</span>
+      <span class="chip">the top window</span>
+      <span class="chip">simulation run 1234</span>
+      <span class="chip">binary tree 634</span>
+    </div>
+
+    
+  </section>
+
+  <!-- 3.1.2 CLASSES -->
+  <section class="topic" id="classes">
+   
+    <h2>Classes</h2>
+    <p class="lede">An object is an <strong>instance</strong> — an occurrence — of a class. A class describes a group of objects that share the same properties (attributes), behavior (operations), relationships, and meaning.</p>
+
+    <div class="example-row">
+      <span class="chip class-chip">Person</span>
+      <span class="chip class-chip">Company</span>
+      <span class="chip class-chip">Process</span>
+      <span class="chip class-chip">Window</span>
+    </div>
+
+    <p>Classes tend to show up as common nouns in problem descriptions, where objects show up as proper nouns. Every <code>Person</code> has a name and birthdate and may work at a job; every <code>Process</code> has an owner, a priority, and a list of required resources.</p>
+
+    
+  </section>
+
+  <!-- 3.1.3 DIAGRAMS -->
+  <section class="topic" id="diagrams">
+    
+    <h2>Class Diagrams</h2>
+    
+      <div class="panel good">
+        <div class="tag">Class Diagram</div>
+        <p style="margin:0">Graphic notation for classes and their relationships — describes the space of <em>possible</em> objects. Used for both abstract modeling and real program design. A class diagram corresponds to an infinite set of possible object diagrams.</p>
+      </div>
+      <div class="panel" style="border-color:var(--object-amber); background:var(--object-amber-tint);">
+        <div class="tag" style="color:var(--object-amber)">Object Diagram</div>
+        <p style="margin:0">Shows specific, individual objects and how they're linked at one moment. Useful for documenting test cases and walking through concrete examples.</p>
+      </div>
+    </div>
+
+    <p>Figure 3.1 shows a class on the left and three of its instances on the right.</p>
+
+    <div class="diagram">
+      <div class="diagram-col">
+        <div class="diagram-tag">Class</div>
+        <div class="uml-box">
+          <div class="compartment cname">Person</div>
+        </div>
+      </div>
+      <div class="arrow-note">→</div>
+      <div class="diagram-col">
+        <div class="diagram-tag">Objects</div>
+        <div style="display:flex; gap:0.9rem; flex-wrap:wrap; justify-content:center;">
+          <div class="uml-box object"><div class="compartment cname">JoeSmith:Person</div></div>
+          <div class="uml-box object"><div class="compartment cname">MarySharp:Person</div></div>
+          <div class="uml-box object"><div class="compartment cname">:Person</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="fig-caption"><span class="fig-label">Figure 3.1</span> — A class and its objects. The UML object symbol is a box reading <code>objectName:ClassName</code>, both underlined. An unnamed instance simply omits the object name, leaving <code>:Person</code>.</p>
+
+    <p>Note the naming convention used throughout the book: multiword names run together with an internal capital letter (<code>JoeSmith</code>) rather than a space or underscore. It's a popular OO convention, not a UML requirement.</p>
+  </section>
+
+  <!-- 3.1.4 ATTRIBUTES -->
+  <section class="topic" id="attributes">
+   
+    <h2>Values and Attributes</h2>
+    <p class="lede">A <strong>value</strong> is a piece of data. An <strong>attribute</strong> is a named property of a class describing a value held by every object of that class.</p>
+
+    
+    <div class="diagram">
+      <div class="diagram-col">
+        <div class="diagram-tag">Class with Attributes</div>
+        <div class="uml-box">
+          <div class="compartment cname">Person</div>
+          <div class="compartment">
+            <span class="attr">name <span class="type">: string</span></span>
+            <span class="attr">birthdate <span class="type">: date</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="arrow-note">→</div>
+      <div class="diagram-col">
+        <div class="diagram-tag">Objects with Values</div>
+        <div style="display:flex; gap:0.9rem; flex-wrap:wrap; justify-content:center;">
+          <div class="uml-box object">
+            <div class="compartment cname">JoeSmith:Person</div>
+            <div class="compartment">
+              <span class="val">name="Joe Smith"</span>
+              <span class="val">birthdate=21 Oct 1983</span>
+            </div>
+          </div>
+          <div class="uml-box object">
+            <div class="compartment cname">MarySharp:Person</div>
+            <div class="compartment">
+              <span class="val">name="Mary Sharp"</span>
+              <span class="val">birthdate=16 Mar 1950</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="fig-caption"><span class="fig-label">Figure 3.2</span> — Attributes are listed in the class box's second compartment, optionally typed after a colon. Object boxes list the actual value after an equal sign.</p>
+
+    
+    </div>
+  </section>
+
+  <!-- 3.1.5 OPERATIONS -->
+  <section class="topic" id="operations">
+   
+    <h2>Operations and Methods</h2>
+    <p class="lede">An <strong>operation</strong> is a function or procedure that may be applied to or by the objects in a class. <code>hire</code>, <code>fire</code>, and <code>payDividend</code> are operations on <code>Company</code>; <code>open</code>, <code>close</code>, <code>hide</code>, and <code>redisplay</code> are operations on <code>Window</code>. All objects in a class share the same set of operations.</p>
+    <div class="callout">
+      <strong>Operation vs. method.</strong> A <em>method</em> is the class-specific implementation of an operation. <code>File</code> might declare a single <code>print</code> operation, implemented by separate methods for ASCII files, binary files, and digitized pictures — different code, same logical task, same generic name.
+    </div>
+    <p><code>name</code>, <code>birthdate</code>, <code>changeJob</code>, and <code>changeAddress</code> are all <strong>features</strong> of <code>Person</code> — feature is the umbrella term for "attribute or operation."</p>
+
+    <div class="diagram">
+      <div class="uml-box">
+        <div class="compartment cname">Person</div>
+        <div class="compartment"><span class="attr">name</span><span class="attr">birthdate</span></div>
+        <div class="compartment"><span class="op">changeJob()</span><span class="op">changeAddress()</span></div>
+      </div>
+      <div class="uml-box">
+        <div class="compartment cname">File</div>
+        <div class="compartment"><span class="attr">fileName</span><span class="attr">sizeInBytes</span><span class="attr">lastUpdate</span></div>
+        <div class="compartment"><span class="op">print()</span></div>
+      </div>
+      <div class="uml-box" style="min-width:220px;">
+        <div class="compartment cname">GeometricObject</div>
+        <div class="compartment"><span class="attr">color</span><span class="attr">position</span></div>
+        <div class="compartment">
+          <span class="op">move <span class="type">(delta: Vector)</span></span>
+          <span class="op">select <span class="type">(p: Point): Boolean</span></span>
+          <span class="op">rotate <span class="type">(in angle: float = 0.0)</span></span>
+        </div>
+      </div>
+    </div>
+    <p class="fig-caption"><span class="fig-label">Figure 3.4</span> — Operations sit in the class box's third compartment. <code>move</code> takes a <code>Vector</code>; <code>select</code> takes a <code>Point</code> and returns a <code>Boolean</code>; <code>rotate</code> takes an input <code>float</code> defaulting to <code>0.0</code>.</p>
+
+    <p>Object boxes never list operations — behavior doesn't vary between objects of the same class, so showing it per-object would only add noise.</p>
+  </section>
+
+  <!-- 3.1.6 SUMMARY -->
+  <section class="topic" id="summary">
+   
+    <h2>Summary of Notation for Classes</h2>
+    <p class="lede">A class box has up to three stacked compartments — name, attributes, operations — each optional beyond the name itself.</p>
+
+    <div class="diagram" style="justify-content:center;">
+      <div class="uml-box" style="min-width:280px;">
+        <div class="compartment cname">ClassName</div>
+        <div class="compartment">
+          <span class="attr">attributeName1 <span class="type">: dataType1 = defaultValue1</span></span>
+          <span class="attr">attributeName2 <span class="type">: dataType2 = defaultValue2</span></span>
+        </div>
+        <div class="compartment">
+          <span class="op">operationName1 <span class="type">(argumentList1) : resultType1</span></span>
+          <span class="op">operationName2 <span class="type">(argumentList2) : resultType2</span></span>
+        </div>
+      </div>
+    </div>
+    <p class="fig-caption"><span class="fig-label">Figure 3.5</span> — General notation for a class box, three compartments deep.</p>
+
+    
+   
+  </section>
+
+</main>
+
+<footer>
+  Built as a study reference from <em>Object-Oriented Modeling and Design with UML</em> (Rumbaugh, Blaha) — Section 3.1, pp. 21–27. Figure numbers and content follow the source text.
+</footer>
+
+</body>
+</html>
