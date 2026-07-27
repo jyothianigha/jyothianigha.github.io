@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Paradigms: Procedural vs. Object-Oriented</title>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent-pop: #ef4444;
+            --accent-oop: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --code-bg: #090d16;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent-pop), var(--accent-oop));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Paradigm Grid Layout */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-top: 4px solid #64748b;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.pop {
+            border-color: var(--accent-pop);
+        }
+
+        .card.oop {
+            border-color: var(--accent-oop);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .pop .tag { background: rgba(239, 68, 68, 0.2); color: var(--accent-pop); }
+        .oop .tag { background: rgba(59, 130, 246, 0.2); color: var(--accent-oop); }
+
+        ul.feature-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+
+        ul.feature-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        ul.feature-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .pop ul.feature-list li::before { color: var(--accent-pop); }
+        .oop ul.feature-list li::before { color: var(--accent-oop); }
+
+        /* Code Blocks */
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            font-size: 0.875rem;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+        }
+
+        .keyword { color: #cf67e8; }
+        .type { color: #569cd6; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+
+        /* Key Differences Table */
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 3rem 0 1.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 3rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        th {
+            background-color: #0f172a;
+            color: var(--text-main);
+        }
+
+        tr:hover {
+            background-color: #26334d;
+        }
+
+        /* Interactive Quiz Section */
+        .interactive-section {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quiz-option {
+            display: inline-block;
+            margin: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #334155;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--accent-oop);
+            background: #475569;
+        }
+
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Java Programming Paradigms</h1>
+        <p class="subtitle">Understanding the shift from Procedural (Functions & Data) to Object-Oriented (Objects & Behaviors)</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- Side-by-Side Comparison -->
+        <div class="comparison-grid">
+            
+            <!-- Procedural Card -->
+            <div class="card pop">
+                <h2>Procedural <span class="tag">POP</span></h2>
+                <p style="margin-bottom: 1rem;">Focuses on writing <strong>functions/methods</strong> that perform operations on data. Program execution follows a linear top-down flow.</p>
+                
+                <ul class="feature-list">
+                    <li><strong>Core Focus:</strong> Action & Algorithms</li>
+                    <li><strong>Data Security:</strong> Global data moves freely around system</li>
+                    <li><strong>Structure:</strong> Large programs split into functions</li>
+                    <li><strong>Real-world analogy:</strong> A step-by-step cooking recipe</li>
+                </ul>
+
+                
+            <!-- Object Oriented Card -->
+            <div class="card oop">
+                <h2>Object-Oriented <span class="tag">OOP</span></h2>
+                <p style="margin-bottom: 1rem;">Focuses on creating <strong>objects</strong> that encapsulate both data (fields) and behaviors (methods) together.</p>
+                
+                <ul class="feature-list">
+                    <li><strong>Core Focus:</strong> Data objects & Interactions</li>
+                    <li><strong>Data Security:</strong> Encapsulated (hidden) via private fields</li>
+                    <li><strong>Structure:</strong> Programs split into self-contained classes</li>
+                    <li><strong>Real-world analogy:</strong> An actual Bank Account card/ATM</li>
+                </ul>
+
+                
+
+        <!-- Key Differences Table -->
+        <h2 class="section-title">Key Conceptual Differences</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Procedural Paradigm (POP)</th>
+                    <th>Object-Oriented Paradigm (OOP)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Approach</strong></td>
+                    <td>Top-down approach</td>
+                    <td>Bottom-up approach</td>
+                </tr>
+                <tr>
+                    <td><strong>Core Unit</strong></td>
+                    <td>Functions / Procedures</td>
+                    <td>Objects & Classes</td>
+                </tr>
+                <tr>
+                    <td><strong>Data Access</strong></td>
+                    <td>Data is often public and accessible across functions</td>
+                    <td>Data is private and accessed via methods (Encapsulation)</td>
+                </tr>
+                <tr>
+                    <td><strong>Reusability</strong></td>
+                    <td>Limited (Requires copying/modifying code)</td>
+                    <td>High (Utilizes Inheritance and Polymorphism)</td>
+                </tr>
+                <tr>
+                    <td><strong>Primary Java Role</strong></td>
+                    <td>Static utility methods (e.g., <code>Math.max()</code>)</td>
+                    <td>Standard Java design pattern (Classes, Blueprints, Domain Models)</td>
+                </tr>
+            </tbody>
+        </table>
+
+    
+
+    </div>
+</body>
+</html>
