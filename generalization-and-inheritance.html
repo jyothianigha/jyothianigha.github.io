@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.3 Generalization and Inheritance — Explained Simply</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --paper:#f4f1e8;
+    --paper-line: rgba(27,38,59,0.09);
+    --ink:#1b263b;
+    --ink-soft:#3c4a63;
+    --navy:#1b263b;
+    --navy-tint:#e7eaf1;
+    --amber:#b5651d;
+    --amber-tint:#f6e9db;
+    --leaf:#3d8361;
+    --leaf-tint:#e2ede9;
+    --rule:#c9c2ad;
+    --white:#fffdf7;
+    --red:#a3372f;
+    --red-tint:#fbeceb;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--paper-line) 1px, transparent 1px) 0 0/100% 42px,
+      var(--paper);
+    color:var(--ink);
+    font-family:'Source Serif 4', Georgia, serif;
+    line-height:1.75;
+    font-size:18px;
+  }
+  h1,h2,h3,.kicker,nav a,.stamp{ font-family:'Space Grotesk', sans-serif; }
+  code,.mono,.attr,.op{ font-family:'IBM Plex Mono', monospace; }
+  a{ color:var(--leaf); }
+
+  /* ===== HEADER ===== */
+  header.hero{
+    padding:5rem 6vw 4rem;
+    border-bottom:3px solid var(--ink);
+  }
+  .kicker{
+    text-transform:uppercase; letter-spacing:0.18em; font-size:0.78rem;
+    color:var(--ink-soft); font-weight:600; margin-bottom:1rem;
+  }
+  h1.title{
+    font-size:clamp(2.1rem, 5vw, 3.4rem);
+    margin:0 0 0.7rem; line-height:1.08; letter-spacing:-0.01em; max-width:20ch;
+  }
+  h1.title em{ font-style:normal; color:var(--leaf); }
+  .subtitle{ max-width:58ch; color:var(--ink-soft); font-size:1.15rem; }
+  .source-tag{
+    margin-top:2rem; font-size:0.85rem; color:var(--ink-soft);
+    border-left:3px solid var(--rule); padding-left:0.8rem;
+  }
+
+  nav.toc{
+    display:flex; flex-wrap:wrap; border-bottom:1px solid var(--ink);
+    background:var(--white); position:sticky; top:0; z-index:10;
+  }
+  nav.toc a{
+    text-decoration:none; color:var(--ink); font-size:0.82rem; font-weight:500;
+    padding:0.85rem 1.1rem; border-right:1px solid var(--paper-line); white-space:nowrap;
+  }
+  nav.toc a:hover{ background:var(--navy-tint); }
+
+  main{ max-width:960px; margin:0 auto; padding:0 6vw; }
+  section.topic{ padding:4rem 0; border-bottom:1px solid var(--paper-line); }
+  section.topic:last-of-type{ border-bottom:none; }
+
+  .sect-num{ font-family:'IBM Plex Mono', monospace; color:var(--leaf); font-size:0.95rem; font-weight:600; letter-spacing:0.05em; }
+  h2{ font-size:clamp(1.5rem, 3vw, 2.1rem); margin:0.3rem 0 1.3rem; letter-spacing:-0.01em; }
+  h3.sub{ font-size:1.1rem; margin-top:2.2rem; color:var(--leaf); font-weight:600; }
+  p{ margin:1rem 0; }
+  .lede{ font-size:1.15rem; color:var(--ink-soft); }
+
+  .callout{
+    background:var(--leaf-tint); border-left:4px solid var(--leaf);
+    padding:1rem 1.3rem; margin:1.6rem 0; font-size:0.98rem;
+  }
+  .callout strong{ color:var(--leaf); }
+
+  .analogy{
+    background:var(--amber-tint); border:1.5px dashed var(--amber);
+    padding:1.3rem 1.5rem; margin:1.6rem 0; border-radius:4px;
+  }
+  .analogy .tag{ font-family:'Space Grotesk',sans-serif; font-weight:700; color:var(--amber); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem;}
+
+  /* ===== STANDARD UML DIAGRAM (inline SVG) ===== */
+  .diagram{
+    margin:2rem 0; padding:2.2rem 1.5rem; background:var(--white);
+    border:1px solid var(--rule); overflow-x:auto;
+    display:flex; justify-content:center;
+  }
+  .diagram svg text{ user-select:none; }
+  .fig-caption{ text-align:center; font-size:0.85rem; color:var(--ink-soft); margin-top:1rem; font-style:italic; }
+  .fig-label{ font-family:'IBM Plex Mono', monospace; font-weight:600; font-style:normal; color:var(--ink); }
+
+  /* purpose cards */
+  .cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin:1.8rem 0; }
+  @media(max-width:800px){ .cards{ grid-template-columns:1fr; } }
+  .card{
+    background:var(--white); border:1px solid var(--rule); border-top:4px solid var(--leaf);
+    padding:1.3rem 1.2rem;
+  }
+  .card .num{ font-family:'IBM Plex Mono',monospace; color:var(--leaf); font-weight:600; font-size:0.85rem; }
+  .card h4{ margin:0.4rem 0 0.6rem; font-family:'Space Grotesk',sans-serif; font-size:1.02rem; }
+  .card p{ margin:0; font-size:0.92rem; color:var(--ink-soft); }
+
+  .versus{ display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:1.6rem 0; }
+  @media(max-width:640px){ .versus{ grid-template-columns:1fr; } }
+  .versus .panel{ padding:1.2rem; border:1px dashed var(--rule); }
+  .versus .panel.bad{ border-color:var(--red); background:var(--red-tint); }
+  .versus .panel.good{ border-color:var(--leaf); background:var(--leaf-tint); }
+  .versus .tagline{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.8rem; text-transform:uppercase; margin-bottom:0.5rem; }
+  .versus .bad .tagline{ color:var(--red); }
+  .versus .good .tagline{ color:var(--leaf); }
+
+  .ruler{
+    display:flex; align-items:center; gap:0.6rem; margin:1.6rem 0; font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+  }
+  .ruler .bar{ flex:1; height:10px; border-radius:5px; background:linear-gradient(to right, var(--leaf), var(--amber) 60%, var(--red)); position:relative; }
+  .ruler .marks{ display:flex; justify-content:space-between; font-size:0.72rem; color:var(--ink-soft); }
+
+  .keypoints{ list-style:none; margin:1.5rem 0; padding:0; display:grid; gap:0.8rem; }
+  .keypoints li{
+    padding:0.9rem 1.1rem; background:var(--white); border:1px solid var(--paper-line);
+    border-left:4px solid var(--navy); font-size:0.96rem;
+  }
+
+  .quiz{
+    background:var(--navy); color:var(--paper); padding:1.6rem 1.8rem; margin:2rem 0;
+  }
+  .quiz .tag{ font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.1em; color:#9fb3d6; margin-bottom:0.6rem; }
+  .quiz p{ margin:0.4rem 0; }
+  .quiz .answer{ color:#8fd6b5; font-family:'IBM Plex Mono',monospace; font-size:0.9rem; margin-top:0.6rem; }
+
+  footer{
+    padding:3rem 6vw 4rem; text-align:center; color:var(--ink-soft);
+    font-size:0.85rem; border-top:3px solid var(--ink);
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <h1 class="title"> Generalization &amp; <em>Inheritance</em></h1>
+
+<main>
+
+  <!-- WARM UP ANALOGY -->
+  <section class="topic" id="warmup">
+    <div class="sect-num">Before we start</div>
+    <h2>The one-sentence idea</h2>
+    <p class="lede"> Grouping similarities in different classes into a general class. That's all generalization is.</p>
+
+    <div class="analogy">
+      <div class="tag">Everyday analogy</div>
+      <p style="margin:0">Think about <strong>Animal</strong>. A <strong>Dog</strong> is an animal. A <strong>Cat</strong> is an animal. Both breathe, eat, and have a name and an age — so instead of writing "has a name" three separate times, you say it <em>once</em>, up at "Animal," and let Dog and Cat both get it for free. Dog then only needs to add what makes it special: it <code>bark()</code>s. Cat only adds <code>meow()</code>.</p>
+    </div>
+
+    <p>That's the whole chapter in one idea: pull out what's <strong>shared</strong>, push down what's <strong>specific</strong>. UML calls this relationship <strong>generalization</strong>, and the mechanism that lets Dog and Cat automatically "receive" Animal's features is called <strong>inheritance</strong>.</p>
+  </section>
+
+  <section class="topic" id="definition">
+    
+    <h2>Definition</h2>
+    <p class="lede"><strong>Generalization</strong> is the relationship between one class (the <strong>superclass</strong>) and one or more variations of it (the <strong>subclasses</strong>).</p>
+
+    <p>The superclass holds whatever every variation has in common — attributes, operations, relationships. Each subclass then <strong>inherits</strong> all of that automatically, and adds only what makes it different. This is also called the <strong>"is-a" relationship</strong>: a Dog <em>is an</em> Animal, a Cat <em>is an</em> Animal.</p>
+
+    <div class="diagram">
+<svg viewBox="-20 -10 380 217" xmlns="http://www.w3.org/2000/svg" style="max-width:420px; width:100%; height:auto;">
+<g class="umlbox ">
+<rect x="95.0" y="0" width="150" height="72" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="95.0" y="0" width="150" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="170.0" y="20.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Animal</text>
+<line x1="95.0" y1="30" x2="245.0" y2="30" stroke="#1b263b" stroke-width="1.2"/>
+<text x="105.0" y="45" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">name : string</text>
+<text x="105.0" y="62" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">age : int</text>
+</g>
+<g class="umlbox ">
+<rect x="0" y="142" width="150" height="55" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="0" y="142" width="150" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="75.0" y="162.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Dog</text>
+<line x1="0" y1="172" x2="150" y2="172" stroke="#1b263b" stroke-width="1.2"/>
+<text x="10" y="187" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">bark()</text>
+</g>
+<g class="umlbox ">
+<rect x="190" y="142" width="150" height="55" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="190" y="142" width="150" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="265.0" y="162.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Cat</text>
+<line x1="190" y1="172" x2="340" y2="172" stroke="#1b263b" stroke-width="1.2"/>
+<text x="200" y="187" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">meow()</text>
+</g>
+<polygon points="170.0,72 159.0,90 181.0,90" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="170.0" y1="90" x2="170.0" y2="116" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="75.0" y1="116" x2="265.0" y2="116" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="75.0" y1="116" x2="75.0" y2="142" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="265.0" y1="116" x2="265.0" y2="142" stroke="#1b263b" stroke-width="1.6"/>
+</svg>
+    </div>
+    <p class="fig-caption">The <span class="fig-label">hollow triangle</span> is UML's generalization arrow — it always points up at the superclass. Dog and Cat both inherit <code>name</code> and <code>age</code> for free.</p>
+
+    <div class="callout">
+      <strong>Notation rule:</strong> the hollow arrowhead points to the superclass, never the subclasses. You can draw a separate arrow to every subclass, but it's usually cleaner to group them into one tree, as shown above.
+    </div>
+
+    <p>Generalization can stack — a hierarchy can have several levels, not just one. When it does, we call the classes above a given class its <strong>ancestors</strong>, and the classes below it its <strong>descendants</strong>. An object automatically has every attribute of every ancestor, and can call any operation defined anywhere up the chain.</p>
+  </section>
+
+  <!-- WORKED EXAMPLES -->
+  <section class="topic" id="examples">
+    <div class="sect-num">Worked examples</div>
+    <h2>Seeing it with the book's own diagrams</h2>
+    <p class="lede">The textbook uses two examples. Let's walk both, simplified.</p>
+
+    <h3 class="sub">Example 1 — Factory equipment (Figure 3.24)</h3>
+    <p>Every physical asset in a plant is a piece of <code>Equipment</code> — it has a name, a manufacturer, a weight, and a cost. But a <code>Pump</code> also needs a flow rate, and a <code>Tank</code> also needs a volume. So we generalize:</p>
+
+    <div class="diagram">
+<svg viewBox="-20 -10 1228.0 396" xmlns="http://www.w3.org/2000/svg" style="max-width:900px; width:100%; height:auto;">
+<g class="umlbox ">
+<rect x="510.0" y="0" width="148" height="106" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="510.0" y="0" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="584.0" y="20.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Equipment</text>
+<line x1="510.0" y1="30" x2="658.0" y2="30" stroke="#1b263b" stroke-width="1.2"/>
+<text x="520.0" y="45" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">name : string</text>
+<text x="520.0" y="62" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">manufacturer : string</text>
+<text x="520.0" y="79" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">weight : float</text>
+<text x="520.0" y="96" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">cost : float</text>
+</g>
+<g class="umlbox ">
+<rect x="170.0" y="156" width="148" height="72" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="170.0" y="156" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="244.0" y="176.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Pump</text>
+<line x1="170.0" y1="186" x2="318.0" y2="186" stroke="#1b263b" stroke-width="1.2"/>
+<text x="180.0" y="201" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">suctionPressure</text>
+<text x="180.0" y="218" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">flowRate</text>
+</g>
+<g class="umlbox ">
+<rect x="510.0" y="156" width="148" height="72" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="510.0" y="156" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="584.0" y="176.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">HeatExchanger</text>
+<line x1="510.0" y1="186" x2="658.0" y2="186" stroke="#1b263b" stroke-width="1.2"/>
+<text x="520.0" y="201" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">surfaceArea</text>
+<text x="520.0" y="218" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">tubeDiameter</text>
+</g>
+<g class="umlbox ">
+<rect x="850.0" y="156" width="148" height="72" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="850.0" y="156" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="924.0" y="176.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Tank</text>
+<line x1="850.0" y1="186" x2="998.0" y2="186" stroke="#1b263b" stroke-width="1.2"/>
+<text x="860.0" y="201" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">volume</text>
+<text x="860.0" y="218" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">pressure</text>
+</g>
+<polygon points="584.0,106 573.0,124 595.0,124" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="584.0" y1="124" x2="584.0" y2="130" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="244.0" y1="130" x2="924.0" y2="130" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="244.0" y1="130" x2="244.0" y2="156" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="584.0" y1="130" x2="584.0" y2="156" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="924.0" y1="130" x2="924.0" y2="156" stroke="#1b263b" stroke-width="1.6"/>
+<g class="umlbox ">
+<rect x="0.0" y="294" width="148" height="55" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="0.0" y="294" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="74.0" y="314.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">CentrifugalPump</text>
+<line x1="0.0" y1="324" x2="148.0" y2="324" stroke="#1b263b" stroke-width="1.2"/>
+<text x="10.0" y="339" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">impellerDiameter</text>
+</g>
+<g class="umlbox ">
+<rect x="170.0" y="294" width="148" height="55" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="170.0" y="294" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="244.0" y="314.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">DiaphragmPump</text>
+<line x1="170.0" y1="324" x2="318.0" y2="324" stroke="#1b263b" stroke-width="1.2"/>
+<text x="180.0" y="339" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">diaphragmMaterial</text>
+</g>
+<g class="umlbox ">
+<rect x="340.0" y="294" width="148" height="55" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="340.0" y="294" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="414.0" y="314.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">PlungerPump</text>
+<line x1="340.0" y1="324" x2="488.0" y2="324" stroke="#1b263b" stroke-width="1.2"/>
+<text x="350.0" y="339" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">plungerLength</text>
+</g>
+<polygon points="244.0,228 233.0,246 255.0,246" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="244.0" y1="246" x2="244.0" y2="268" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="74.0" y1="268" x2="414.0" y2="268" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="74.0" y1="268" x2="74.0" y2="294" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="244.0" y1="268" x2="244.0" y2="294" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="414.0" y1="268" x2="414.0" y2="294" stroke="#1b263b" stroke-width="1.6"/>
+<g class="umlbox ">
+<rect x="680.0" y="294" width="148" height="55" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="680.0" y="294" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="754.0" y="314.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">SphericalTank</text>
+<line x1="680.0" y1="324" x2="828.0" y2="324" stroke="#1b263b" stroke-width="1.2"/>
+<text x="690.0" y="339" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">diameter</text>
+</g>
+<g class="umlbox ">
+<rect x="850.0" y="294" width="148" height="72" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="850.0" y="294" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="924.0" y="314.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">PressurizedTank</text>
+<line x1="850.0" y1="324" x2="998.0" y2="324" stroke="#1b263b" stroke-width="1.2"/>
+<text x="860.0" y="339" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">diameter</text>
+<text x="860.0" y="356" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">height</text>
+</g>
+<g class="umlbox ">
+<rect x="1020.0" y="294" width="148" height="72" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="1020.0" y="294" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="1094.0" y="314.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">FloatingRoofTank</text>
+<line x1="1020.0" y1="324" x2="1168.0" y2="324" stroke="#1b263b" stroke-width="1.2"/>
+<text x="1030.0" y="339" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">diameter</text>
+<text x="1030.0" y="356" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">height</text>
+</g>
+<polygon points="924.0,228 913.0,246 935.0,246" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="924.0" y1="246" x2="924.0" y2="268" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="754.0" y1="268" x2="1094.0" y2="268" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="754.0" y1="268" x2="754.0" y2="294" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="924.0" y1="268" x2="924.0" y2="294" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="1094.0" y1="268" x2="1094.0" y2="294" stroke="#1b263b" stroke-width="1.6"/>
+</svg>
+    </div>
+    <p class="fig-caption"><span class="fig-label">Figure 3.24</span> — Standard UML generalization notation: each class box has a name compartment and an attribute compartment, and hollow-triangle arrows converge on a shared trunk pointing up to the superclass. This is a <strong>multilevel</strong> hierarchy: a real object like <code>P101 : DiaphragmPump</code> carries the features of DiaphragmPump, Pump, <em>and</em> Equipment all at once.</p>
+
+    <div class="callout"><strong>Where a class sits in the tree doesn't matter visually.</strong> The book notes that whether Tank is drawn to the left or right of Pump carries no meaning — only the arrows themselves matter.</div>
+
+    <h3 class="sub">Example 2 — Shapes on screen (Figure 3.25)</h3>
+    <p>Every <code>Figure</code> drawn on screen — a point, a line, a circle — shares a color, a position, and operations like <code>move</code>, <code>select</code>, and <code>rotate</code>. But some behavior only makes sense for certain shapes: you can't sensibly "fill" a single Point with color, since it has no interior.</p>
+
+    <div class="diagram">
+<svg viewBox="-20 -10 1058.0 472" xmlns="http://www.w3.org/2000/svg" style="max-width:1000px; width:100%; height:auto;">
+<g class="umlbox ">
+<rect x="368.3333333333333" y="0" width="148" height="131" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="368.3333333333333" y="0" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="442.3333333333333" y="20.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Figure</text>
+<line x1="368.3333333333333" y1="30" x2="516.3333333333333" y2="30" stroke="#1b263b" stroke-width="1.2"/>
+<text x="378.3333333333333" y="45" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">color</text>
+<text x="378.3333333333333" y="62" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">centerPosition</text>
+<line x1="368.3333333333333" y1="72" x2="516.3333333333333" y2="72" stroke="#1b263b" stroke-width="1.2"/>
+<text x="378.3333333333333" y="87" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">move()</text>
+<text x="378.3333333333333" y="104" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">select()</text>
+<text x="378.3333333333333" y="121" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">rotate()</text>
+</g>
+<g class="umlbox ">
+<rect x="0.0" y="172" width="148" height="30" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="0.0" y="172" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="74.0" y="192.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">ZeroDimensional</text>
+</g>
+<g class="umlbox ">
+<rect x="340.0" y="172" width="148" height="80" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="340.0" y="172" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="414.0" y="192.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">OneDimensional</text>
+<line x1="340.0" y1="202" x2="488.0" y2="202" stroke="#1b263b" stroke-width="1.2"/>
+<text x="350.0" y="217" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">orientation</text>
+<line x1="340.0" y1="227" x2="488.0" y2="227" stroke="#1b263b" stroke-width="1.2"/>
+<text x="350.0" y="242" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">scale()</text>
+</g>
+<g class="umlbox ">
+<rect x="765.0" y="172" width="148" height="114" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="765.0" y="172" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="839.0" y="192.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">TwoDimensional</text>
+<line x1="765.0" y1="202" x2="913.0" y2="202" stroke="#1b263b" stroke-width="1.2"/>
+<text x="775.0" y="217" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">orientation</text>
+<text x="775.0" y="234" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">fillType</text>
+<line x1="765.0" y1="244" x2="913.0" y2="244" stroke="#1b263b" stroke-width="1.2"/>
+<text x="775.0" y="259" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">scale()</text>
+<text x="775.0" y="276" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">fill()</text>
+</g>
+<polygon points="442.3333333333333,131 431.3333333333333,149 453.3333333333333,149" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="442.3333333333333" y1="149" x2="442.3333333333333" y2="146" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="74.0" y1="146" x2="839.0" y2="146" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="74.0" y1="146" x2="74.0" y2="172" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="414.0" y1="146" x2="414.0" y2="172" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="839.0" y1="146" x2="839.0" y2="172" stroke="#1b263b" stroke-width="1.6"/>
+<text x="456.3333333333333" y="151.5" font-family="IBM Plex Mono, monospace" font-style="italic" font-size="12" fill="#3d8361">{dimensionality}</text>
+<g class="umlbox ">
+<rect x="0.0" y="318" width="148" height="55" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="0.0" y="318" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="74.0" y="338.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Point</text>
+<line x1="0.0" y1="348" x2="148.0" y2="348" stroke="#1b263b" stroke-width="1.2"/>
+<text x="10.0" y="363" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">display()</text>
+</g>
+<polygon points="74.0,202 63.0,220 85.0,220" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="74.0" y1="220" x2="74.0" y2="292" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="74.0" y1="292" x2="74.0" y2="318" stroke="#1b263b" stroke-width="1.6"/>
+<g class="umlbox ">
+<rect x="170.0" y="318" width="148" height="80" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="170.0" y="318" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="244.0" y="338.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Line</text>
+<line x1="170.0" y1="348" x2="318.0" y2="348" stroke="#1b263b" stroke-width="1.2"/>
+<text x="180.0" y="363" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">endPoints</text>
+<line x1="170.0" y1="373" x2="318.0" y2="373" stroke="#1b263b" stroke-width="1.2"/>
+<text x="180.0" y="388" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">display()</text>
+</g>
+<g class="umlbox ">
+<rect x="340.0" y="318" width="148" height="114" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="340.0" y="318" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="414.0" y="338.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Arc</text>
+<line x1="340.0" y1="348" x2="488.0" y2="348" stroke="#1b263b" stroke-width="1.2"/>
+<text x="350.0" y="363" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">radius</text>
+<text x="350.0" y="380" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">startAngle</text>
+<text x="350.0" y="397" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">arcAngle</text>
+<line x1="340.0" y1="407" x2="488.0" y2="407" stroke="#1b263b" stroke-width="1.2"/>
+<text x="350.0" y="422" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">display()</text>
+</g>
+<g class="umlbox ">
+<rect x="510.0" y="318" width="148" height="80" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="510.0" y="318" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="584.0" y="338.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Spline</text>
+<line x1="510.0" y1="348" x2="658.0" y2="348" stroke="#1b263b" stroke-width="1.2"/>
+<text x="520.0" y="363" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">controlPts</text>
+<line x1="510.0" y1="373" x2="658.0" y2="373" stroke="#1b263b" stroke-width="1.2"/>
+<text x="520.0" y="388" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">display()</text>
+</g>
+<polygon points="414.0,252 403.0,270 425.0,270" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="414.0" y1="270" x2="414.0" y2="292" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="244.0" y1="292" x2="584.0" y2="292" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="244.0" y1="292" x2="244.0" y2="318" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="414.0" y1="292" x2="414.0" y2="318" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="584.0" y1="292" x2="584.0" y2="318" stroke="#1b263b" stroke-width="1.6"/>
+<g class="umlbox ">
+<rect x="680.0" y="318" width="148" height="97" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="680.0" y="318" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="754.0" y="338.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Polygon</text>
+<line x1="680.0" y1="348" x2="828.0" y2="348" stroke="#1b263b" stroke-width="1.2"/>
+<text x="690.0" y="363" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">numOfSides</text>
+<text x="690.0" y="380" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">vertices</text>
+<line x1="680.0" y1="390" x2="828.0" y2="390" stroke="#1b263b" stroke-width="1.2"/>
+<text x="690.0" y="405" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">display()</text>
+</g>
+<g class="umlbox ">
+<rect x="850.0" y="318" width="148" height="97" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<rect x="850.0" y="318" width="148" height="30" fill="#e7eaf1" stroke="#1b263b" stroke-width="1.6"/>
+<text x="924.0" y="338.0" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1b263b">Circle</text>
+<line x1="850.0" y1="348" x2="998.0" y2="348" stroke="#1b263b" stroke-width="1.2"/>
+<text x="860.0" y="363" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">diameter</text>
+<line x1="850.0" y1="373" x2="998.0" y2="373" stroke="#1b263b" stroke-width="1.2"/>
+<text x="860.0" y="388" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">display()</text>
+<text x="860.0" y="405" font-family="IBM Plex Mono, monospace" font-size="12.5" fill="#1b263b">rotate()</text>
+</g>
+<polygon points="839.0,286 828.0,304 850.0,304" fill="#fffdf7" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="839.0" y1="304" x2="839.0" y2="292" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="754.0" y1="292" x2="924.0" y2="292" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="754.0" y1="292" x2="754.0" y2="318" stroke="#1b263b" stroke-width="1.6"/>
+<line x1="924.0" y1="292" x2="924.0" y2="318" stroke="#1b263b" stroke-width="1.6"/>
+</svg>
+  
+  </section>
+
+
+  
+
+  <!-- 3.3.2 USE -->
+  <section class="topic" id="use">
+    <h2>Use of Generalization</h2>
+    <p class="lede">The book gives three concrete payoffs.</p>
+
+    <div class="cards">
+      <div class="card">
+        <div class="num">01</div>
+        <h4>Polymorphism</h4>
+        <p>Code written against the superclass — "tell this <code>Figure</code> to <code>rotate()</code>" — automatically runs the right version for whatever subclass the object actually is. Add a new shape later, and old code doesn't need to change.</p>
+      </div>
+      <div class="card">
+        <div class="num">02</div>
+        <h4>Structuring the model</h4>
+        <p>Drawing a generalization is a conceptual claim, not just a coding shortcut — you're building a taxonomy that says "these things are fundamentally related," which is more meaningful than describing every class in total isolation.</p>
+      </div>
+      <div class="card">
+        <div class="num">03</div>
+        <h4>Reuse</h4>
+        <p>You write the shared behavior once — in the superclass — and every subclass gets it without retyping it. You can still tweak a subclass to fit its own needs on top of what it inherited.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Three words, one idea:</strong> <em>generalization</em> and <em>specialization</em> are the same relationship viewed from opposite ends — generalization looks up toward the shared superclass, specialization looks down toward the refined subclasses. <em>Inheritance</em> is simply the mechanism that makes the sharing happen.
+    </div>
+  </section>
+
+  <!-- 3.3.3 OVERRIDING -->
+  <section class="topic" id="override">
+   
+    <h2>Overriding features</h2>
+    <p class="lede">Sometimes a subclass needs to replace, not just add to, something it inherited. That's called <strong>overriding</strong>: the subclass defines a feature with the <em>same name</em> as one from its superclass, and its version takes priority.</p>
+
+    <p>From Figure 3.25: <code>Figure</code> declares a generic <code>display</code> operation, but every leaf shape (Point, Line, Circle...) must override it with its own drawing logic — a circle and a line simply don't draw the same way. <code>Circle</code> also overrides <code>rotate</code> to do nothing at all, since rotating a circle in place doesn't change how it looks — a small performance win.</p>
+
+    
+
+  </section>
+
+</main>
+
+<footer>
+  Simplified teaching guide based on <em>Object-Oriented Modeling and Design with UML</em> (Rumbaugh, Blaha) — Section 3.3, pp. 37–41. Figure numbers follow the source text; diagrams are redrawn and condensed for clarity.
+</footer>
+
+</body>
+</html>
