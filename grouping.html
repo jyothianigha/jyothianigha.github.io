@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grouping Constructs — UML &amp; Object-Oriented Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A1929;
+    --bg-panel:#0E2440;
+    --bg-panel-2:#0B1E38;
+    --grid: rgba(125,211,252,0.07);
+    --grid-strong: rgba(125,211,252,0.14);
+    --ink:#EAF2FF;
+    --ink-dim:#8FA9CC;
+    --ink-dimmer:#5E759B;
+    --cyan:#7DD3FC;
+    --teal:#5EEAD4;
+    --amber:#FBBF24;
+    --rule: rgba(234,242,255,0.22);
+    --rule-soft: rgba(234,242,255,0.12);
+    --radius: 3px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    line-height:1.6;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  ::selection{ background: var(--amber); color:#0A1929; }
+  h1,h2,h3{ font-family:'Space Grotesk', sans-serif; margin:0; letter-spacing:-0.01em; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  a{ color: var(--cyan); }
+
+  .wrap{ max-width: 1080px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- running index rail ---------- */
+  .railnote{
+    position: fixed; top: 0; left: 0; right:0; z-index: 50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 10px 28px;
+    background: rgba(10,25,41,0.86);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--rule-soft);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+  }
+  .railnote .dot{ color: var(--amber); }
+  .railnote nav{ display:flex; gap:18px; }
+  .railnote nav a{ color: var(--ink-dim); text-decoration:none; }
+  .railnote nav a:hover{ color: var(--cyan); }
+  @media (max-width: 760px){ .railnote nav{ display:none; } }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding: 96px 0 64px;
+    border-bottom: 1px solid var(--rule-soft);
+    position:relative;
+  }
+  .hero .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: 0.14em; text-transform:uppercase;
+    color: var(--teal);
+    display:flex; align-items:center; gap:10px;
+    margin-bottom: 22px;
+  }
+  .hero .eyebrow::before{
+    content:""; width: 22px; height:1px; background: var(--teal);
+  }
+  .hero h1{
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    line-height: 1.02;
+    max-width: 14ch;
+  }
+  .hero h1 em{ font-style: normal; color: var(--cyan); }
+  .hero .sub{
+    margin-top: 22px; max-width: 62ch;
+    color: var(--ink-dim); font-size: 1.08rem;
+  }
+  .hero .sheetline{
+    margin-top: 44px; display:flex; gap:36px; flex-wrap:wrap;
+    font-family:'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-dimmer);
+  }
+  .hero .sheetline b{ color: var(--ink-dim); font-weight:500; }
+
+  /* ---------- section shell (a "sheet") ---------- */
+  .sheet{
+    padding: 76px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .sheet-head{
+    display:flex; align-items:baseline; gap:16px; margin-bottom: 10px;
+    flex-wrap:wrap;
+  }
+  .sheet-num{
+    font-family:'IBM Plex Mono', monospace; color: var(--amber); font-size: 13px;
+  }
+  .sheet-head h2{ font-size: clamp(1.5rem, 3.4vw, 2.1rem); }
+  .stereotype{
+    font-family:'IBM Plex Mono', monospace; color: var(--ink-dimmer); font-size: 13px;
+  }
+  .sheet-intro{ color: var(--ink-dim); max-width: 68ch; margin-top: 14px; font-size: 1rem; }
+
+  .grid2{ display:grid; grid-template-columns: 1.05fr 0.95fr; gap: 44px; margin-top: 40px; align-items:start; }
+  @media (max-width: 860px){ .grid2{ grid-template-columns: 1fr; } }
+
+  .panel{
+    background: var(--bg-panel);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+  .diagram-frame{
+    background: var(--bg-panel-2);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius);
+    padding: 18px 18px 0;
+  }
+  .diagram-frame svg{ display:block; width:100%; height:auto; }
+  .titleblock{
+    border-top: 1px solid var(--rule-soft);
+    margin-top: 14px;
+    padding: 9px 2px 12px;
+    display:flex; justify-content: space-between; gap: 10px;
+    font-family:'IBM Plex Mono', monospace; font-size: 10.5px; color: var(--ink-dimmer);
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .titleblock span b{ color: var(--ink-dim); font-weight: 500; text-transform: none; letter-spacing: 0; }
+
+  .notes h3{ font-size: 1.06rem; margin-bottom: 10px; color: var(--ink); }
+  .notes p{ color: var(--ink-dim); margin: 0 0 14px; font-size: 0.98rem; }
+  .notes ul{ margin: 0 0 14px; padding-left: 18px; color: var(--ink-dim); font-size: 0.96rem; }
+  .notes li{ margin-bottom: 7px; }
+  .notes li b{ color: var(--ink); font-weight: 600; }
+  .callout{
+    border-left: 2px solid var(--amber);
+    padding: 4px 0 4px 14px;
+    color: var(--ink-dim); font-size: 0.92rem;
+    margin-top: 16px;
+  }
+  .callout b{ color: var(--amber); font-weight: 600; }
+
+  /* ---------- toggle buttons on interactive diagram ---------- */
+  .togglebar{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom: 16px; }
+  .togglebar button{
+    font-family:'IBM Plex Mono', monospace; font-size: 11.5px;
+    background: transparent; border: 1px solid var(--rule); color: var(--ink-dim);
+    padding: 7px 12px; border-radius: 999px; cursor:pointer;
+    transition: all .15s ease;
+  }
+  .togglebar button:hover{ border-color: var(--cyan); color: var(--cyan); }
+  .togglebar button.active{ background: var(--cyan); color: #0A1929; border-color: var(--cyan); font-weight:600; }
+
+  /* ---------- comparison table ---------- */
+  table.compare{
+    width: 100%; border-collapse: collapse; margin-top: 34px;
+    font-size: 0.92rem;
+  }
+  table.compare th, table.compare td{
+    border: 1px solid var(--rule-soft);
+    padding: 12px 14px; text-align: left; vertical-align: top;
+  }
+  table.compare th{
+    font-family:'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--teal); background: var(--bg-panel);
+    font-weight: 500;
+  }
+  table.compare td{ color: var(--ink-dim); }
+  table.compare td.icon{ font-family:'IBM Plex Mono', monospace; color: var(--cyan); white-space: nowrap; }
+  table.compare tr:hover td{ background: rgba(125,211,252,0.03); color: var(--ink); }
+
+  /* ---------- final composite ---------- */
+  .composite-frame{
+    background: var(--bg-panel-2);
+    border: 1px solid var(--rule-soft);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-top: 36px;
+  }
+  .composite-frame svg{ width:100%; height:auto; display:block; }
+
+  /* ---------- cheat sheet footer ---------- */
+  footer{ padding: 70px 0 90px; }
+  .cheat-grid{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    gap: 1px; background: var(--rule-soft);
+    border: 1px solid var(--rule-soft); margin-top: 30px;
+  }
+  .cheat-card{ background: var(--bg); padding: 20px; }
+  .cheat-card .mark{ font-family:'IBM Plex Mono', monospace; color: var(--amber); font-size: 12px; margin-bottom: 8px; }
+  .cheat-card h4{ font-family:'Space Grotesk', sans-serif; font-size: 1.02rem; margin: 0 0 8px; color: var(--ink); }
+  .cheat-card p{ color: var(--ink-dim); font-size: 0.88rem; margin:0; }
+
+  footer .colophon{
+    margin-top: 60px; display:flex; justify-content: space-between; flex-wrap:wrap; gap: 12px;
+    font-family:'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-dimmer);
+    border-top: 1px solid var(--rule-soft); padding-top: 20px;
+  }
+
+  code.inline{
+    font-family:'IBM Plex Mono', monospace; background: rgba(125,211,252,0.09);
+    color: var(--cyan); padding: 1px 6px; border-radius: 3px; font-size: 0.88em;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="railnote">
+  <div><span class="dot">●</span> SHEET SET — GROUPING CONSTRUCTS</div>
+  
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Grouping Constructs</h1>
+    
+  </div>
+</header>
+
+<!-- ============ 01 CLASS ============ -->
+<section class="sheet" id="class">
+  <div class="wrap">
+    <div class="sheet-head">
+     
+      <h2>The Class — the smallest grouping construct</h2>
+    </div>
+    <p class="sheet-intro">
+      The class itself is already an act of grouping: it bundles a set of
+      attributes and operations that belong to one concept, and draws a boundary.
+    </p>
+
+    <div class="grid2">
+      <div class="diagram-frame">
+        <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg">
+          <rect x="120" y="30" width="220" height="230" fill="none" stroke="#7DD3FC" stroke-width="1.5"/>
+          <line x1="120" y1="76" x2="340" y2="76" stroke="#7DD3FC" stroke-width="1.5"/>
+          <line x1="120" y1="176" x2="340" y2="176" stroke="#7DD3FC" stroke-width="1.5"/>
+          <text x="230" y="58" text-anchor="middle" fill="#EAF2FF" font-family="Space Grotesk" font-size="17" font-weight="600">Invoice</text>
+          <g font-family="IBM Plex Mono" font-size="12.5" fill="#8FA9CC">
+            <text x="132" y="98">- number : String</text>
+            <text x="132" y="118">- issuedOn : Date</text>
+            <text x="132" y="138">- lineItems : List&lt;Item&gt;</text>
+            <text x="132" y="158">- status : Status</text>
+          </g>
+          <g font-family="IBM Plex Mono" font-size="12.5" fill="#5EEAD4">
+            <text x="132" y="198">+ addItem(item)</text>
+            <text x="132" y="218">+ total() : Money</text>
+            <text x="132" y="238">+ markPaid()</text>
+          </g>
+          <text x="230" y="286" text-anchor="middle" fill="#5E759B" font-family="IBM Plex Mono" font-size="11">attributes + operations, grouped by concept</text>
+        </svg>
+        <div class="titleblock">
+          <span>FIG 01.1</span>
+          <span><b>Class compartments</b></span>
+          <span>notation: UML class box</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 PACKAGE ============ -->
+<section class="sheet" id="package">
+  <div class="wrap">
+    <div class="sheet-head">
+      <span class="sheet-num">02</span>
+      <h2>Package — grouping classes into a namespace</h2>
+      <span class="stereotype">«package»</span>
+    </div>
+    <p class="sheet-intro">
+      A package is UML's general-purpose grouping construct. It collects related classes, interfaces,
+      and even other packages under one name, and that name becomes a namespace — two classes in
+      different packages can share a simple name without colliding.
+    </p>
+
+    <div class="grid2">
+      <div class="diagram-frame">
+        <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- billing package -->
+          <path d="M40 50 h80 v18 h140 v150 h-220 z" fill="none" stroke="#7DD3FC" stroke-width="1.5"/>
+          <text x="52" y="64" fill="#EAF2FF" font-family="Space Grotesk" font-size="13" font-weight="600">billing</text>
+          <rect x="60" y="100" width="100" height="34" fill="none" stroke="#8FA9CC" stroke-width="1"/>
+          <text x="110" y="121" text-anchor="middle" fill="#8FA9CC" font-family="IBM Plex Mono" font-size="11">Invoice</text>
+          <rect x="60" y="150" width="100" height="34" fill="none" stroke="#8FA9CC" stroke-width="1"/>
+          <text x="110" y="171" text-anchor="middle" fill="#8FA9CC" font-family="IBM Plex Mono" font-size="11">Payment</text>
+
+          <!-- customer package -->
+          <path d="M280 50 h60 v18 h60 v90 h-120 z" fill="none" stroke="#5EEAD4" stroke-width="1.5"/>
+          <text x="292" y="64" fill="#EAF2FF" font-family="Space Grotesk" font-size="13" font-weight="600">customer</text>
+          <rect x="292" y="100" width="96" height="34" fill="none" stroke="#8FA9CC" stroke-width="1"/>
+          <text x="340" y="121" text-anchor="middle" fill="#8FA9CC" font-family="IBM Plex Mono" font-size="11">Customer</text>
+
+          <!-- dependency arrow -->
+          <line x1="220" y1="120" x2="284" y2="120" stroke="#FBBF24" stroke-width="1.3" stroke-dasharray="4 3"/>
+          <polygon points="284,120 274,115 274,125" fill="#FBBF24"/>
+          <text x="252" y="112" text-anchor="middle" fill="#FBBF24" font-family="IBM Plex Mono" font-size="10">«import»</text>
+
+          <text x="230" y="270" text-anchor="middle" fill="#5E759B" font-family="IBM Plex Mono" font-size="11">dashed arrow = dependency between packages</text>
+        </svg>
+        <div class="titleblock">
+          <span>FIG 02.1</span>
+          <span><b>Package with import dependency</b></span>
+          <span>notation: folder-tab box</span>
+        </div>
+      </div>
+
+      
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 SUBSYSTEM ============ -->
+<section class="sheet" id="subsystem">
+  <div class="wrap">
+    <div class="sheet-head">
+      <span class="sheet-num">03</span>
+      <h2>Subsystem — a package that also does something</h2>
+      <span class="stereotype">«subsystem»</span>
+    </div>
+    <p class="sheet-intro">
+      A subsystem is a package stereotype with teeth: besides grouping elements, it declares
+      <em>behavior</em> — it offers interfaces to the rest of the system .
+    </p>
+
+    <div class="grid2">
+      <div class="diagram-frame">
+        <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg">
+          <path d="M100 46 h80 v16 h180 v170 h-260 z" fill="none" stroke="#7DD3FC" stroke-width="1.5"/>
+          <text x="112" y="59" fill="#5E759B" font-family="IBM Plex Mono" font-size="10">«subsystem»</text>
+          <text x="112" y="76" fill="#EAF2FF" font-family="Space Grotesk" font-size="14" font-weight="600">PaymentProcessing</text>
+
+          <rect x="130" y="110" width="110" height="30" fill="none" stroke="#8FA9CC" stroke-width="1"/>
+          <text x="185" y="129" text-anchor="middle" fill="#8FA9CC" font-family="IBM Plex Mono" font-size="10.5">CardGateway</text>
+          <rect x="260" y="110" width="110" height="30" fill="none" stroke="#8FA9CC" stroke-width="1"/>
+          <text x="315" y="129" text-anchor="middle" fill="#8FA9CC" font-family="IBM Plex Mono" font-size="10.5">FraudCheck</text>
+          <rect x="195" y="160" width="110" height="30" fill="none" stroke="#8FA9CC" stroke-width="1"/>
+          <text x="250" y="179" text-anchor="middle" fill="#8FA9CC" font-family="IBM Plex Mono" font-size="10.5">Ledger</text>
+
+          <!-- lollipop interface -->
+          <circle cx="90" cy="130" r="7" fill="none" stroke="#5EEAD4" stroke-width="1.5"/>
+          <line x1="97" y1="130" x2="130" y2="130" stroke="#5EEAD4" stroke-width="1.5"/>
+          <text x="55" y="120" text-anchor="middle" fill="#5EEAD4" font-family="IBM Plex Mono" font-size="10">IPay</text>
+        </svg>
+        <div class="titleblock">
+          <span>FIG 03.1</span>
+          <span><b>Subsystem realizing an interface</b></span>
+          <span>notation: stereotyped package + lollipop</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 COMPONENT ============ -->
+<section class="sheet" id="component">
+  <div class="wrap">
+    <div class="sheet-head">
+      <span class="sheet-num">04</span>
+      <h2>Component — grouping for replaceability</h2>
+      <span class="stereotype">«component»</span>
+    </div>
+    <p class="sheet-intro">
+      A component groups classes into a unit meant to be swapped as a whole: a compiled module, a
+      service, a library. It contains and more by the ports and interfaces to connect to external world.
+      
+    </p>
+
+    <div class="grid2">
+      <div class="diagram-frame">
+        <svg viewBox="0 0 460 260" xmlns="http://www.w3.org/2000/svg">
+          <rect x="130" y="50" width="200" height="130" fill="none" stroke="#7DD3FC" stroke-width="1.5"/>
+          <rect x="112" y="66" width="26" height="14" fill="#0E2440" stroke="#7DD3FC" stroke-width="1.5"/>
+          <rect x="112" y="66" width="26" height="14" fill="none" stroke="#7DD3FC" stroke-width="1.5" transform="translate(0,0)"/>
+          <rect x="112" y="100" width="26" height="14" fill="none" stroke="#7DD3FC" stroke-width="1.5"/>
+          <text x="230" y="78" text-anchor="middle" fill="#5E759B" font-family="IBM Plex Mono" font-size="10">«component»</text>
+          <text x="230" y="97" text-anchor="middle" fill="#EAF2FF" font-family="Space Grotesk" font-size="15" font-weight="600">SearchIndex</text>
+
+          <line x1="230" y1="110" x2="330" y2="110" stroke="#8FA9CC" stroke-width="1"/>
+          <text x="230" y="130" text-anchor="middle" fill="#8FA9CC" font-family="IBM Plex Mono" font-size="10.5">Tokenizer</text>
+          <text x="230" y="150" text-anchor="middle" fill="#8FA9CC" font-family="IBM Plex Mono" font-size="10.5">RankScorer</text>
+          <text x="230" y="170" text-anchor="middle" fill="#8FA9CC" font-family="IBM Plex Mono" font-size="10.5">ShardWriter</text>
+
+          <!-- provided interface -->
+          <circle cx="380" cy="90" r="7" fill="none" stroke="#5EEAD4" stroke-width="1.5"/>
+          <line x1="330" y1="90" x2="373" y2="90" stroke="#5EEAD4" stroke-width="1.5"/>
+          <text x="405" y="94" text-anchor="middle" fill="#5EEAD4" font-family="IBM Plex Mono" font-size="10">ISearch</text>
+
+          <!-- required interface -->
+          <line x1="130" y1="150" x2="70" y2="150" stroke="#FBBF24" stroke-width="1.5"/>
+          <path d="M62 142 A10 10 0 0 0 62 158" fill="none" stroke="#FBBF24" stroke-width="1.5"/>
+          <text x="65" y="170" text-anchor="middle" fill="#FBBF24" font-family="IBM Plex Mono" font-size="10">IStorage</text>
+        </svg>
+        <div class="titleblock">
+          <span>FIG 04.1</span>
+          <span><b>Component with ports</b></span>
+          <span>notation: box + provided/required interfaces</span>
+        </div>
+      </div>
+
+      =
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+<footer>
+  
+
+    
+</footer>
+
+<script>
+  const colorLayers = {
+    packages: document.querySelectorAll('.layer-packages'),
+    subsystem: document.querySelectorAll('.layer-subsystem'),
+    component: document.querySelectorAll('.layer-component'),
+    deps: document.querySelectorAll('.layer-deps')
+  };
+  document.querySelectorAll('#toggleBar button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active');
+      const layer = btn.dataset.layer;
+      const on = btn.classList.contains('active');
+      colorLayers[layer].forEach(el => {
+        el.style.display = on ? '' : 'none';
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
