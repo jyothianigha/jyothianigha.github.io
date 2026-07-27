@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3.2 — Link and Association Concepts</title>
+<style>
+  :root{
+    --blueprint: #0b2545;
+    --blueprint-deep: #071a34;
+    --line: #6fb3d2;
+    --line-bright: #a9d6e5;
+    --paper: #eef4f8;
+    --amber: #e0a458;
+    --amber-dim: #b9863f;
+    --grid: rgba(111,179,210,0.14);
+    --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    --disp: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --body: 'Source Sans Pro', 'Segoe UI', sans-serif;
+  }
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Sans+Pro:wght@400;600;700&display=swap');
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--blueprint);
+    background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:28px 28px;
+    color:var(--paper); font-family:var(--body); line-height:1.6; min-height:100vh;
+  }
+  a{color:var(--amber);}
+  .wrap{max-width:980px; margin:0 auto; padding:0 28px;}
+
+  header.hero{padding:90px 0 56px; border-bottom:1px dashed rgba(169,214,229,0.35);}
+  .eyebrow{font-family:var(--mono); letter-spacing:0.18em; text-transform:uppercase; font-size:0.78rem; color:var(--line-bright); display:flex; align-items:center; gap:12px; margin-bottom:22px;}
+  .eyebrow::before{content:""; width:34px; height:1px; background:var(--line-bright); display:inline-block;}
+  h1.title{font-family:var(--disp); font-weight:700; font-size:clamp(2rem,4.6vw,3.2rem); line-height:1.1; color:var(--paper); max-width:820px;}
+  h1.title .num{color:var(--amber); font-variant-numeric:tabular-nums;}
+  .subhead{margin-top:20px; font-size:1.08rem; color:rgba(238,244,248,0.78); max-width:660px;}
+  .srcnote{margin-top:22px; font-family:var(--mono); font-size:0.75rem; color:var(--line); border-left:2px solid var(--amber-dim); padding:8px 14px; max-width:640px;}
+
+  nav.legend{display:flex; flex-wrap:wrap; border-bottom:1px dashed rgba(169,214,229,0.35);}
+  nav.legend a{font-family:var(--mono); font-size:0.74rem; text-decoration:none; color:var(--line-bright); padding:14px 15px; border-right:1px dashed rgba(169,214,229,0.35); transition:background 0.15s ease, color 0.15s ease;}
+  nav.legend a:hover{background:rgba(169,214,229,0.08); color:var(--amber);}
+  nav.legend a span{color:var(--amber-dim); margin-right:6px;}
+
+  section.block{padding:56px 0; border-bottom:1px dashed rgba(169,214,229,0.35);}
+  section.block:last-of-type{border-bottom:none;}
+  .tag{font-family:var(--mono); font-size:0.75rem; color:var(--amber); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:10px; display:block;}
+  h2.htitle{font-family:var(--disp); font-weight:600; font-size:clamp(1.3rem,2.5vw,1.85rem); color:var(--paper); margin-bottom:18px; display:flex; align-items:baseline; gap:14px;}
+  h2.htitle .idx{font-family:var(--mono); font-size:0.9rem; color:var(--line); border:1px solid rgba(169,214,229,0.4); padding:2px 9px; border-radius:3px;}
+
+  p{color:rgba(238,244,248,0.85); max-width:720px; margin-bottom:16px;}
+  p strong{color:var(--paper);}
+  p em{color:var(--line-bright); font-style:normal; border-bottom:1px dotted var(--line);}
+  ul.points{list-style:none; max-width:720px; margin:18px 0;}
+  ul.points li{position:relative; padding-left:26px; margin-bottom:12px; color:rgba(238,244,248,0.85);}
+  ul.points li::before{content:"▸"; position:absolute; left:0; top:0; color:var(--amber);}
+
+  .teachbox{
+    border:1px solid var(--amber-dim); border-radius:6px; background:rgba(224,164,88,0.06);
+    padding:16px 20px; margin:20px 0; max-width:720px;
+  }
+  .teachbox .k{font-family:var(--mono); font-size:0.7rem; color:var(--amber); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:6px; display:block;}
+  .teachbox p{margin:0; font-size:0.92rem;}
+
+  /* association diagram */
+  .assoc-diagram{
+    display:flex; align-items:center; gap:0; margin:30px 0; flex-wrap:wrap;
+  }
+  .classnode{
+    border:1px solid var(--line); border-radius:4px; background:rgba(169,214,229,0.05);
+    padding:14px 22px; font-family:var(--mono); font-size:0.92rem; color:var(--paper); text-align:center; min-width:120px;
+  }
+  .assoc-mid{
+    display:flex; flex-direction:column; align-items:center; padding:0 18px; font-family:var(--mono); font-size:0.78rem; color:var(--line-bright);
+  }
+  .assoc-mid .aname{color:var(--amber); font-style:italic; margin-bottom:4px;}
+  .assoc-mid .line-row{display:flex; align-items:center; gap:6px;}
+  .assoc-mid .mult{color:var(--line); font-size:0.74rem;}
+  .assoc-mid .ln{width:70px; height:1px; background:var(--line); display:inline-block;}
+  @media (max-width:640px){ .assoc-diagram{flex-direction:column;} .assoc-mid{flex-direction:row; padding:10px 0;} .assoc-mid .ln{width:40px;} }
+
+  .code{background:var(--blueprint-deep); border:1px solid rgba(169,214,229,0.3); border-radius:6px; margin:22px 0; overflow:hidden;}
+  .code .bar{display:flex; align-items:center; justify-content:space-between; padding:9px 16px; border-bottom:1px solid rgba(169,214,229,0.2); font-family:var(--mono); font-size:0.72rem; color:var(--line);}
+  .code pre{padding:18px 20px; overflow-x:auto; font-family:var(--mono); font-size:0.85rem; line-height:1.65; color:#dbe9f0;}
+  .code .kw{color:#e0a458;}
+  .code .type{color:#8fd3f4;}
+  .code .str{color:#b4e197;}
+  .code .cm{color:#5a7f96; font-style:italic;}
+  .code .fn{color:#f2c14e;}
+
+  .analogy-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin:26px 0;}
+  @media (max-width:640px){.analogy-grid{grid-template-columns:1fr;}}
+  .acard{border:1px solid rgba(169,214,229,0.3); border-radius:6px; padding:18px 20px; background:rgba(169,214,229,0.04);}
+  .acard .k{font-family:var(--mono); font-size:0.72rem; color:var(--amber); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; display:block;}
+  .acard p{margin:0; font-size:0.94rem;}
+
+  table.compare{width:100%; border-collapse:collapse; margin:24px 0; font-size:0.9rem;}
+  table.compare th, table.compare td{border:1px solid rgba(169,214,229,0.28); padding:10px 13px; text-align:left;}
+  table.compare th{font-family:var(--mono); font-size:0.72rem; letter-spacing:0.07em; text-transform:uppercase; color:var(--amber); background:rgba(169,214,229,0.06);}
+  table.compare td{color:rgba(238,244,248,0.85);}
+  table.compare tr:nth-child(even) td{background:rgba(169,214,229,0.03);}
+
+  /* multiplicity gallery */
+  .mult-gallery{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px; margin:26px 0;}
+  .mcard{border:1px solid rgba(169,214,229,0.3); border-radius:6px; padding:16px; background:rgba(169,214,229,0.04); text-align:center;}
+  .mcard .msymbol{font-family:var(--mono); font-size:1.3rem; color:var(--amber); margin-bottom:6px;}
+  .mcard .mlabel{font-family:var(--disp); font-size:0.9rem; color:var(--paper); margin-bottom:6px;}
+  .mcard .mdesc{font-size:0.8rem; color:rgba(238,244,248,0.75);}
+
+  /* association class box */
+  .assocclass-diagram{ display:flex; flex-direction:column; align-items:center; gap:0; margin:30px 0; }
+  .assocclass-diagram .toprow{ display:flex; align-items:center; }
+  .dashln{ width:1px; height:26px; background-image:linear-gradient(var(--amber-dim) 60%, transparent 40%); background-size:1px 8px; }
+  .ac-box{ border:1px solid var(--amber-dim); border-radius:4px; background:rgba(224,164,88,0.08); font-family:var(--mono); font-size:0.82rem; padding:10px 16px; margin-top:0; }
+  .ac-box .acn{color:var(--amber); font-weight:600; text-align:center; border-bottom:1px solid var(--amber-dim); padding-bottom:6px; margin-bottom:6px;}
+  .ac-box .aca{color:var(--line-bright);}
+
+  .summary-panel{padding:60px 0 90px;}
+  .caliper{display:flex; flex-wrap:wrap; align-items:stretch; border:1px solid var(--line); border-radius:6px; overflow:hidden; margin-bottom:30px;}
+  .caliper .seg{flex:1 1 30%; min-width:170px; padding:18px 16px; border-right:1px dashed rgba(169,214,229,0.3); border-bottom:1px dashed rgba(169,214,229,0.3); position:relative;}
+  .caliper .seg:last-child{border-right:none;}
+  .caliper .seg .tick{font-family:var(--mono); font-size:0.65rem; color:var(--line); position:absolute; top:8px; right:10px;}
+  .caliper .seg h4{font-family:var(--disp); color:var(--amber); font-size:0.9rem; margin-bottom:8px;}
+  .caliper .seg p{font-size:0.8rem; margin:0; color:rgba(238,244,248,0.8);}
+
+  footer{text-align:center; padding:34px 0 60px; font-family:var(--mono); font-size:0.72rem; color:rgba(169,214,229,0.45); letter-spacing:0.05em;}
+  ::selection{background:var(--amber); color:var(--blueprint-deep);}
+  @media (prefers-reduced-motion:no-preference){
+    section.block, header.hero{animation:fadeUp 0.6s ease both;}
+    @keyframes fadeUp{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <h1 class="title"><span class="num"></span> Link and Association Concepts</h1>
+  </header>
+
+
+
+  <!-- 3.2.1 -->
+  <section class="block" id="links">
+   
+    <h2 class="htitle"><span class="idx">01</span> Links and Associations</h2>
+    <p>A <strong>link</strong> is a connection between specific objects — physical or conceptual. "Priya works for Nimbus Corp" describes a link between one <code>Person</code> object and one <code>Company</code> object.  An association describes groups of link</p>
+
+    
+
+    <div class="assoc-diagram">
+      <div class="classnode">Person</div>
+      <div class="assoc-mid">
+        <span class="aname">WorksFor</span>
+        <div class="line-row"><span class="mult">*</span><span class="ln"></span><span class="mult">*</span></div>
+      </div>
+      <div class="classnode">Company</div>
+    </div>
+    <p>An association is drawn as a line between two class boxes, labeled with an italic name. This diagram says: some number of <code>Person</code> objects can be linked, through <code>WorksFor</code>, to some number of <code>Company</code> objects. The actual links — which specific people work for which specific companies — only show up in an object diagram.</p>
+
+  
+  </section>
+
+  <!-- 3.2.2 -->
+  <section class="block" id="mult">
+    
+    <h2 class="htitle"><span class="idx">02</span> Multiplicity</h2>
+    <p><strong>Multiplicity</strong> states how many objects on one end of an association can be linked to a single object on the other end. It's written as a number or a range at each end of the association line — the most common shorthand, an asterisk, simply means "zero or more."</p>
+
+    <div class="mult-gallery">
+      <div class="mcard"><div class="msymbol">1</div><div class="mlabel">Exactly one</div><div class="mdesc">Every country has exactly one capital city in this model.</div></div>
+      <div class="mcard"><div class="msymbol">0..1</div><div class="mlabel">Zero or one</div><div class="mdesc">A workstation may or may not have a console window assigned.</div></div>
+      <div class="mcard"><div class="msymbol">*</div><div class="mlabel">Many (zero or more)</div><div class="mdesc">A student may be enrolled in any number of courses, including none.</div></div>
+      <div class="mcard"><div class="msymbol">1..*</div><div class="mlabel">One or more</div><div class="mdesc">Every course must have at least one instructor assigned.</div></div>
+      <div class="mcard"><div class="msymbol">3..5</div><div class="mlabel">A bounded range</div><div class="mdesc">A committee must have between three and five members.</div></div>
+    </div>
+
+    <div class="teachbox">
+      <span class="k">Common student mix-up</span>
+      <p>Multiplicity is not the same as cardinality. Multiplicity is the <em>rule</em> — the constraint written on the diagram. Cardinality is the <em>actual count</em> in a particular case at a particular moment. </p>
+    </div>
+
+  </section>
+
+  <!-- 3.2.3 -->
+  <section class="block" id="ends">
+    
+    <h2 class="htitle"><span class="idx">03</span> Association End Names</h2>
+    <p>Just as an association itself can have a name, each <em>end</em> of an association can too. An <strong>association end name</strong> describes the role a class plays from the other side's point of view — usually a noun, not a verb.</p>
+
+    <div class="assoc-diagram">
+      <div class="classnode">Person</div>
+      <div class="assoc-mid">
+        <span class="aname">WorksFor</span>
+        <div class="line-row"><span class="mult">employee *</span><span class="ln"></span><span class="mult">employer 0..1</span></div>
+      </div>
+      <div class="classnode">Company</div>
+    </div>
+    <p>Here, a <code>Person</code> plays the role of <em>employee</em> with respect to a company, and a <code>Company</code> plays the role of <em>employer</em> with respect to a person. These end names matter most in two situations that come up constantly in student projects:</p>
+
+    <ul class="points">
+      <li><strong>Self-associations.</strong> When a class is associated with itself — a <code>Directory</code> that can contain other <code>Directory</code> objects — there's no second class name to lean on for clarity, so end names like <em>container</em> and <em>contents</em> become the only way to tell the two roles apart.</li>
+      <li><strong>Multiple associations between the same pair of classes.</strong> If <code>User</code> and <code>Directory</code> are connected by both an "owns" relationship and an "is authorized to use" relationship, end names (or association names) are what keep the two links from being confused with each other.</li>
+    </ul>
+
+    
+  </section>
+
+  <!-- 3.2.4 -->
+  <section class="block" id="order">
+   
+    <h2 class="htitle"><span class="idx">04</span> Ordering</h2>
+    <p>By default, the objects on a "many" end of an association have no inherent order — think of them as an unordered set. Sometimes, though, order genuinely matters to the problem. A stack of overlapping windows on a screen, for example, needs to remember which window is on top.</p>
+
+    <div class="assoc-diagram">
+      <div class="classnode">Screen</div>
+      <div class="assoc-mid">
+        <span class="aname">VisibleOn</span>
+        <div class="line-row"><span class="mult">1</span><span class="ln"></span><span class="mult">{ordered} *</span></div>
+      </div>
+      <div class="classnode">Window</div>
+    </div>
+    <p>Writing <code>{ordered}</code> next to an association end tells the reader — and eventually, whoever implements the model — that sequence is a meaningful part of this relationship</p>
+  </section>
+
+  <!-- 3.2.5 -->
+  <section class="block" id="bags">
+    <h2 class="htitle"><span class="idx">05</span> Bags and Sequences</h2>
+    <p>Normally, an association allows at most <em>one</em> link between any given pair of objects. To allow the same pair of objects to be linked more than once, mark the association end with <code>{bag}</code> or <code>{sequence}</code>.</p>
+
+    <div class="analogy-grid">
+      <div class="acard">
+        <span class="k">{bag}</span>
+        <p>An unordered collection that allows duplicates. Multiple links between the same pair of objects are permitted, but no particular order among them is implied.</p>
+      </div>
+      <div class="acard">
+        <span class="k">{sequence}</span>
+        <p>An ordered collection that allows duplicates — effectively <code>{ordered}</code> plus repetition allowed. A flight itinerary that revisits the same airport twice needs a sequence, not just an ordered set.</p>
+      </div>
+    </div>
+
+    <table class="compare">
+      <tr><th>Annotation</th><th>Ordered?</th><th>Duplicates allowed?</th></tr>
+      <tr><td>(none)</td><td>No</td><td>No</td></tr>
+      <tr><td><code>{ordered}</code></td><td>Yes</td><td>No</td></tr>
+      <tr><td><code>{bag}</code></td><td>No</td><td>Yes</td></tr>
+      <tr><td><code>{sequence}</code></td><td>Yes</td><td>Yes</td></tr>
+    </table>
+  </section>
+
+  <!-- 3.2.6 -->
+  <section class="block" id="acclass">
+    
+    <h2 class="htitle"><span class="idx">06</span> Association Classes</h2>
+    <p>Sometimes a piece of data doesn't belong to either object in a relationship — it belongs to the <em>link itself</em>. An <strong>association class</strong> lets an association carry its own attributes and operations, drawn as a class box attached to the association line by a dashed line.</p>
+
+    <div class="assocclass-diagram">
+      <div class="assoc-diagram" style="margin-bottom:0;">
+        <div class="classnode">File</div>
+        <div class="assoc-mid">
+          <span class="aname">AccessibleBy</span>
+          <div class="line-row"><span class="mult">*</span><span class="ln"></span><span class="mult">*</span></div>
+        </div>
+        <div class="classnode">User</div>
+      </div>
+      <div class="dashln"></div>
+      <div class="ac-box">
+        <div class="acn">AccessibleBy</div>
+        <div class="aca">accessPermission : string</div>
+      </div>
+    </div>
+
+    
+  </section>
+
+  <!-- 3.2.7 -->
+  <section class="block" id="qualified">
+    
+    <h2 class="htitle"><span class="idx">07</span> Qualified Associations</h2>
+    <p>A <strong>qualified association</strong> uses an extra attribute . that describes the association. It is the Attributr which is used toconnect two objects</p>
+    <div class="assoc-diagram">
+      <div class="classnode">Bank</div>
+      <div class="assoc-mid">
+        <span class="aname">Services</span>
+        <div class="line-row"><span class="mult">1</span><span class="ln"></span><span class="mult">accountNumber</span><span class="ln"></span><span class="mult">0..1</span></div>
+      </div>
+      <div class="classnode">Account</div>
+    </div>
+    <p>Without a qualifier, a bank services "many" accounts, and finding one specific account means searching the whole set. With <code>accountNumber</code> as a qualifier, the model states directly: <em>given a bank and an account number, there's at most one matching account</em></p>
+  </section>
+
+ 
+</div>
+
+</body>
+</html>
