@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Object Oriented Programming using Java - Classes and Objects</title>
+
+<style>
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    margin:0;
+    background:#eef3f8;
+    line-height:1.7;
+    color:#333;
+}
+
+header{
+    background:#003366;
+    color:white;
+    padding:25px;
+    text-align:center;
+}
+
+nav{
+    background:#00509e;
+    padding:10px;
+    text-align:center;
+    position:sticky;
+    top:0;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:15px;
+    font-weight:bold;
+}
+
+nav a:hover{
+    color:yellow;
+}
+
+.container{
+    width:90%;
+    margin:auto;
+    padding:20px;
+}
+
+section{
+    background:white;
+    padding:25px;
+    margin-top:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px lightgray;
+}
+
+h2{
+    color:#003366;
+}
+
+.code{
+    background:#272822;
+    color:#f8f8f2;
+    padding:15px;
+    overflow:auto;
+    border-radius:8px;
+    font-family:Consolas;
+}
+
+.note{
+    background:#ffffcc;
+    padding:15px;
+    border-left:6px solid orange;
+}
+
+.diagram{
+    display:flex;
+    justify-content:center;
+    gap:60px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+.box{
+    width:260px;
+    border:3px solid #003366;
+    border-radius:10px;
+    background:#f9fbff;
+}
+
+.title{
+    background:#003366;
+    color:white;
+    padding:10px;
+    text-align:center;
+    font-weight:bold;
+}
+
+.content{
+    padding:15px;
+}
+
+.arrow{
+    text-align:center;
+    font-size:40px;
+    color:red;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+table,th,td{
+    border:1px solid gray;
+}
+
+th{
+    background:#003366;
+    color:white;
+}
+
+th,td{
+    padding:10px;
+}
+
+.quiz{
+    background:#eaf7ea;
+    padding:20px;
+    border-radius:10px;
+}
+
+footer{
+    background:#003366;
+    color:white;
+    text-align:center;
+    padding:15px;
+    margin-top:30px;
+}
+
+.highlight{
+    color:#003366;
+    font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>Object-Oriented Programming using Java</h1>
+<h2>Basics of Classes and Objects</h2>
+</header>
+
+<nav>
+<a href="#intro">Introduction</a>
+<a href="#class">Class</a>
+<a href="#object">Object</a>
+<a href="#java">Java Program</a>
+<a href="#comparison">Comparison</a>
+<a href="#quiz">Quiz</a>
+</nav>
+
+<div class="container">
+
+<section id="intro">
+
+<h2>1. Introduction</h2>
+
+<p>
+Object-Oriented Programming (OOP) is a programming paradigm that models
+real-world entities as <strong>objects</strong>. Java is one of the most popular
+Object-Oriented Programming languages.
+</p>
+
+<p>
+Everything in Java revolves around the concepts of
+<span class="highlight">Classes</span> and
+<span class="highlight">Objects</span>.
+</p>
+
+<div class="note">
+Think of a class as a blueprint and an object as the actual product built using that blueprint.
+</div>
+
+</section>
+
+<h2>2. What is a Class?</h2>
+
+<p>
+A <strong>Class</strong> is a user-defined data type that acts as a blueprint for creating objects. It is defined as group of object with similar properties. Class is a generic concept and does not occupy  memory space.
+</p>
+
+<h3>A Class contains</h3>
+
+<ul>
+<li>Attributes (Data Members)</li>
+<li>Methods (Functions)</li>
+</ul>
+
+<h3>Example Class</h3>
+
+<div class="diagram">
+
+<div class="box">
+
+<div class="title">Student</div>
+
+<div class="content">
+
+<b>Attributes</b>
+
+<hr>
+
+name
+
+<br>
+
+rollNo
+
+<br>
+
+mark
+
+<hr>
+
+<b>Methods</b>
+
+<hr>
+
+display()
+
+<br>
+
+calculateGrade()
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="object">
+
+<h2>3. What is an Object?</h2>
+
+<p>
+An object is an instance of a class.
+</p>
+
+<p>
+Objects occupy memory and contain actual values.
+</p>
+
+<h3>Example Objects</h3>
+
+<table>
+
+<tr>
+<th>Object</th>
+<th>Name</th>
+<th>Roll No</th>
+<th>Mark</th>
+</tr>
+
+<tr>
+<td>s1</td>
+<td>Anu</td>
+<td>1</td>
+<td>95</td>
+</tr>
+
+<tr>
+<td>s2</td>
+<td>Rahul</td>
+<td>2</td>
+<td>88</td>
+</tr>
+
+<tr>
+<td>s3</td>
+<td>Arun</td>
+<td>3</td>
+<td>76</td>
+</tr>
+
+</table>
+
+</section>
+
+
+
+<h2>4. Java Program</h2>
+
+<div class="code">
+
+class Student {<br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;String name;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int rollNo;<br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;void display(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(name);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;System.out.println(rollNo);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+
+}<br><br>
+
+public class Main{<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;public static void main(String args[]){<br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Student s1=new Student();<br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s1.name="Anu";<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s1.rollNo=101;<br><br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;s1.display();<br>
+
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+
+}
+
+</div>
+
+</section>
+
+
+
+</div>
+
+<footer>
+
+<h3>Object-Oriented Programming using Java</h3>
+
+Designed for Classroom Teaching • Classes and Objects
+
+</footer>
+
+</body>
+</html>

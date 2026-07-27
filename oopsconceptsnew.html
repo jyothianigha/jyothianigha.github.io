@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP Concepts in Java</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f6f9;
+    margin:0;
+    padding:0;
+}
+
+header{
+    background:#004080;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+.container{
+    width:80%;
+    margin:auto;
+    padding:20px;
+}
+
+section{
+    background:white;
+    margin:20px 0;
+    padding:20px;
+    border-radius:8px;
+    box-shadow:0 0 5px lightgray;
+}
+
+h2, h3{
+    color:#004080;
+}
+
+.code{
+    background:#272822;
+    color:#ffffff;
+    padding:15px;
+    border-radius:5px;
+    font-family: Consolas, monospace;
+    overflow:auto;
+}
+
+/* Style for embedded diagram containers */
+.diagram-box {
+    background-color: #f8fafc;
+    border: 1px dashed #004080;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.diagram-box svg {
+    max-width: 100%;
+    height: auto;
+}
+
+footer{
+    background:#004080;
+    color:white;
+    text-align:center;
+    padding:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>Object-Oriented Programming (OOP) in Java</h1>
+<p>Introduction to OOP Concepts</p>
+</header>
+
+<div class="container">
+
+<section>
+
+<h2>What is OOP?</h2>
+
+<p>
+Object-Oriented Programming (OOP) is a programming paradigm that organizes
+software using <strong>objects</strong>. Objects contain both
+<strong>data (attributes)</strong> and <strong>behaviour (methods)</strong>.
+</p>
+
+<p>
+Java is a fully object-oriented programming language that supports code
+reusability, modularity, and security.
+</p>
+
+</section>
+
+<section>
+
+<h2>Main OOP Concepts</h2>
+
+<ul>
+<li><strong>Class</strong> – A blueprint for creating objects.</li>
+<li><strong>Object</strong> – An instance of a class.</li>
+<li><strong>Encapsulation</strong> – Wrapping data and methods into one unit.</li>
+<li><strong>Inheritance</strong> – Acquiring properties from another class.</li>
+<li><strong>Polymorphism</strong> – One interface, many implementations.</li>
+<li><strong>Abstraction</strong> – Hiding implementation details and showing only essential features.</li>
+</ul>
+
+</section>
+
+<!-- 1. CLASS AND OBJECT -->
+<section>
+
+<h2>1. Class and Object</h2>
+<p>A class is the theoretical blueprint, while an object is a concrete instance created from that blueprint.</p>
+
+<div class="diagram-box">
+  <svg width="550" height="150" viewBox="0 0 550 150">
+    <!-- Class Blueprint -->
+    <rect x="20" y="20" width="180" height="110" rx="8" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+    <text x="110" y="45" font-size="16" font-weight="bold" fill="#0369a1" text-anchor="middle">Class: Student</text>
+    <line x1="20" y1="55" x2="200" y2="55" stroke="#0284c7" stroke-width="1"/>
+    <text x="30" y="75" font-size="13" fill="#334155">- String name</text>
+    <text x="30" y="95" font-size="13" fill="#334155">- int rollNo</text>
+    <text x="30" y="115" font-size="13" fill="#334155">+ display()</text>
+
+    <!-- Arrow -->
+    <path d="M 210 75 L 290 75" stroke="#004080" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="250" y="65" font-size="12" fill="#004080" font-weight="bold" text-anchor="middle">instantiates</text>
+
+    <!-- Object -->
+    <rect x="310" y="20" width="200" height="110" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+    <text x="410" y="45" font-size="16" font-weight="bold" fill="#15803d" text-anchor="middle">Object: s1</text>
+    <line x1="310" y1="55" x2="510" y2="55" stroke="#16a34a" stroke-width="1"/>
+    <text x="320" y="75" font-size="13" fill="#334155">name = "Anu"</text>
+    <text x="320" y="95" font-size="13" fill="#334155">rollNo = 101</text>
+    <text x="320" y="115" font-size="13" fill="#334155">display() executed</text>
+
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#004080"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+
+
+</section>
+
+<!-- 2. ENCAPSULATION -->
+<section>
+<h2>2. Encapsulation</h2>
+<p>Bundling data and methods together into a single unit (like a capsule) and keeping variables private to hide sensitive state.</p>
+
+<div class="diagram-box">
+  <svg width="450" height="140" viewBox="0 0 450 140">
+    <!-- Capsule -->
+    <rect x="50" y="20" width="350" height="100" rx="50" fill="#fef3c7" stroke="#d97706" stroke-width="3"/>
+    
+    <!-- Private Data -->
+    <rect x="80" y="40" width="130" height="60" rx="10" fill="#fca5a5" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="145" y="65" font-size="13" font-weight="bold" fill="#7f1d1d" text-anchor="middle">Private Data</text>
+    <text x="145" y="85" font-size="12" fill="#7f1d1d" text-anchor="middle">(Variables)</text>
+    
+    <!-- Public Methods -->
+    <rect x="240" y="40" width="130" height="60" rx="10" fill="#86efac" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="305" y="65" font-size="13" font-weight="bold" fill="#14532d" text-anchor="middle">Public Methods</text>
+    <text x="305" y="85" font-size="12" fill="#14532d" text-anchor="middle">(Getters/Setters)</text>
+  </svg>
+</div>
+
+
+</section>
+
+<!-- 3. INHERITANCE -->
+<section>
+<h2>3. Inheritance</h2>
+<p>The process where one class (child class) acquires the properties and behaviors of another class (parent class).</p>
+
+<div class="diagram-box">
+  <svg width="350" height="180" viewBox="0 0 350 180">
+    <!-- Parent Class -->
+    <rect x="100" y="10" width="150" height="50" rx="5" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+    <text x="175" y="30" font-size="14" font-weight="bold" fill="#3730a3" text-anchor="middle">Parent: Animal</text>
+    <text x="175" y="48" font-size="12" fill="#3730a3" text-anchor="middle">eat()</text>
+
+    <!-- Connector Line -->
+    <line x1="175" y1="110" x2="175" y2="60" stroke="#4338ca" stroke-width="2" marker-end="url(#triangle)"/>
+
+    <!-- Child Class -->
+    <rect x="100" y="110" width="150" height="50" rx="5" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+    <text x="175" y="130" font-size="14" font-weight="bold" fill="#3730a3" text-anchor="middle">Child: Dog</text>
+    <text x="175" y="148" font-size="12" fill="#3730a3" text-anchor="middle">bark() + inherits eat()</text>
+
+    <defs>
+      <marker id="triangle" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+        <path d="M 0 10 L 5 0 L 10 10 z" fill="#4338ca"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+
+</section>
+
+<!-- 4. POLYMORPHISM -->
+<section>
+<h2>4. Polymorphism</h2>
+<p>"Many forms" – The ability of a single method name to perform different actions based on the object invoking it.</p>
+
+<div class="diagram-box">
+  <svg width="450" height="150" viewBox="0 0 450 150">
+    <!-- Parent -->
+    <rect x="160" y="10" width="130" height="40" rx="5" fill="#f3e8ff" stroke="#7e22ce" stroke-width="2"/>
+    <text x="225" y="35" font-size="13" font-weight="bold" fill="#6b21a8" text-anchor="middle">makeSound()</text>
+
+    <!-- Lines -->
+    <path d="M 180 50 L 100 90" stroke="#7e22ce" stroke-width="2"/>
+    <path d="M 270 50 L 350 90" stroke="#7e22ce" stroke-width="2"/>
+
+    <!-- Children -->
+    <rect x="30" y="90" width="140" height="45" rx="5" fill="#f3e8ff" stroke="#7e22ce" stroke-width="2"/>
+    <text x="100" y="110" font-size="13" font-weight="bold" fill="#6b21a8" text-anchor="middle">Dog Object</text>
+    <text x="100" y="125" font-size="11" fill="#581c87" text-anchor="middle">Outputs: "Woof!"</text>
+
+    <rect x="280" y="90" width="140" height="45" rx="5" fill="#f3e8ff" stroke="#7e22ce" stroke-width="2"/>
+    <text x="350" y="110" font-size="13" font-weight="bold" fill="#6b21a8" text-anchor="middle">Cat Object</text>
+    <text x="350" y="125" font-size="11" fill="#581c87" text-anchor="middle">Outputs: "Meow!"</text>
+  </svg>
+</div>
+
+
+</section>
+
+<!-- 5. ABSTRACTION -->
+<section>
+<h2>5. Abstraction</h2>
+<p>Showing only necessary details to the user while hiding complex implementation mechanics internally.</p>
+
+<div class="diagram-box">
+  <svg width="450" height="130" viewBox="0 0 450 130">
+    <!-- Outer View -->
+    <rect x="20" y="25" width="140" height="80" rx="8" fill="#ccfbf1" stroke="#0f766e" stroke-width="2"/>
+    <text x="90" y="60" font-size="13" font-weight="bold" fill="#115e59" text-anchor="middle">User Interface</text>
+    <text x="90" y="80" font-size="12" fill="#115e59" text-anchor="middle">pressStart()</text>
+
+    <!-- Arrow -->
+    <path d="M 170 65 L 270 65" stroke="#0f766e" stroke-dasharray="4" stroke-width="2" marker-end="url(#arrow2)"/>
+    <text x="220" y="55" font-size="11" fill="#0f766e" text-anchor="middle">Hides Logic</text>
+
+    <!-- Internal Mechanics -->
+    <rect x="280" y="25" width="150" height="80" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+    <text x="355" y="50" font-size="12" font-weight="bold" fill="#334155" text-anchor="middle">Internal Engine</text>
+    <text x="355" y="70" font-size="10" fill="#475569" text-anchor="middle">Complex logic &</text>
+    <text x="355" y="85" font-size="10" fill="#475569" text-anchor="middle">hardware control</text>
+
+    <defs>
+      <marker id="arrow2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f766e"/>
+      </marker>
+    </defs>
+  </svg>
+</div>
+
+
+</section>
+
+<section>
+
+<h2>Advantages of OOP</h2>
+
+<ul>
+<li>Easy to maintain programs.</li>
+<li>Promotes code reusability.</li>
+<li>Improves security through data hiding.</li>
+<li>Supports modular programming.</li>
+<li>Makes software easier to test and extend.</li>
+</ul>
+
+</section>
+
+</div>
+
+<footer>
+
+<p>Object-Oriented Programming in Java | Simple Learning Page</p>
+
+</footer>
+
+</body>
+</html>

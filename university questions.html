@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Class Methods & Constructors - Solved Questions</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #004080;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+section {
+    background: white;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px lightgray;
+}
+
+h2 {
+    color: #004080;
+    border-bottom: 2px solid #e0f2fe;
+    padding-bottom: 5px;
+}
+
+h3 {
+    color: #0284c7;
+    margin-top: 15px;
+}
+
+.code {
+    background: #272822;
+    color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: Consolas, monospace;
+    overflow: auto;
+    line-height: 1.5;
+}
+
+.note {
+    background-color: #e0f2fe;
+    border-left: 4px solid #0284c7;
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.exam-tag {
+    background-color: #004080;
+    color: white;
+    padding: 3px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+footer {
+    background: #004080;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Java Classes, Methods & Constructors</h1>
+    <p>Solutions & Answers to Previous University Exam Questions</p>
+</header>
+
+<div class="container">
+
+<!-- SECTION: DEC 2019 -->
+<section>
+    <h2>DEC 2019 <span class="exam-tag">Dec 2019</span></h2>
+
+    <h3>Q1. Copy Constructor with Rectangle Class</h3>
+    <p><strong>Question:</strong> Model a class 'Rectangle' with 'Length' and 'Breadth' that allows initialization by copying values from an already initialized instance[cite: 3].</p>
+    
+    <div class="note">
+        <strong>Explanation:</strong> In Java, a copy constructor takes an object of the same class as an argument and copies its fields into the new instance[cite: 3].
+    </div>
+
+    <pre class="code"><code>class Rectangle {
+    double length;
+    double breadth;
+
+    // Parameterized Constructor
+    Rectangle(double length, double breadth) {
+        this.length = length;
+        this.breadth = breadth;
+    }
+
+    // Copy Constructor
+    Rectangle(Rectangle rect) {
+        this.length = rect.length;
+        this.breadth = rect.breadth;
+    }
+
+    void display() {
+        System.out.println("Length: " + length + ", Breadth: " + breadth);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Rectangle r1 = new Rectangle(10.5, 5.0); // Original
+        Rectangle r2 = new Rectangle(r1);        // Copying instance
+
+        System.out.print("r1: "); r1.display();
+        System.out.print("r2: "); r2.display();
+    }
+}</code></pre>
+
+    <h3>Q2. Complex Number Class using Constructor Overloading</h3>
+    <p><strong>Question:</strong> Create a 'Complex' class that uses constructor overloading to initialize complex numbers[cite: 3].</p>
+
+    <pre class="code"><code>class Complex {
+    double real;
+    double imag;
+
+    // Default Constructor (0 + 0i)
+    Complex() {
+        this.real = 0.0;
+        this.imag = 0.0;
+    }
+
+    // Single Parameter (real number: real + 0i)
+    Complex(double real) {
+        this.real = real;
+        this.imag = 0.0;
+    }
+
+    // Two Parameters (real + imag i)
+    Complex(double real, double imag) {
+        this.real = real;
+        this.imag = imag;
+    }
+
+    void display() {
+        System.out.println(real + " + " + imag + "i");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Complex c1 = new Complex();           // 0.0 + 0.0i
+        Complex c2 = new Complex(5.5);        // 5.5 + 0.0i
+        Complex c3 = new Complex(3.0, 4.2);   // 3.0 + 4.2i
+
+        c1.display();
+        c2.display();
+        c3.display();
+    }
+}</code></pre>
+
+    <h3>Q3. Object Passing Mechanism in Java</h3>
+    <p><strong>Question:</strong> Explain the argument passing mechanism used in Java when an instance of a class is passed as an argument[cite: 3].</p>
+    
+    <div class="note">
+        <strong>Answer:</strong> Java uses <strong>Pass-by-Value</strong> exclusively[cite: 3]. However, when passing an object, the value passed to the method is the <strong>reference (memory address)</strong> to the object[cite: 3]. Modifications made to object properties inside the method directly affect the original object[cite: 3].
+    </div>
+
+    <pre class="code"><code>class Box {
+    int size = 10;
+}
+
+public class Main {
+    static void modifyBox(Box b) {
+        b.size = 50; // Modifies original object in heap memory
+    }
+
+    public static void main(String[] args) {
+        Box myBox = new Box();
+        System.out.println("Before: " + myBox.size); // Output: 10
+        modifyBox(myBox);
+        System.out.println("After: " + myBox.size);  // Output: 50
+    }
+}</code></pre>
+</section>
+
+<!-- SECTION: APRIL 2018 & DEC 2018 -->
+<section>
+    <h2>APRIL 2018 / DEC 2018 <span class="exam-tag">April 2018</span> <span class="exam-tag">Dec 2018</span></h2>
+
+    <h3>Q1. Uses of Constructor & Calling Default Constructor Error</h3>
+    <p><strong>Question:</strong> What is a constructor? What are its uses? Is it possible to create an object using <code>A ob = new A();</code> if class A contains ONLY parameterized constructors? Justify[cite: 3].</p>
+
+    <div class="note">
+        <strong>Answer:</strong>
+        <p><strong>Constructor:</strong> A special member function used to initialize objects upon creation[cite: 3].</p>
+        <p><strong>Uses:</strong> Assign initial values to instance attributes and allocate resources during object creation[cite: 3].</p>
+        <p><strong>Is <code>A ob = new A();</code> possible?</strong> <strong>NO[cite: 3].</strong></p>
+        <p><strong>Justification:</strong> The Java compiler automatically generates a default no-argument constructor <em>ONLY</em> if the class defines no constructors at all[cite: 3]. Once a parameterized constructor is defined explicitly, the compiler suppresses the automatic default constructor[cite: 3]. Thus, calling <code>new A()</code> without defining an explicit no-arg constructor causes a compilation error[cite: 3].</p>
+    </div>
+
+    <pre class="code"><code>class A {
+    int val;
+
+    // ONLY parameterized constructor defined
+    A(int v) {
+        this.val = v;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // A ob = new A(); // COMPILATION ERROR: Constructor A() is undefined
+
+        A ob = new A(100); // Correct Usage!
+    }
+}</code></pre>
+</section>
+
+<!-- SECTION: MAY 2019 -->
+<section>
+    <h2>MAY 2019 <span class="exam-tag">May 2019</span></h2>
+
+    <h3>Q1. Queue Data Structure Implementation</h3>
+    <p><strong>Question:</strong> Define a Queue class with a default constructor, parameterized constructor, enqueue, dequeue, and display functions[cite: 3].</p>
+
+    <pre class="code"><code>class Queue {
+    private int arr[];
+    private int front, rear, capacity, count;
+
+    // Default Constructor (Default capacity = 5)
+    Queue() {
+        this(5);
+    }
+
+    // Parameterized Constructor
+    Queue(int size) {
+        arr = new int[size];
+        capacity = size;
+        front = 0;
+        rear = -1;
+        count = 0;
+    }
+
+    public void enqueue(int item) {
+        if (count == capacity) {
+            System.out.println("Queue Overflow!");
+            return;
+        }
+        rear = (rear + 1) % capacity;
+        arr[rear] = item;
+        count++;
+    }
+
+    public int dequeue() {
+        if (count == 0) {
+            System.out.println("Queue Underflow!");
+            return -1;
+        }
+        int x = arr[front];
+        front = (front + 1) % capacity;
+        count--;
+        return x;
+    }
+
+    public void display() {
+        if (count == 0) {
+            System.out.println("Queue is empty!");
+            return;
+        }
+        System.out.print("Queue elements: ");
+        for (int i = 0; i < count; i++) {
+            System.out.print(arr[(front + i) % capacity] + " ");
+        }
+        System.out.println();
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Queue q = new Queue(3);
+        q.enqueue(10);
+        q.enqueue(20);
+        q.display();       // Output: 10 20
+        q.dequeue();
+        q.display();       // Output: 20
+    }
+}</code></pre>
+</section>
+
+<!-- SECTION: SEPTEMBER 2020 -->
+<section>
+    <h2>SEPTEMBER 2020 <span class="exam-tag">Sept 2020</span></h2>
+
+    <h3>Q1. Box Class with Volume Calculation</h3>
+    <p><strong>Question:</strong> Create a class called 'Box' with length, breadth, and height, default and parameterized constructors, and a display volume method[cite: 3].</p>
+
+    <pre class="code"><code>class Box {
+    double length, breadth, height;
+
+    // Default Constructor
+    Box() {
+        length = breadth = height = 1.0;
+    }
+
+    // Parameterized Constructor
+    Box(double l, double b, double h) {
+        length = l;
+        breadth = b;
+        height = h;
+    }
+
+    double getVolume() {
+        return length * breadth * height;
+    }
+
+    void displayVolume() {
+        System.out.println("Box Volume: " + getVolume());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Box defaultBox = new Box();
+        Box customBox = new Box(3.0, 4.0, 5.0);
+
+        defaultBox.displayVolume(); // Output: 1.0
+        customBox.displayVolume();  // Output: 60.0
+    }
+}</code></pre>
+</section>
+
+<!-- SECTION: JULY 2017 -->
+<section>
+    <h2>JULY 2017 <span class="exam-tag">July 2017</span></h2>
+
+    <h3>Q1. Class Implementation: Bank, Vehicle, and Student</h3>
+    <p><strong>Question:</strong> Implement Java classes with suitable instance variables for (1) Bank, (2) Vehicle, and (3) Student[cite: 3].</p>
+
+    <pre class="code"><code>// 1. Bank Class
+class Bank {
+    String accountHolder;
+    double balance;
+
+    Bank(String accountHolder, double balance) {
+        this.accountHolder = accountHolder;
+        this.balance = balance;
+    }
+}
+
+// 2. Vehicle Class
+class Vehicle {
+    String model;
+    int speed;
+
+    Vehicle(String model, int speed) {
+        this.model = model;
+        this.speed = speed;
+    }
+}
+
+// 3. Student Class
+class Student {
+    String name;
+    int rollNo;
+
+    Student(String name, int rollNo) {
+        this.name = name;
+        this.rollNo = rollNo;
+    }
+}</code></pre>
+</section>
+
+<!-- SECTION: DEC 2020 -->
+<section>
+    <h2>DECEMBER 2020 <span class="exam-tag">Dec 2020</span></h2>
+
+    <h3>Q1. Concept of Classes & Objects via Student Application</h3>
+    <p><strong>Question:</strong> Discuss classes and objects in Java using a 'Student' object in a Student Management Application[cite: 3].</p>
+
+    <div class="note">
+        <strong>Concepts:</strong>
+        <ul>
+            <li><strong>Class:</strong> Acts as a template defining properties (e.g., id, name, GPA) and behavior (e.g., calculateGrade)[cite: 3].</li>
+            <li><strong>Object:</strong> A concrete runtime instance allocated in Heap Memory holding specific student data[cite: 3].</li>
+        </ul>
+    </div>
+
+    <pre class="code"><code>class Student {
+    // Attributes (State)
+    int studentId;
+    String name;
+    double gpa;
+
+    // Constructor
+    Student(int studentId, String name, double gpa) {
+        this.studentId = studentId;
+        this.name = name;
+        this.gpa = gpa;
+    }
+
+    // Method (Behavior)
+    char calculateGrade() {
+        if (gpa >= 3.5) return 'A';
+        else if (gpa >= 2.5) return 'B';
+        else return 'C';
+    }
+
+    void printStudentReport() {
+        System.out.println("ID: " + studentId + " | Name: " + name + " | Grade: " + calculateGrade());
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Instantiating Student Objects
+        Student student1 = new Student(101, "Alice", 3.8);
+        Student student2 = new Student(102, "Bob", 2.9);
+
+        student1.printStudentReport();
+        student2.printStudentReport();
+    }
+}</code></pre>
+</section>
+
+</div>
+
+<footer>
+    <p>Java University Exam Solutions | Solved Answer Key</p>
+</footer>
+
+</body>
+</html>

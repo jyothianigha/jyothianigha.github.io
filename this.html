@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java 'this' Keyword Guide</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #004080;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+section {
+    background: white;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px lightgray;
+}
+
+h2, h3 {
+    color: #004080;
+}
+
+.code {
+    background: #272822;
+    color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: Consolas, monospace;
+    overflow: auto;
+    line-height: 1.5;
+}
+
+.diagram-box {
+    background-color: #f8fafc;
+    border: 1px dashed #004080;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.diagram-box svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.note {
+    background-color: #e0f2fe;
+    border-left: 4px solid #0284c7;
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 0 4px 4px 0;
+}
+
+footer {
+    background: #004080;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>The 'this' Keyword in Java</h1>
+    <p>Understand reference handling and instance differentiation in Java</p>
+</header>
+
+<div class="container">
+
+<!-- SECTION 1: WHAT IS THIS -->
+<section>
+    <h2>1. What is the <code>this</code> Keyword?</h2>
+    <p>In Java, <code>this</code> is a <strong>reference variable</strong> that refers to the <em>current object</em>—the instance whose method or constructor is currently being called.</p>
+    
+    <div class="note">
+        <strong>Core Uses of <code>this</code>:</strong>
+        <ul>
+            <li>To resolve naming conflicts between instance variables and parameters.</li>
+            <li>To invoke the current class constructor (Constructor Chaining).</li>
+            <li>To pass the current object as an argument to another method.</li>
+            <li>To return the current class instance from a method.</li>
+        </ul>
+    </div>
+
+    <div class="diagram-box">
+        <svg width="500" height="150" viewBox="0 0 500 150">
+            <!-- Heap Object -->
+            <rect x="280" y="25" width="180" height="100" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+            <text x="370" y="50" font-size="14" font-weight="bold" fill="#15803d" text-anchor="middle">Student Object (Heap)</text>
+            <line x1="280" y1="60" x2="460" y2="60" stroke="#16a34a" stroke-width="1"/>
+            <text x="295" y="80" font-size="12" fill="#14532d">name = "Anu"</text>
+            <text x="295" y="100" font-size="12" fill="#14532d">rollNo = 101</text>
+
+            <!-- 'this' Reference pointer -->
+            <rect x="40" y="50" width="120" height="50" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+            <text x="100" y="80" font-size="14" font-weight="bold" fill="#0369a1" text-anchor="middle">this</text>
+
+            <!-- Pointer Arrow -->
+            <path d="M 160 75 L 270 75" stroke="#004080" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="215" y="65" font-size="11" fill="#004080" font-weight="bold" text-anchor="middle">Points to</text>
+
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#004080"/>
+                </marker>
+            </defs>
+        </svg>
+    </div>
+</section>
+
+<!-- SECTION 2: RESOLVING VARIABLE SHADOWING -->
+<section>
+    <h2>2. Resolving Variable Shadowing</h2>
+    <p>When a method/constructor parameter has the exact same name as an instance variable, the parameter <em>shadows</em> the field. Use <code>this.variableName</code> to explicitly refer to the instance variable.</p>
+
+    <pre class="code"><code>class Student {
+    String name;  // Instance Variable
+    int rollNo;   // Instance Variable
+
+    Student(String name, int rollNo) {
+        // 'this.name' refers to the instance field
+        // 'name' refers to the local constructor parameter
+        this.name = name;      
+        this.rollNo = rollNo;  
+    }
+
+    void display() {
+        System.out.println(this.name + " - " + this.rollNo);
+    }
+}</code></pre>
+</section>
+
+<!-- SECTION 3: CONSTRUCTOR CHAINING USING THIS() -->
+<section>
+    <h2>3. Constructor Chaining: <code>this()</code></h2>
+    <p>The <code>this()</code> method call allows one constructor to invoke another constructor in the same class. It must always be the <strong>first statement</strong> inside the calling constructor.</p>
+
+    <div class="diagram-box">
+        <svg width="480" height="130" viewBox="0 0 480 130">
+            <!-- Default Constructor Box -->
+            <rect x="20" y="30" width="170" height="70" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="105" y="55" font-size="13" font-weight="bold" fill="#92400e" text-anchor="middle">Student()</text>
+            <text x="105" y="75" font-size="11" fill="#92400e" text-anchor="middle">Calls this("Unknown", 0)</text>
+
+            <path d="M 190 65 L 260 65" stroke="#004080" stroke-width="2" marker-end="url(#arrow)"/>
+
+            <!-- Target Constructor Box -->
+            <rect x="270" y="30" width="190" height="70" rx="6" fill="#e0e7ff" stroke="#4338ca" stroke-width="2"/>
+            <text x="365" y="55" font-size="13" font-weight="bold" fill="#3730a3" text-anchor="middle">Student(name, rollNo)</text>
+            <text x="365" y="75" font-size="11" fill="#3730a3" text-anchor="middle">Initializes fields</text>
+        </svg>
+    </div>
+
+    <pre class="code"><code>class Student {
+    String name;
+    int rollNo;
+
+    // Default Constructor
+    Student() {
+        this("Unknown", 0); // Delegates work to the parameterized constructor
+    }
+
+    // Parameterized Constructor
+    Student(String name, int rollNo) {
+        this.name = name;
+        this.rollNo = rollNo;
+    }
+}</code></pre>
+</section>
+
+<!-- SECTION 4: PASSING AND RETURNING THIS -->
+<section>
+    <h2>4. Advanced Usage: Passing & Returning <code>this</code></h2>
+    
+    <h3>A. Passing <code>this</code> as a Method Argument</h3>
+    <p>You can pass <code>this</code> to provide the current object instance to another method or class utility.</p>
+    <pre class="code"><code>class Printer {
+    void printStudentDetails(Student s) {
+        System.out.println("Printing details for: " + s.name);
+    }
+}
+
+class Student {
+    String name = "Anu";
+
+    void sendToPrinter() {
+        Printer p = new Printer();
+        p.printStudentDetails(this); // Passes current Student instance
+    }
+}</code></pre>
+
+    <h3>B. Returning <code>this</code> (Method Chaining)</h3>
+    <p>Returning <code>this</code> enables method chaining (commonly used in Builder patterns).</p>
+    <pre class="code"><code>class StudentBuilder {
+    String name;
+    int rollNo;
+
+    public StudentBuilder setName(String name) {
+        this.name = name;
+        return this; // Returns current builder instance
+    }
+
+    public StudentBuilder setRollNo(int rollNo) {
+        this.rollNo = rollNo;
+        return this; // Returns current builder instance
+    }
+}
+
+// Usage:
+// StudentBuilder b = new StudentBuilder().setName("Anu").setRollNo(101);</code></pre>
+</section>
+
+<!-- SUMMARY TABLE -->
+<section>
+    <h2>Summary Table</h2>
+
+    <table border="1" cellpadding="10" cellspacing="0" width="100%">
+        <tr bgcolor="#004080" style="color:white;">
+            <th>Use Case</th>
+            <th>Syntax / Pattern</th>
+            <th>Purpose</th>
+        </tr>
+        <tr>
+            <td><strong>Field Disambiguation</strong></td>
+            <td><code>this.fieldName = fieldName;</code></td>
+            <td>Distinguishes instance variables from local method parameters.</td>
+        </tr>
+        <tr>
+            <td><strong>Constructor Chaining</strong></td>
+            <td><code>this(arg1, arg2);</code></td>
+            <td>Invokes another constructor in the same class (must be first line).</td>
+        </tr>
+        <tr>
+            <td><strong>Method Argument</strong></td>
+            <td><code>otherMethod(this);</code></td>
+            <td>Passes the current object reference to an external method.</td>
+        </tr>
+        <tr>
+            <td><strong>Return Current Object</strong></td>
+            <td><code>return this;</code></td>
+            <td>Allows fluid method chaining syntax.</td>
+        </tr>
+    </table>
+</section>
+
+<!-- QUIZ -->
+<section>
+    <h2>Quick Check</h2>
+    <ol>
+        <li>Can the <code>this</code> keyword be used inside a <code>static</code> method? Why or why not?</li>
+        <li>What error occurs if <code>this()</code> is placed on the second line of a constructor?</li>
+        <li>How does <code>this.variable</code> differ from just writing <code>variable</code> inside a method?</li>
+        <li>What pattern frequently uses <code>return this;</code> from setter-like methods?</li>
+    </ol>
+</section>
+
+</div>
+
+<footer>
+    <p>Java 'this' Keyword Tutorial | Interactive Learning Resource</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Access Specifiers Guide</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #004080;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+section {
+    background: white;
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px lightgray;
+}
+
+h2, h3 {
+    color: #004080;
+}
+
+.code {
+    background: #272822;
+    color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    font-family: Consolas, monospace;
+    overflow: auto;
+    line-height: 1.5;
+}
+
+.diagram-box {
+    background-color: #f8fafc;
+    border: 1px dashed #004080;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.diagram-box svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.note {
+    background-color: #e0f2fe;
+    border-left: 4px solid #0284c7;
+    padding: 12px;
+    margin: 15px 0;
+    border-radius: 0 4px 4px 0;
+}
+
+footer {
+    background: #004080;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Access Specifiers in Java</h1>
+    <p>Master scope and encapsulation rules across classes and packages</p>
+</header>
+
+<div class="container">
+
+<!-- SECTION 1: WHAT ARE ACCESS SPECIFIERS -->
+<section>
+    <h2>1. What are Access Specifiers?</h2>
+    <p><strong>Access Specifiers</strong> (also known as access modifiers) in Java define the <strong>scope and visibility</strong> of classes, constructors, variables, and methods. They control which other parts of your program can read or modify a specific member.</p>
+    
+    <div class="note">
+        <strong>The 4 Access Levels in Java:</strong>
+        <ul>
+            <li><strong>private:</strong> Accessible <em>only</em> within the declared class.</li>
+            <li><strong>default (no modifier):</strong> Accessible within the <em>same package</em>.</li>
+            <li><strong>protected:</strong> Accessible within the <em>same package</em> and by <em>subclasses</em> in other packages.</li>
+            <li><strong>public:</strong> Accessible <em>everywhere</em> across all packages.</li>
+        </ul>
+    </div>
+
+    <div class="diagram-box">
+        <svg width="550" height="200" viewBox="0 0 550 200">
+            <!-- Outer Scope: World -->
+            <rect x="20" y="10" width="510" height="180" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+            <text x="35" y="32" font-size="12" font-weight="bold" fill="#0369a1">Public (Everywhere)</text>
+
+            <!-- Package Scope -->
+            <rect x="50" y="45" width="450" height="135" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+            <text x="65" y="65" font-size="12" font-weight="bold" fill="#92400e">Protected (Subclasses) & Default (Package)</text>
+
+            <!-- Class Scope -->
+            <rect x="180" y="80" width="190" height="85" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+            <text x="275" y="105" font-size="13" font-weight="bold" fill="#991b1b" text-anchor="middle">Private</text>
+            <text x="275" y="125" font-size="11" fill="#7f1d1d" text-anchor="middle">(Class Only)</text>
+        </svg>
+    </div>
+</section>
+
+<!-- SECTION 2: ACCESS SPECIFIER EXAMPLES -->
+<section>
+    <h2>2. Code Examples by Modifier</h2>
+    
+    <h3>A. Private Modifier</h3>
+    <p>Restricts access strictly inside the same class file.</p>
+    <pre class="code"><code>package com.example;
+
+public class Student {
+    // Private variable cannot be accessed directly from outside
+    private String secretCode = "1234";
+
+    private void printSecret() {
+        System.out.println(secretCode); // Allowed: Inside the same class
+    }
+}</code></pre>
+
+    <h3>B. Default Access (Package-Private)</h3>
+    <p>Applied when no keyword is specified. Accessible to any class in the same package.</p>
+    <pre class="code"><code>package com.example;
+
+class Course { // Default class visibility
+    String courseName = "Java Programming"; // Default variable visibility
+
+    void display() { // Default method visibility
+        System.out.println("Course: " + courseName);
+    }
+}</code></pre>
+
+    <h3>C. Protected Modifier</h3>
+    <p>Accessible within the package and by child classes outside the package via inheritance.</p>
+    <pre class="code"><code>package com.parent;
+
+public class Person {
+    protected String nationalId = "ID-9901";
+}
+
+// In a different package:
+package com.child;
+import com.parent.Person;
+
+public class Employee extends Person {
+    public void showId() {
+        // Allowed because Employee inherits from Person
+        System.out.println(nationalId); 
+    }
+}</code></pre>
+
+    <h3>D. Public Modifier</h3>
+    <p>Provides unrestricted access from any package in the application.</p>
+    <pre class="code"><code>package com.example;
+
+public class Application {
+    public String appName = "MyJavaApp";
+
+    public void start() {
+        System.out.println("App Started!");
+    }
+}</code></pre>
+</section>
+
+<!-- SECTION 3: VISIBILITY MATRIX TABLE -->
+<section>
+    <h2>3. Access Specifiers Matrix</h2>
+    <p>Use this reference table to quickly review access rules across different boundaries:</p>
+
+    <table border="1" cellpadding="10" cellspacing="0" width="100%">
+        <tr bgcolor="#004080" style="color:white;">
+            <th>Access Modifier</th>
+            <th>Same Class</th>
+            <th>Same Package</th>
+            <th>Subclass (Diff Package)</th>
+            <th>World (Diff Package)</th>
+        </tr>
+        <tr>
+            <td><strong>private</strong></td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+            <td align="center" style="color:red; font-weight:bold;">No</td>
+            <td align="center" style="color:red; font-weight:bold;">No</td>
+            <td align="center" style="color:red; font-weight:bold;">No</td>
+        </tr>
+        <tr>
+            <td><strong>default</strong> (no modifier)</td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+            <td align="center" style="color:red; font-weight:bold;">No</td>
+            <td align="center" style="color:red; font-weight:bold;">No</td>
+        </tr>
+        <tr>
+            <td><strong>protected</strong></td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+            <td align="center" style="color:red; font-weight:bold;">No</td>
+        </tr>
+        <tr>
+            <td><strong>public</strong></td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+            <td align="center" style="color:green; font-weight:bold;">Yes</td>
+        </tr>
+    </table>
+</section>
+
+
+
+</div>
+
+<footer>
+    <p>Java Access Specifiers Tutorial | Interactive Learning Resource</p>
+</footer>
+
+</body>
+</html>
