@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Command-Line Arguments in Java</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#eef0f5;
+    --paper2:#e3e6ee;
+    --ink:#1b1f2a;
+    --ink-soft:#5b6072;
+    --rule:#1b1f2a;
+
+    --term-bg:#20242e;
+    --term-line:#343a48;
+
+    --green:#2f8f5b;
+    --green-pale:#dcefe3;
+    --green-deep:#1f6642;
+
+    --amber:#c99a2e;
+    --amber-pale:#f6ecd2;
+
+    --red:#b23b3b;
+    --red-pale:#f6dede;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:'Work Sans', sans-serif; line-height:1.65; font-size:15.5px;
+  }
+  h1,h2{ font-family:'Instrument Serif', serif; font-weight:400; margin:0; }
+  h1 i, h2 i{ color:var(--green-deep); font-style:italic; }
+  .mono, code, pre{ font-family:'JetBrains Mono', monospace; }
+
+  .wrap{ max-width:940px; margin:0 auto; padding:0 24px; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:940px; margin:0 auto; padding:18px 24px;
+    font-family:'JetBrains Mono',monospace; font-size:12px;
+  }
+  .topbar .mark{ font-weight:700; }
+  .topbar .mark .dollar{ color:var(--green-deep); }
+  .topbar nav a{ margin-left:16px; text-decoration:none; color:var(--ink-soft); border-bottom:1px solid transparent; }
+  .topbar nav a:hover{ color:var(--ink); border-color:var(--ink); }
+
+  /* ---------- hero ---------- */
+  .hero{ padding:26px 0 8px; text-align:center; }
+  .hero h1{ font-size:clamp(30px,5.2vw,54px); line-height:1.15; max-width:760px; margin:0 auto 14px; }
+  .hero p.sub{ max-width:540px; margin:0 auto; color:var(--ink-soft); font-size:16px; }
+
+  /* ---------- terminal ---------- */
+  .terminal{
+    max-width:760px; margin:36px auto 0; background:var(--term-bg); border-radius:9px;
+    overflow:hidden; box-shadow:0 18px 40px -18px rgba(20,20,30,.45);
+  }
+  .term-chrome{
+    display:flex; align-items:center; gap:7px; padding:10px 14px;
+    border-bottom:1px solid var(--term-line);
+  }
+  .term-chrome .dot{ width:10px; height:10px; border-radius:50%; }
+  .term-chrome .dot:nth-child(1){ background:#e2564f; }
+  .term-chrome .dot:nth-child(2){ background:#e5b93f; }
+  .term-chrome .dot:nth-child(3){ background:#3fae5c; }
+  .term-chrome .tlabel{ margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:11px; color:#7d8398; }
+  .term-body{ padding:26px 28px 30px; }
+
+  .cmdrow{ display:flex; align-items:flex-start; gap:14px; flex-wrap:wrap; font-family:'JetBrains Mono',monospace; }
+  .cmdfixed{ flex:none; font-size:16px; padding-top:3px; white-space:nowrap; }
+  .cmdfixed .prompt{ color:#3fae5c; }
+  .cmdfixed .prog{ color:#7d8398; }
+
+  .cmdtoken{ display:flex; flex-direction:column; align-items:center; gap:0; flex:none; }
+  .cmdtoken .tok{
+    font-size:16px; color:#eef0f5; padding:2px 8px; border-radius:3px; white-space:nowrap;
+  }
+  .cmdtoken .tok.hl0{ background:rgba(63,174,92,.25); }
+  .cmdtoken .tok.hl1{ background:rgba(229,185,63,.25); }
+  .cmdtoken .tok.hl2{ background:rgba(120,150,229,.25); }
+  .cmdtoken .stub{ border-left:1.5px dashed #4a5064; height:22px; margin-top:2px; }
+  .cmdtoken .argcell{
+    background:#282d39; border:1.5px solid var(--term-line); border-radius:5px;
+    padding:8px 10px; font-family:'JetBrains Mono',monospace; font-size:12px; color:#eef0f5;
+    margin-top:2px; white-space:nowrap; text-align:center;
+  }
+  .argcell b{ display:block; font-size:10px; color:#8f96ab; font-weight:500; margin-bottom:3px; }
+  .arglen{
+    align-self:center; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#8f96ab;
+    padding-top:3px; margin-left:auto;
+  }
+
+  .term-note{ margin-top:18px; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#8f96ab; }
+  .term-note em{ color:#e5b93f; font-style:normal; }
+
+  /* ---------- sections ---------- */
+  section{ padding:52px 0; border-top:1.5px solid #d6d9e2; }
+  section.notop{ border-top:none; }
+  .kicker{ font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--green-deep); margin-bottom:10px; display:block; }
+  h2.h{ font-size:30px; margin-bottom:14px; }
+  p.lead{ font-size:16px; color:var(--ink-soft); max-width:660px; }
+
+  pre.code{
+    background:var(--term-bg); color:#eef0f5; padding:18px 18px; overflow-x:auto;
+    font-size:12.6px; line-height:1.7; margin:16px 0 0; border-radius:7px;
+  }
+  pre.code .kw{ color:#7896e5; }
+  pre.code .tp{ color:#e5b93f; }
+  pre.code .str{ color:#7fc994; }
+  pre.code .cm{ color:#7d8398; font-style:italic; }
+  pre.code .err{ color:#e2564f; }
+
+  .filecap{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); margin:14px 0 0; }
+
+  .two-col{ display:grid; grid-template-columns:1.1fr .9fr; gap:30px; margin-top:8px; align-items:start; }
+  .callout{
+    background:#fff; border:1.5px solid var(--rule); border-left:5px solid var(--green);
+    padding:16px 18px; font-size:14px;
+  }
+  .callout.warn{ border-left-color:var(--amber); }
+  .callout.danger{ border-left-color:var(--red); }
+  .callout h4{ margin:0 0 6px; font-family:'JetBrains Mono',monospace; font-size:12.5px; text-transform:uppercase; }
+  .callout p{ margin:0; color:var(--ink-soft); }
+
+  /* run examples */
+  .runs{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+  .run{ background:var(--term-bg); border-radius:7px; padding:16px 18px; }
+  .run .rline{ font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#eef0f5; white-space:pre-wrap; }
+  .run .rline .prompt{ color:#3fae5c; }
+  .run .rline.out{ color:#b7bdd0; }
+  .run .rline.err{ color:#e2564f; }
+  .run-label{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--ink-soft); margin-bottom:8px; }
+
+  /* patterns */
+  .pattern-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:20px; }
+  .pattern-card{ background:#fff; border:1.5px solid var(--rule); padding:16px 18px; }
+  .pattern-card h4{ font-family:'JetBrains Mono',monospace; font-size:12.5px; margin:0 0 8px; color:var(--green-deep); }
+  .pattern-card code.inline{ display:block; background:var(--paper2); padding:8px 10px; border-radius:4px; font-size:12px; margin:8px 0; }
+  .pattern-card p{ margin:0; font-size:13.3px; color:var(--ink-soft); }
+
+  /* glossary */
+  .glossary{ display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:20px; }
+  .gterm{ background:#fff; border:1.5px solid var(--rule); padding:12px 16px; font-size:13.5px; }
+  .gterm b{ display:block; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--green-deep); margin-bottom:3px; }
+
+  footer{ padding:28px 0 50px; text-align:center; font-family:'JetBrains Mono',monospace; font-size:11.5px; color:var(--ink-soft); }
+
+  @media (max-width:720px){
+    .two-col, .runs, .pattern-grid, .glossary{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="mark"><span class="dollar">$</span> java · args</span>
+  <nav>
+    <a href="#anatomy">Anatomy</a>
+    <a href="#reading">Reading them</a>
+    <a href="#example">Example</a>
+    <a href="#patterns">Patterns</a>
+    <a href="#glossary">Glossary</a>
+  </nav>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Command Line arguments</h1>
+   
+    <div class="terminal">
+      <div class="term-chrome">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <span class="tlabel">bash</span>
+      </div>
+      <div class="term-body">
+        <div class="cmdrow">
+          <div class="cmdfixed"><span class="prompt">$</span> <span class="prog">java Greet</span></div>
+          <div class="cmdtoken">
+            <div class="tok hl0">Hello</div>
+            <div class="stub"></div>
+            <div class="argcell" style="border-color:rgba(63,174,92,.5);"><b>args[0]</b>"Hello"</div>
+          </div>
+          <div class="cmdtoken">
+            <div class="tok hl1">World</div>
+            <div class="stub"></div>
+            <div class="argcell" style="border-color:rgba(229,185,63,.5);"><b>args[1]</b>"World"</div>
+          </div>
+          <div class="cmdtoken">
+            <div class="tok hl2">3</div>
+            <div class="stub"></div>
+            <div class="argcell" style="border-color:rgba(120,150,229,.5);"><b>args[2]</b>"3"</div>
+          </div>
+          <div class="arglen">args.length&nbsp;=&nbsp;3</div>
+        </div>
+
+        <div class="term-note">Note: <em>java</em> and <em>Greet</em> are not in the array — Java's <code>args</code> starts counting from the first word <em>after</em> the class name.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANATOMY -->
+  <section class="notop" id="anatomy">
+    <span class="kicker">01 · Anatomy</span>
+    <h2 class="h">Where <code>args</code> comes from</h2>
+    <p class="lead">Every Java program starts at one method, and the JVM hands it exactly one thing: an array of Strings holding whatever you typed after the class name.</p>
+    <pre class="code"><span class="kw">public</span> <span class="kw">class</span> <span class="tp">Greet</span> {
+    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">void</span> main(String[] args) {
+        <span class="cm">// args is created and filled in by the JVM before main() runs</span>
+        System.out.println(<span class="str">"You passed "</span> + args.length + <span class="str">" argument(s)"</span>);
+    }
+}</pre>
+    <div class="two-col" style="margin-top:22px;">
+      <div>
+        <p>Compile and run it, then try passing different numbers of words:</p>
+        <div class="runs">
+          <div class="run">
+            <div class="run-label">no arguments</div>
+            <div class="rline"><span class="prompt">$</span> java Greet</div>
+            <div class="rline out">You passed 0 argument(s)</div>
+          </div>
+          <div class="run">
+            <div class="run-label">three arguments</div>
+            <div class="rline"><span class="prompt">$</span> java Greet Hello World 3</div>
+            <div class="rline out">You passed 3 argument(s)</div>
+          </div>
+        </div>
+      </div>
+      <div class="callout">
+        <h4>Every element is a String</h4>
+        <p>Even <code>"3"</code> arrives as the two-character string <code>"3"</code>, not the number 3. If you need a number, you convert it yourself — the JVM never guesses your intent.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- READING THEM -->
+ 
+  
+  
+
+  
+</div>
+
+<footer>
+  args is just an array — everything above is what to do with it once it arrives.
+</footer>
+
+</body>
+</html>
