@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Method Overloading in Java</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-hover: #1b5e20;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+            --accent-bg: #e8f5e9;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            border-bottom: 2px solid var(--accent-bg);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            margin: 1rem 0 0.5rem;
+            color: #2c3e50;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .note-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .rule-box {
+            background-color: var(--accent-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        pre {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.2rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        code {
+            font-family: "Courier New", Courier, monospace;
+            background-color: #eef1f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #c7254e;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .output-box {
+            background-color: #f8f9fa;
+            border: 1px solid #dcdcdc;
+            border-left: 4px solid #17a2b8;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0 4px 4px 0;
+            font-family: monospace;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Method Overloading in Java</h1>
+        <p>A core concept of Object-Oriented Programming & Compile-Time Polymorphism</p>
+    </header>
+
+    <section class="card">
+        <h2>What is Method Overloading?</h2>
+        <p>
+            <strong>Method Overloading</strong> allows a class to have multiple methods with the <strong>same name</strong> but <strong>different parameter lists</strong>. It is an example of <em>Compile-Time (or Static) Polymorphism</em>.
+        </p>
+        <div class="rule-box">
+            <strong>Key Rules:</strong>
+            <ul>
+                <li>Methods must share the exact same method name.</li>
+                <li>Methods <strong>must differ in parameter list</strong> (number, type, or order of parameters).</li>
+                <li>Method overloading <strong>cannot</strong> be achieved solely by changing the return type.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Ways to Achieve Method Overloading</h2>
+
+        <!-- Method 1 -->
+        <h3>1. Changing the Number of Parameters</h3>
+        <p>Overloading by providing a different count of arguments in method definitions.</p>
+        <pre><code>class Product {
+    // Multiplying two integer values
+    public int multiply(int a, int b) {
+        return a * b;
+    }
+
+    // Multiplying three integer values
+    public int multiply(int a, int b, int c) {
+        return a * b * c;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Product ob = new Product();
+        System.out.println("Product of 2 numbers: " + ob.multiply(1, 2));
+        System.out.println("Product of 3 numbers: " + ob.multiply(1, 2, 3));
+    }
+}</code></pre>
+        <div class="output-box">
+            <strong>Output:</strong><br>
+            Product of 2 numbers: 2<br>
+            Product of 3 numbers: 6
+        </div>
+
+        <!-- Method 2 -->
+        <h3>2. Changing Data Types of Parameters</h3>
+        <p>Overloading by defining methods with different parameter data types.</p>
+        <pre><code>class Product {
+    public int prod(int a, int b, int c) {
+        return a * b * c;
+    }
+
+    public double prod(double a, double b, double c) {
+        return a * b * c;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Product p = new Product();
+        System.out.println(p.prod(1, 2, 3));       // Calls int version
+        System.out.println(p.prod(1.0, 2.0, 3.0)); // Calls double version
+    }
+}</code></pre>
+        <div class="output-box">
+            <strong>Output:</strong><br>
+            6<br>
+            6.0
+        </div>
+
+        <!-- Method 3 -->
+        <h3>3. Changing the Sequence/Order of Parameters</h3>
+        <p>Overloading by changing the sequence of parameter data types in the method declaration.</p>
+        <pre><code>class Student {
+    public void studentId(String name, int rollNo) {
+        System.out.println("Name: " + name + ", Roll-No: " + rollNo);
+    }
+
+    public void studentId(int rollNo, String name) {
+        System.out.println("Roll-No: " + rollNo + ", Name: " + name);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Student s = new Student();
+        s.studentId("Sweta", 1);
+        s.studentId(2, "Gudly");
+    }
+}</code></pre>
+        <div class="output-box">
+            <strong>Output:</strong><br>
+            Name: Sweta, Roll-No: 1<br>
+            Roll-No: 2, Name: Gudly
+        </div>
+    </section>
+
+    
+
+    <footer>
+        <p>Source Content: GeeksforGeeks - Method Overloading in Java</p>
+    </footer>
+
+</div>
+
+</body>
+</html>
