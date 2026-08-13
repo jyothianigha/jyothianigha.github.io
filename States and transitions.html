@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UML Tutorial: States, Transitions & Practical Examples</title>
+    <style>
+        :root {
+            --primary-color: #0969da;
+            --secondary-color: #1f2328;
+            --bg-color: #f6f8fa;
+            --card-bg: #ffffff;
+            --border-color: #d0d7de;
+            --accent-green: #1a7f37;
+            --accent-orange: #bc4c00;
+            --accent-purple: #8250df;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--secondary-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(31,35,40,0.12);
+            border: 1px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.3em;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.3em;
+            margin-top: 1.8em;
+        }
+
+        h3 {
+            margin-top: 1.2em;
+        }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        code {
+            background-color: #eff1f3;
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 88%;
+            color: #cf222e;
+        }
+
+        .highlight-box {
+            background-color: #ddf4ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .tip-box {
+            background-color: #fff8c5;
+            border-left: 4px solid #d4a72c;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 6px 6px 0;
+        }
+
+        .diagram-container {
+            text-align: center;
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+
+        .diagram-caption {
+            font-size: 0.9em;
+            color: #57606a;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .anatomy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .anatomy-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            background-color: #ffffff;
+        }
+
+        .anatomy-card h4 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #f6f8fa;
+        }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #57606a;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Learn UML: States and Transitions</h1>
+    <p>In Object-Oriented Modeling, <strong>State Machine Diagrams</strong> describe how an object changes over its lifespan in response to events. This tutorial covers the fundamental building blocks: <strong>States</strong> and <strong>Transitions</strong>.</p>
+
+    <div class="highlight-box">
+        <strong>Key Takeaway:</strong> 
+        <ul>
+            <li><strong>State:</strong> A condition or situation in the life of an object during which it satisfies some condition or performs an activity.</li>
+            <li><strong>Transition:</strong> A relationship between two states indicating that an object will perform certain actions and move to the next state when a specified event occurs.</li>
+        </ul>
+    </div>
+
+    <!-- SECTION 1: ANATOMY OF A STATE -->
+    <h2>1. The Anatomy of a State</h2>
+    <p>In UML, a state is rendered as a <strong>rounded rectangle</strong>. It is divided into compartments to show the state's name and internal activities.</p>
+
+    <div class="diagram-container">
+        <!-- SVG for State Structure -->
+        <svg width="400" height="180" viewBox="0 0 400 180" xmlns="http://www.w3.org/2000/svg">
+            <rect x="100" y="20" width="200" height="140" rx="15" ry="15" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            
+            <!-- Title Compartment -->
+            <text x="200" y="50" text-anchor="middle" font-weight="bold" font-size="16" fill="#1f2328">ActiveState</text>
+            <line x1="100" y1="65" x2="300" y2="65" stroke="#0969da" stroke-width="1.5"/>
+            
+            <!-- Internal Activities -->
+            <text x="115" y="90" font-family="monospace" font-size="13" fill="#1a7f37">entry / initialize()</text>
+            <text x="115" y="115" font-family="monospace" font-size="13" fill="#bc4c00">do / processData()</text>
+            <text x="115" y="140" font-family="monospace" font-size="13" fill="#cf222e">exit / cleanup()</text>
+        </svg>
+        <div class="diagram-caption">Figure 1: Standard UML State representation with internal activity compartments</div>
+    </div>
+
+    <h3>Internal Activities Explained:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Activity Type</th>
+                <th>Trigger Moment</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>entry / action</code></td>
+                <td>On Entering</td>
+                <td>Executes immediately when the object enters the state. Cannot be interrupted.</td>
+            </tr>
+            <tr>
+                <td><code>do / activity</code></td>
+                <td>While In State</td>
+                <td>An ongoing behavior performed while the object remains in the state. Can be interrupted by transitions.</td>
+            </tr>
+            <tr>
+                <td><code>exit / action</code></td>
+                <td>On Exiting</td>
+                <td>Executes immediately before the object leaves the state. Cannot be interrupted.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- SECTION 2: ANATOMY OF A TRANSITION -->
+    <h2>2. Anatomy of a Transition</h2>
+    <p>A transition is represented as a <strong>solid directed line</strong> connecting a source state to a target state.</p>
+
+    <div class="diagram-container">
+        <!-- SVG for Transition Anatomy -->
+        <svg width="700" height="150" viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#0969da" />
+                </marker>
+            </defs>
+
+            <!-- Source State -->
+            <rect x="20" y="45" width="130" height="60" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="85" y="80" text-anchor="middle" font-weight="bold" font-size="14">State A</text>
+
+            <!-- Transition Arrow -->
+            <path d="M 150 75 L 530 75" stroke="#0969da" stroke-width="2" marker-end="url(#arrow)"/>
+
+            <!-- Syntax Label -->
+            <text x="340" y="55" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="#8250df">
+                Event(args) [Guard Condition] / Action()
+            </text>
+
+            <!-- Target State -->
+            <rect x="540" y="45" width="130" height="60" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="605" y="80" text-anchor="middle" font-weight="bold" font-size="14">State B</text>
+        </svg>
+        <div class="diagram-caption">Figure 2: Formal UML Transition Syntax String</div>
+    </div>
+
+    <h3>Transition Syntax Breakdown:</h3>
+    <div class="anatomy-grid">
+        <div class="anatomy-card">
+            <h4>1. Event Name</h4>
+            <p>The trigger that fires the transition (e.g., <code>buttonClicked</code> or <code>tempChanged</code>).</p>
+        </div>
+        <div class="anatomy-card">
+            <h4>2. [ Guard Condition ]</h4>
+            <p>A Boolean expression enclosed in square brackets. The transition only fires if this evaluates to <code>true</code>.</p>
+        </div>
+        <div class="anatomy-card">
+            <h4>3. / Action</h4>
+            <p>An executable atomic calculation or operation executed during the state shift.</p>
+        </div>
+    </div>
+
+    <!-- SECTION 3: COMPLEX DOMAIN EXAMPLES -->
+    <h2>3. Practical Domain Examples</h2>
+    <p>Below are detailed UML state machine examples modeling real-world dynamic behavior.</p>
+
+    <!-- EXAMPLE 1: CHESS GAME -->
+    <h3>Example A: Chess Game Lifecycle</h3>
+    <p>This diagram models the turn-taking flow in a chess game, handling checks, checkmates, and draws.</p>
+
+    <div class="diagram-container">
+        <svg width="850" height="320" viewBox="0 0 850 320" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrow3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#0969da" />
+                </marker>
+            </defs>
+
+            <!-- Initial State -->
+            <circle cx="40" cy="110" r="10" fill="#1f2328" />
+            <path d="M 50 110 L 100 110" stroke="#0969da" stroke-width="2" marker-end="url(#arrow3)"/>
+
+            <!-- State 1: White Turn -->
+            <rect x="110" y="70" width="160" height="80" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="190" y="95" text-anchor="middle" font-weight="bold" font-size="14">WhiteToMove</text>
+            <line x1="110" y1="105" x2="270" y2="105" stroke="#d0d7de" stroke-width="1"/>
+            <text x="190" y="125" text-anchor="middle" font-size="11" fill="#57606a">do / waitWhiteInput()</text>
+
+            <!-- Transition White -> Black -->
+            <path d="M 270 90 L 510 90" stroke="#0969da" stroke-width="2" marker-end="url(#arrow3)"/>
+            <text x="390" y="75" text-anchor="middle" font-size="11" fill="#1f2328">movePiece() [!isCheckmate &amp;&amp; !isDraw]</text>
+
+            <!-- Transition Black -> White -->
+            <path d="M 510 130 L 270 130" stroke="#0969da" stroke-width="2" marker-end="url(#arrow3)"/>
+            <text x="390" y="150" text-anchor="middle" font-size="11" fill="#1f2328">movePiece() [!isCheckmate &amp;&amp; !isDraw]</text>
+
+            <!-- State 2: Black Turn -->
+            <rect x="520" y="70" width="160" height="80" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="600" y="95" text-anchor="middle" font-weight="bold" font-size="14">BlackToMove</text>
+            <line x1="520" y1="105" x2="680" y2="105" stroke="#d0d7de" stroke-width="1"/>
+            <text x="600" y="125" text-anchor="middle" font-size="11" fill="#57606a">do / waitBlackInput()</text>
+
+            <!-- Transitions to Game Over -->
+            <!-- From White Turn -->
+            <path d="M 190 150 L 190 230 L 360 230" stroke="#0969da" stroke-width="2" marker-end="url(#arrow3)"/>
+            <text x="210" y="200" font-size="10" fill="#cf222e">movePiece() [isCheckmate || isDraw]</text>
+
+            <!-- From Black Turn -->
+            <path d="M 600 150 L 600 230 L 480 230" stroke="#0969da" stroke-width="2" marker-end="url(#arrow3)"/>
+            <text x="590" y="200" font-size="10" fill="#cf222e" text-anchor="end">movePiece() [isCheckmate || isDraw]</text>
+
+            <!-- State 3: Game Over -->
+            <rect x="370" y="200" width="100" height="60" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="420" y="235" text-anchor="middle" font-weight="bold" font-size="13">GameOver</text>
+
+            <!-- Final State -->
+            <path d="M 420 260 L 420 285" stroke="#0969da" stroke-width="2" marker-end="url(#arrow3)"/>
+            <circle cx="420" cy="300" r="10" fill="none" stroke="#1f2328" stroke-width="2"/>
+            <circle cx="420" cy="300" r="5" fill="#1f2328"/>
+        </svg>
+        <div class="diagram-caption">Figure 3: State machine diagram for a Turn-Based Chess Game Engine</div>
+    </div>
+
+    <!-- EXAMPLE 2: TELEPHONE LINE -->
+    <h3>Example B: Landline Telephone System</h3>
+    <p>This traditional UML state model demonstrates state switches during a phone call lifecycle based on user actions and network responses.</p>
+
+    <div class="diagram-container">
+        <svg width="850" height="340" viewBox="0 0 850 340" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <marker id="arrow4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#0969da" />
+                </marker>
+            </defs>
+
+            <!-- Initial State -->
+            <circle cx="40" cy="80" r="10" fill="#1f2328" />
+            <path d="M 50 80 L 90 80" stroke="#0969da" stroke-width="2" marker-end="url(#arrow4)"/>
+
+            <!-- State 1: Idle -->
+            <rect x="100" y="50" width="120" height="60" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="160" y="85" text-anchor="middle" font-weight="bold" font-size="14">Idle (On Hook)</text>
+
+            <!-- Idle -> Dial Tone -->
+            <path d="M 220 80 L 310 80" stroke="#0969da" stroke-width="2" marker-end="url(#arrow4)"/>
+            <text x="265" y="65" text-anchor="middle" font-size="10" fill="#1f2328">liftReceiver()</text>
+
+            <!-- State 2: Dial Tone -->
+            <rect x="320" y="50" width="140" height="60" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="390" y="75" text-anchor="middle" font-weight="bold" font-size="13">Dial Tone</text>
+            <line x1="320" y1="85" x2="460" y2="85" stroke="#d0d7de" stroke-width="1"/>
+            <text x="390" y="100" text-anchor="middle" font-size="10" fill="#57606a">do / playTone()</text>
+
+            <!-- Dial Tone -> Dialing -->
+            <path d="M 460 80 L 550 80" stroke="#0969da" stroke-width="2" marker-end="url(#arrow4)"/>
+            <text x="505" y="65" text-anchor="middle" font-size="10" fill="#1f2328">dialDigit(n)</text>
+
+            <!-- State 3: Ringing -->
+            <rect x="560" y="50" width="130" height="60" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="625" y="75" text-anchor="middle" font-weight="bold" font-size="13">Ringing</text>
+            <line x1="560" y1="85" x2="690" y2="85" stroke="#d0d7de" stroke-width="1"/>
+            <text x="625" y="100" text-anchor="middle" font-size="10" fill="#57606a">do / ringCallee()</text>
+
+            <!-- Ringing -> Connected -->
+            <path d="M 625 110 L 625 210" stroke="#0969da" stroke-width="2" marker-end="url(#arrow4)"/>
+            <text x="635" y="160" font-size="10" fill="#1f2328">calleeAnswers()</text>
+
+            <!-- State 4: Connected -->
+            <rect x="550" y="220" width="150" height="60" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="625" y="245" text-anchor="middle" font-weight="bold" font-size="13">Connected</text>
+            <line x1="550" y1="255" x2="700" y2="255" stroke="#d0d7de" stroke-width="1"/>
+            <text x="625" y="270" text-anchor="middle" font-size="10" fill="#57606a">do / startVoiceChannel()</text>
+
+            <!-- Connected -> Idle (Hang up) -->
+            <path d="M 550 250 L 160 250 L 160 120" stroke="#0969da" stroke-width="2" marker-end="url(#arrow4)"/>
+            <text x="350" y="240" text-anchor="middle" font-size="10" fill="#cf222e">hangUp() / disconnect()</text>
+
+            <!-- Dial Tone -> Busy (Timeout) -->
+            <path d="M 390 110 L 390 200" stroke="#0969da" stroke-width="2" marker-end="url(#arrow4)"/>
+            <text x="380" y="155" text-anchor="end" font-size="10" fill="#1f2328">after (15 sec)</text>
+
+            <!-- State 5: Busy Tone -->
+            <rect x="330" y="200" width="120" height="50" rx="10" fill="#ffffff" stroke="#0969da" stroke-width="2"/>
+            <text x="390" y="230" text-anchor="middle" font-weight="bold" font-size="13">Busy Tone</text>
+
+            <!-- Busy Tone -> Idle -->
+            <path d="M 330 225 L 220 225 L 220 120" stroke="#0969da" stroke-width="2" marker-end="url(#arrow4)"/>
+            <text x="260" y="215" text-anchor="middle" font-size="10" fill="#1f2328">hangUp()</text>
+        </svg>
+        <div class="diagram-caption">Figure 4: Complete State Machine for a Landline Phone System</div>
+    </div>
+
+    <footer>
+        <p>Object-Oriented Modeling & Design | UML State Machine Tutorial</p>
+    </footer>
+</div>
+
+</body>
+</html>

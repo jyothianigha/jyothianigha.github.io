@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>States, Events &amp; Transitions — UML Field Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f6f2e7;
+    --paper-2:#efe8d6;
+    --paper-3:#fbf9f2;
+    --grid:rgba(43,95,173,0.11);
+    --ink:#1b2430;
+    --ink-soft:#5b6472;
+    --blue:#2b5fad;
+    --blue-deep:#1d4380;
+    --red:#b23a1b;
+    --amber:#c98a12;
+    --green:#2f7a4f;
+    --mono:'IBM Plex Mono', 'Courier New', monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:28px 28px;
+  }
+  .wrap{ max-width:1140px; margin:0 auto; padding:0 30px; }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding:60px 0 46px; border-bottom:2px solid var(--ink); }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--blue-deep);
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    border:1px solid var(--blue);
+    padding:5px 10px;
+    border-radius:3px;
+    background:var(--paper-3);
+  }
+  .eyebrow::before{ content:'§'; color:var(--red); font-weight:700; }
+  h1{
+    font-family:var(--mono);
+    font-weight:700;
+    font-size:clamp(30px,4.2vw,50px);
+    line-height:1.15;
+    margin:20px 0 16px;
+    max-width:780px;
+  }
+  .hero p.lede{ font-size:16.5px; color:var(--ink-soft); max-width:640px; margin:0; }
+  .underline{ text-decoration:underline; text-decoration-color:var(--red); text-decoration-thickness:2px; text-underline-offset:4px; }
+
+  /* ---------- SECTIONS ---------- */
+  section{ padding:64px 0; border-bottom:1px solid rgba(27,36,48,0.14); }
+  .section-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:10px; }
+  .tag{
+    font-family:var(--mono);
+    font-size:12.5px;
+    color:var(--paper-3);
+    background:var(--ink);
+    padding:3px 9px;
+    border-radius:3px;
+    white-space:nowrap;
+  }
+  h2{ font-family:var(--mono); font-size:clamp(22px,2.8vw,28px); margin:0; }
+  .section-sub{ color:var(--ink-soft); max-width:680px; margin:12px 0 36px; font-size:15.5px; }
+
+  .panel{
+    background:var(--paper-3);
+    border:1.5px solid var(--ink);
+    border-radius:6px;
+    padding:22px;
+    position:relative;
+  }
+  .panel svg{ width:100%; height:auto; display:block; }
+
+  /* diagram element styles (shared across all SVGs) */
+  .st{ fill:var(--paper-3); stroke:var(--blue); stroke-width:2; }
+  .st-lbl{ font-family:var(--mono); font-size:14px; fill:var(--ink); text-anchor:middle; }
+  .st-sub{ font-family:var(--mono); font-size:10.5px; fill:var(--ink-soft); text-anchor:middle; }
+  .edge{ fill:none; stroke:var(--ink); stroke-width:1.6; }
+  .edge-lbl{ font-family:var(--mono); font-size:11.5px; fill:var(--blue-deep); text-anchor:middle; }
+  .init-dot{ fill:var(--ink); }
+  .final-outer{ fill:none; stroke:var(--ink); stroke-width:2; }
+  .final-inner{ fill:var(--ink); }
+  .note{ font-family:var(--mono); font-size:11.5px; fill:var(--red); }
+  .lead{ stroke:var(--red); stroke-width:1.2; stroke-dasharray:2 3; fill:none; }
+
+  /* ---------- TRAFFIC LIGHT CONSOLE ---------- */
+  .console{ display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:18px; padding-top:18px; border-top:1.5px dashed var(--ink); }
+  .console-label{ font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:8px; }
+  .event-buttons{ display:flex; flex-wrap:wrap; gap:8px; }
+  .event-btn{
+    font-family:var(--mono); font-size:12.5px;
+    background:var(--paper-3); color:var(--blue-deep);
+    border:1.5px solid var(--blue); padding:7px 12px; border-radius:4px;
+    cursor:pointer; transition:all .15s ease;
+  }
+  .event-btn:hover{ background:var(--blue); color:var(--paper-3); }
+  .event-btn:disabled{ opacity:.35; cursor:not-allowed; }
+  .state-readout{ font-family:var(--mono); font-size:13px; color:var(--ink-soft); margin-top:12px; }
+  .state-readout span{ color:var(--red); font-weight:700; }
+  .log{ font-family:var(--mono); font-size:11.5px; color:var(--ink-soft); height:96px; overflow-y:auto; border-left:2px solid var(--ink); padding-left:10px; }
+  .log div{ margin-bottom:5px; }
+  .log div:first-child{ color:var(--green); font-weight:600; }
+
+  /* ---------- GRID CARDS ---------- */
+  .grid-3{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .card{
+    background:var(--paper-3); border:1.5px solid var(--ink); border-radius:6px; padding:18px 20px;
+  }
+  .card h3{ font-family:var(--mono); font-size:14px; margin:0 0 8px; color:var(--blue-deep); }
+  .card p{ margin:0; font-size:13.5px; color:var(--ink-soft); }
+  .card code{ background:var(--paper-2); padding:1px 5px; border-radius:3px; font-family:var(--mono); font-size:12.5px; color:var(--ink); }
+
+  /* ---------- EVENT TYPE MINI DIAGRAMS ---------- */
+  .event-type{ background:var(--paper-3); border:1.5px solid var(--ink); border-radius:6px; padding:16px; }
+  .event-type .et-tag{ font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--red); display:block; margin-bottom:8px; }
+  .event-type svg{ width:100%; height:auto; display:block; margin-bottom:10px; }
+  .event-type p{ margin:0; font-size:13px; color:var(--ink-soft); }
+
+  /* ---------- TABS ---------- */
+  .tabs{ display:flex; gap:10px; margin-bottom:22px; flex-wrap:wrap; }
+  .tab-btn{
+    font-family:var(--mono); font-size:13px;
+    background:var(--paper-2); color:var(--ink-soft);
+    border:1.5px solid var(--ink); border-bottom:none;
+    padding:9px 16px; border-radius:6px 6px 0 0;
+    cursor:pointer;
+  }
+  .tab-btn.active{ background:var(--paper-3); color:var(--ink); font-weight:600; }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; }
+
+  /* ---------- REFERENCE TABLE ---------- */
+  table.ref{ width:100%; border-collapse:collapse; font-size:14px; }
+  table.ref th{
+    font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    text-align:left; color:var(--ink-soft); padding:9px 12px; border-bottom:2px solid var(--ink);
+  }
+  table.ref td{ padding:11px 12px; border-bottom:1px solid rgba(27,36,48,0.15); vertical-align:top; }
+  table.ref td:first-child{ font-family:var(--mono); color:var(--blue-deep); white-space:nowrap; font-weight:600; }
+  table.ref tr:last-child td{ border-bottom:none; }
+
+  footer{ padding:44px 0 64px; text-align:center; }
+  footer p{ font-family:var(--mono); font-size:12.5px; color:var(--ink-soft); }
+
+  @media (max-width:820px){
+    .console{ grid-template-columns:1fr; }
+    .grid-3{ grid-template-columns:1fr; }
+    .grid-2{ grid-template-columns:1fr; }
+  }
+  :focus-visible{ outline:2px solid var(--red); outline-offset:2px; }
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">UML Behavioral Modeling — Field Notes</span>
+    <h1>States, Events &amp; <span class="underline">Transitions</span></h1>
+    <p class="lede">A state diagram is a map of an object's life: the situations it can sit in, the occurrences that move it along, and the arrows that connect the two. This page works through all three pieces with worked, clickable examples — no theory without a diagram next to it.</p>
+  </div>
+</header>
+
+<!-- ================= 1. ANATOMY ================= -->
+<section id="anatomy">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">01</span>
+      <h2>Anatomy of a Transition</h2>
+    </div>
+    <p class="section-sub">Every arrow on a state diagram can carry up to four pieces of information. Only the event is common — everything else is optional.</p>
+
+    <div class="panel">
+      <svg viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg">
+        <rect class="st" x="40" y="98" width="140" height="64" rx="8"></rect>
+        <text class="st-lbl" x="110" y="134">Open</text>
+        <path class="edge" d="M180,130 L560,130" marker-end="url(#arrowhead1)"></path>
+        <rect class="st" x="560" y="98" width="150" height="64" rx="8"></rect>
+        <text class="st-lbl" x="635" y="134">Closed</text>
+
+        <text x="370" y="112" text-anchor="middle" font-family="IBM Plex Mono" font-size="14" fill="#1b2430">close_door [not locked] / play_click_sound()</text>
+
+        <!-- callouts -->
+        <path class="lead" d="M110,98 L110,50"></path>
+        <text class="note" x="110" y="38" text-anchor="middle">SOURCE STATE</text>
+
+        <path class="lead" d="M635,98 L635,50"></path>
+        <text class="note" x="635" y="38" text-anchor="middle">TARGET STATE</text>
+
+        <path class="lead" d="M285,112 L285,190"></path>
+        <text class="note" x="285" y="205" text-anchor="middle">EVENT (required)</text>
+
+        <path class="lead" d="M375,112 L375,225"></path>
+        <text class="note" x="375" y="240" text-anchor="middle">GUARD — must be true</text>
+
+        <path class="lead" d="M535,112 L535,190"></path>
+        <text class="note" x="535" y="205" text-anchor="middle">ACTION — runs once</text>
+      </svg>
+      <defs></defs>
+    </div>
+
+    <div class="grid-2" style="margin-top:26px;">
+      <div class="card">
+        <h3>WHAT'S REQUIRED</h3>
+        <p>Only the <strong>event</strong> is mandatory. <code>Open --close_door--&gt; Closed</code> is a perfectly valid transition on its own. The guard narrows <em>when</em> it's allowed to fire; the action says <em>what else happens</em> the instant it does.</p>
+      </div>
+      <div class="card">
+        <h3>TRIGGERLESS TRANSITIONS</h3>
+        <p>An arrow with no event at all fires automatically the moment the source state's internal work — its <code>do /</code> activity — finishes. These are called <strong>completion transitions</strong>, and they're how a diagram expresses "then it just moves on."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. STATES ================= -->
+<section id="states">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">02</span>
+      <h2>States</h2>
+    </div>
+    <p class="section-sub">A state is a stretch of time during which an object satisfies some condition, waits for something, or runs an activity. Every diagram also needs two special, non-ordinary states to mark where the story starts and ends.</p>
+
+    <div class="panel">
+      <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg">
+        <circle class="init-dot" cx="60" cy="100" r="9"></circle>
+        <text class="note" x="60" y="140" text-anchor="middle">INITIAL PSEUDOSTATE</text>
+        <path class="edge" d="M69,100 L150,100" marker-end="url(#arrowhead2)"></path>
+
+        <rect class="st" x="150" y="60" width="180" height="80" rx="8"></rect>
+        <line x1="150" y1="92" x2="330" y2="92" stroke="#1b2430" stroke-width="1"></line>
+        <text class="st-lbl" x="240" y="82">Brewing</text>
+        <text class="st-sub" x="240" y="112">entry / start_heater()</text>
+        <text class="st-sub" x="240" y="126">do / monitor_temp()</text>
+        <text class="note" x="240" y="158" text-anchor="middle">ORDINARY STATE</text>
+
+        <path class="edge" d="M330,100 L560,100" marker-end="url(#arrowhead2)"></path>
+        <text class="edge-lbl" x="445" y="90">brew_complete</text>
+
+        <circle class="final-outer" cx="640" cy="100" r="18"></circle>
+        <circle class="final-inner" cx="640" cy="100" r="8"></circle>
+        <text class="note" x="640" y="140" text-anchor="middle">FINAL STATE</text>
+      </svg>
+    </div>
+
+    <div class="grid-3" style="margin-top:26px;">
+      <div class="card">
+        <h3>ORDINARY STATE</h3>
+        <p>Rounded rectangle, optionally split into a name compartment and an internal-activities compartment listing its <code>entry /</code>, <code>do /</code>, and <code>exit /</code> operations.</p>
+      </div>
+      <div class="card">
+        <h3>INITIAL PSEUDOSTATE</h3>
+        <p>A small filled circle. Not a real state the object ever "sits in" — just a marker for where the diagram begins, exactly one per diagram (or per composite state).</p>
+      </div>
+      <div class="card">
+        <h3>FINAL STATE</h3>
+        <p>A filled circle inside a ring — the "bullseye." Once reached, the object's behavior in that diagram is complete; no event can fire and no transition can leave it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3. EVENTS ================= -->
+<section id="events">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">03</span>
+      <h2>Events — Four Kinds</h2>
+    </div>
+    <p class="section-sub">"Event" covers more than a button press. UML groups every possible trigger into four kinds, and each one is written differently on a transition label.</p>
+
+    <div class="grid-2">
+      <div class="event-type">
+        <span class="et-tag">Signal Event</span>
+        <svg viewBox="0 0 380 70" xmlns="http://www.w3.org/2000/svg">
+          <rect class="st" x="10" y="15" width="90" height="40" rx="6"></rect>
+          <text class="st-lbl" x="55" y="39" font-size="12">Idle</text>
+          <path class="edge" d="M100,35 L260,35" marker-end="url(#arrowhead3)"></path>
+          <text class="edge-lbl" x="180" y="25" font-size="11">cardSwiped</text>
+          <rect class="st" x="260" y="15" width="110" height="40" rx="6"></rect>
+          <text class="st-lbl" x="315" y="39" font-size="12">Reading</text>
+        </svg>
+        <p>An asynchronous, named occurrence sent from one object to another — like a raised flag. Written as just the signal's name: <code>cardSwiped</code>.</p>
+      </div>
+
+      <div class="event-type">
+        <span class="et-tag">Call Event</span>
+        <svg viewBox="0 0 380 70" xmlns="http://www.w3.org/2000/svg">
+          <rect class="st" x="10" y="15" width="90" height="40" rx="6"></rect>
+          <text class="st-lbl" x="55" y="39" font-size="12">Locked</text>
+          <path class="edge" d="M100,35 L260,35" marker-end="url(#arrowhead3)"></path>
+          <text class="edge-lbl" x="180" y="25" font-size="11">unlock(code)</text>
+          <rect class="st" x="260" y="15" width="110" height="40" rx="6"></rect>
+          <text class="st-lbl" x="315" y="39" font-size="12">Unlocked</text>
+        </svg>
+        <p>The receipt of a direct operation call, complete with its parameters. Written like a method signature: <code>unlock(code)</code>.</p>
+      </div>
+
+      <div class="event-type">
+        <span class="et-tag">Change Event</span>
+        <svg viewBox="0 0 380 70" xmlns="http://www.w3.org/2000/svg">
+          <rect class="st" x="10" y="15" width="90" height="40" rx="6"></rect>
+          <text class="st-lbl" x="55" y="39" font-size="12">Filling</text>
+          <path class="edge" d="M100,35 L260,35" marker-end="url(#arrowhead3)"></path>
+          <text class="edge-lbl" x="180" y="25" font-size="10.5">when(level&gt;=full)</text>
+          <rect class="st" x="260" y="15" width="110" height="40" rx="6"></rect>
+          <text class="st-lbl" x="315" y="39" font-size="12">Full</text>
+        </svg>
+        <p>Fires the instant a boolean condition becomes true — no single discrete signal triggers it, the diagram is just watching a value. Written as <code>when(condition)</code>.</p>
+      </div>
+
+      <div class="event-type">
+        <span class="et-tag">Time Event</span>
+        <svg viewBox="0 0 380 70" xmlns="http://www.w3.org/2000/svg">
+          <rect class="st" x="10" y="15" width="90" height="40" rx="6"></rect>
+          <text class="st-lbl" x="55" y="39" font-size="12">Ringing</text>
+          <path class="edge" d="M100,35 L260,35" marker-end="url(#arrowhead3)"></path>
+          <text class="edge-lbl" x="180" y="25" font-size="11">after(30 sec)</text>
+          <rect class="st" x="260" y="15" width="110" height="40" rx="6"></rect>
+          <text class="st-lbl" x="315" y="39" font-size="12">Missed</text>
+        </svg>
+        <p>Fires once a duration has elapsed since entering the state, or at an absolute time. Written as <code>after(duration)</code> or <code>when(date/time)</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4. WORKED EXAMPLES ================= -->
+<section id="examples">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">04</span>
+      <h2>Worked Examples</h2>
+    </div>
+    <p class="section-sub">Three small machines, three different lessons. The first one is live — fire its events and watch the diagram respond.</p>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="tl">01 · Traffic Light</button>
+      <button class="tab-btn" data-tab="atm">02 · ATM Card Session</button>
+      <button class="tab-btn" data-tab="doc">03 · Document Review</button>
+    </div>
+
+    <!-- TAB 1: TRAFFIC LIGHT (interactive) -->
+    <div class="tab-panel active" id="tab-tl">
+      <div class="panel">
+        <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+          <circle class="init-dot" cx="50" cy="150" r="8"></circle>
+          <path class="edge" d="M58,150 L110,150" marker-end="url(#arrowhead4)"></path>
+
+          <rect id="tl-red" class="st" x="110" y="118" width="110" height="64" rx="8"></rect>
+          <text id="tl-red-lbl" class="st-lbl" x="165" y="154">Red</text>
+
+          <path id="tl-red-green" class="edge" d="M220,150 L330,150" marker-end="url(#arrowhead4)"></path>
+          <text class="edge-lbl" x="275" y="140">timer_expires</text>
+
+          <rect id="tl-green" class="st" x="330" y="118" width="110" height="64" rx="8"></rect>
+          <text id="tl-green-lbl" class="st-lbl" x="385" y="154">Green</text>
+
+          <path id="tl-green-yellow" class="edge" d="M440,150 L550,150" marker-end="url(#arrowhead4)"></path>
+          <text class="edge-lbl" x="495" y="140">timer_expires</text>
+
+          <rect id="tl-yellow" class="st" x="550" y="118" width="110" height="64" rx="8"></rect>
+          <text id="tl-yellow-lbl" class="st-lbl" x="605" y="154">Yellow</text>
+
+          <path id="tl-yellow-red" class="edge" d="M605,182 C605,240 165,240 165,182" marker-end="url(#arrowhead4)"></path>
+          <text class="edge-lbl" x="385" y="255">timer_expires</text>
+
+          <path id="tl-yellow-off" class="edge" d="M660,150 L784,150" marker-end="url(#arrowhead4)"></path>
+          <text class="edge-lbl" x="722" y="140">power_off</text>
+
+          <circle class="final-outer" cx="800" cy="150" r="16"></circle>
+          <circle id="tl-off-inner" class="final-inner" cx="800" cy="150" r="7"></circle>
+        </svg>
+
+        <div class="console">
+          <div>
+            <div class="console-label">Fire Event</div>
+            <div class="event-buttons" id="tl-buttons"></div>
+            <div class="state-readout">Current state: <span id="tl-current">Red</span></div>
+          </div>
+          <div>
+            <div class="console-label">Transition Log</div>
+            <div class="log" id="tl-log"><div>— waiting for first event —</div></div>
+          </div>
+        </div>
+      </div>
+      <p class="section-sub" style="margin-top:18px; margin-bottom:0;">Lesson: <code>timer_expires</code> cycles the light through three ordinary states, while <code>power_off</code> is available from every one of them but leads only to the final state — after which the button list empties, because a final state accepts no further events.</p>
+    </div>
+
+    <!-- TAB 2: ATM -->
+    <div class="tab-panel" id="tab-atm">
+      <div class="panel">
+        <svg viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg">
+          <circle class="init-dot" cx="15" cy="172" r="7"></circle>
+          <path class="edge" d="M22,172 L40,172" marker-end="url(#arrowhead5)"></path>
+
+          <rect class="st" x="40" y="140" width="120" height="64" rx="8"></rect>
+          <text class="st-lbl" x="100" y="176">Idle</text>
+
+          <path class="edge" d="M160,172 L260,172" marker-end="url(#arrowhead5)"></path>
+          <text class="edge-lbl" x="210" y="162">card_inserted</text>
+
+          <rect class="st" x="260" y="140" width="160" height="64" rx="8"></rect>
+          <text class="st-lbl" x="340" y="176">CardInserted</text>
+
+          <!-- self transition -->
+          <path class="edge" d="M300,140 C300,90 380,90 380,140" marker-end="url(#arrowhead5)"></path>
+          <text class="edge-lbl" x="340" y="82">pin_incorrect [attempts &lt; 3] / attempts++</text>
+          <path class="lead" d="M340,90 L340,58"></path>
+          <text class="note" x="340" y="46" text-anchor="middle">SELF-TRANSITION — exits &amp; re-enters the same state</text>
+
+          <path class="edge" d="M420,172 L530,172" marker-end="url(#arrowhead5)"></path>
+          <text class="edge-lbl" x="475" y="162" font-size="10.5">pin_correct [attempts &lt; 3]</text>
+          <path class="lead" d="M475,178 L475,215"></path>
+          <text class="note" x="475" y="230" text-anchor="middle">GUARD narrows when this fires</text>
+
+          <rect class="st" x="530" y="140" width="140" height="64" rx="8"></rect>
+          <text class="st-lbl" x="600" y="176">Authorized</text>
+
+          <path class="edge" d="M600,140 C600,60 100,60 100,140" marker-end="url(#arrowhead5)"></path>
+          <text class="edge-lbl" x="345" y="50">transaction_complete</text>
+
+          <path class="edge" d="M340,204 L340,282" marker-end="url(#arrowhead5)"></path>
+          <text class="edge-lbl" x="345" y="248" text-anchor="start" font-size="10.5">pin_incorrect [attempts &gt;= 3]</text>
+
+          <circle class="final-outer" cx="340" cy="305" r="16"></circle>
+          <circle class="final-inner" cx="340" cy="305" r="7"></circle>
+          <text class="note" x="410" y="309">FINAL — card retained</text>
+        </svg>
+      </div>
+      <p class="section-sub" style="margin-top:18px; margin-bottom:0;">Lesson: the guard <code>[attempts &lt; 3]</code> vs. <code>[attempts &gt;= 3]</code> splits one event, <code>pin_incorrect</code>, into two different transitions with two different destinations — this is what keeps a diagram deterministic even when the same event can lead two different places.</p>
+    </div>
+
+    <!-- TAB 3: DOCUMENT REVIEW -->
+    <div class="tab-panel" id="tab-doc">
+      <div class="panel">
+        <svg viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg">
+          <circle class="init-dot" cx="15" cy="130" r="7"></circle>
+          <path class="edge" d="M22,130 L40,130" marker-end="url(#arrowhead6)"></path>
+
+          <rect class="st" x="40" y="90" width="170" height="80" rx="8"></rect>
+          <line x1="40" y1="122" x2="210" y2="122" stroke="#1b2430" stroke-width="1"></line>
+          <text class="st-lbl" x="125" y="112">Draft</text>
+          <text class="st-sub" x="125" y="142">do / auto_save() every 30s</text>
+
+          <path class="edge" d="M210,130 L340,130" marker-end="url(#arrowhead6)"></path>
+          <text class="edge-lbl" x="275" y="120">submit</text>
+
+          <rect class="st" x="340" y="90" width="170" height="80" rx="8"></rect>
+          <text class="st-lbl" x="425" y="134">UnderReview</text>
+
+          <path class="edge" d="M400,170 C400,220 150,220 150,170" marker-end="url(#arrowhead6)"></path>
+          <text class="edge-lbl" x="275" y="234">reject</text>
+
+          <path class="edge" d="M510,130 L644,130" marker-end="url(#arrowhead6)"></path>
+          <text class="edge-lbl" x="580" y="120">approve</text>
+
+          <circle class="final-outer" cx="670" cy="130" r="16"></circle>
+          <circle class="final-inner" cx="670" cy="130" r="7"></circle>
+          <text class="note" x="670" y="170" text-anchor="middle">Published</text>
+        </svg>
+      </div>
+      <p class="section-sub" style="margin-top:18px; margin-bottom:0;">Lesson: <code>Draft</code>'s <code>do / auto_save()</code> is an ongoing activity, not a one-off action — it keeps running the entire time the document sits in <code>Draft</code>, including through repeated trips around the <code>reject</code> loop, and is only cut off once <code>submit</code> finally moves the object out of the state.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. QUICK REFERENCE ================= -->
+<section id="reference">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="tag">Ref</span>
+      <h2>Quick Reference</h2>
+    </div>
+    <p class="section-sub">Everything above, condensed.</p>
+    <table class="ref">
+      <thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>State</td><td>A condition or situation the object occupies for a stretch of time.</td></tr>
+        <tr><td>Initial pseudostate</td><td>Filled dot marking where the diagram begins; not a real state.</td></tr>
+        <tr><td>Final state</td><td>Bullseye marking where the object's behavior ends; no outgoing transitions.</td></tr>
+        <tr><td>Event</td><td>A significant, instantaneous occurrence that can trigger a transition.</td></tr>
+        <tr><td>Signal event</td><td>An asynchronous named occurrence: <code>signalName</code>.</td></tr>
+        <tr><td>Call event</td><td>A direct operation invocation: <code>operation(args)</code>.</td></tr>
+        <tr><td>Change event</td><td>Fires when a boolean condition becomes true: <code>when(condition)</code>.</td></tr>
+        <tr><td>Time event</td><td>Fires after a duration or at a fixed time: <code>after(duration)</code>.</td></tr>
+        <tr><td>Transition</td><td>event [guard] / action — the arrow between two states.</td></tr>
+        <tr><td>Guard condition</td><td>Boolean check in brackets; the transition can only fire while it holds.</td></tr>
+        <tr><td>Action</td><td>Instantaneous, non-interruptible step run when the transition fires.</td></tr>
+        <tr><td>Self-transition</td><td>Source and target are the same state; exit and entry actions both re-run.</td></tr>
+        <tr><td>Completion (triggerless) transition</td><td>No event listed; fires automatically once the source state's activity finishes.</td></tr>
+        <tr><td>Determinism</td><td>At most one transition may be enabled for a given (state, event) pair.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <p>UML BEHAVIORAL MODELING · STATES, EVENTS &amp; TRANSITIONS</p>
+</footer>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <marker id="arrowhead1" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#1b2430"></path></marker>
+    <marker id="arrowhead2" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#1b2430"></path></marker>
+    <marker id="arrowhead3" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#1b2430"></path></marker>
+    <marker id="arrowhead4" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#1b2430"></path></marker>
+    <marker id="arrowhead5" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#1b2430"></path></marker>
+    <marker id="arrowhead6" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#1b2430"></path></marker>
+  </defs>
+</svg>
+
+<script>
+(function(){
+  // ---- Tabs ----
+  var tabBtns = document.querySelectorAll('.tab-btn');
+  var tabPanels = document.querySelectorAll('.tab-panel');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabBtns.forEach(function(b){ b.classList.remove('active'); });
+      tabPanels.forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ---- Traffic light state machine ----
+  var machine = {
+    red:    { timer_expires: { to:'green',  edge:'tl-red-green' },   power_off: { to:'off', edge:'tl-yellow-off' } },
+    green:  { timer_expires: { to:'yellow', edge:'tl-green-yellow' },power_off: { to:'off', edge:'tl-yellow-off' } },
+    yellow: { timer_expires: { to:'red',    edge:'tl-yellow-red' },  power_off: { to:'off', edge:'tl-yellow-off' } },
+    off:    {}
+  };
+  var names = { red:'Red', green:'Green', yellow:'Yellow', off:'Off (final)' };
+  var rectIds = { red:'tl-red', green:'tl-green', yellow:'tl-yellow' };
+  var lblIds  = { red:'tl-red-lbl', green:'tl-green-lbl', yellow:'tl-yellow-lbl' };
+
+  var current = 'red';
+  var btnBox = document.getElementById('tl-buttons');
+  var currentLbl = document.getElementById('tl-current');
+  var logBox = document.getElementById('tl-log');
+
+  function clearHighlights(){
+    Object.values(rectIds).forEach(function(id){
+      document.getElementById(id).style.stroke = '';
+      document.getElementById(id).style.fill = '';
+    });
+    Object.values(lblIds).forEach(function(id){
+      document.getElementById(id).style.fill = '';
+    });
+  }
+
+  function render(){
+    clearHighlights();
+    if(current !== 'off'){
+      document.getElementById(rectIds[current]).style.stroke = '#b23a1b';
+      document.getElementById(rectIds[current]).style.fill = '#fdf0e8';
+      document.getElementById(lblIds[current]).style.fill = '#b23a1b';
+    } else {
+      document.getElementById('tl-off-inner').style.fill = '#b23a1b';
+    }
+    currentLbl.textContent = names[current];
+
+    btnBox.innerHTML = '';
+    var events = Object.keys(machine[current]);
+    if(events.length === 0){
+      var span = document.createElement('span');
+      span.style.fontFamily = 'IBM Plex Mono';
+      span.style.fontSize = '12.5px';
+      span.style.color = '#5b6472';
+      span.textContent = 'final state — no further events accepted';
+      btnBox.appendChild(span);
+      return;
+    }
+    events.forEach(function(evt){
+      var b = document.createElement('button');
+      b.className = 'event-btn';
+      b.textContent = evt;
+      b.addEventListener('click', function(){ fire(evt); });
+      btnBox.appendChild(b);
+    });
+  }
+
+  function fire(evt){
+    var t = machine[current][evt];
+    if(!t) return;
+    var from = current;
+    var edgeEl = document.getElementById(t.edge);
+    if(edgeEl){
+      edgeEl.style.stroke = '#b23a1b';
+      edgeEl.style.strokeWidth = '2.5';
+      setTimeout(function(){
+        edgeEl.style.stroke = '';
+        edgeEl.style.strokeWidth = '';
+      }, 500);
+    }
+    current = t.to;
+    render();
+    var entry = document.createElement('div');
+    entry.textContent = names[from].toUpperCase() + '  --[' + evt + ']-->  ' + names[current].toUpperCase();
+    logBox.prepend(entry);
+    while(logBox.children.length > 6){ logBox.removeChild(logBox.lastChild); }
+  }
+
+  render();
+})();
+</script>
+
+</body>
+</html>
