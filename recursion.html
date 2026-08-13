@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mastering Recursion in Java</title>
+  <style>
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-color: #0f172a;
+      --text-muted: #64748b;
+      --code-bg: #0f172a;
+      --code-text: #f8fafc;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding-bottom: 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      padding: 3rem 1.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      color: var(--primary-dark);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #e0f2fe;
+      padding-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .two-column { grid-template-columns: 1fr; }
+    }
+
+    .rule-box {
+      border-radius: 8px;
+      padding: 1.25rem;
+      border-left: 5px solid;
+    }
+
+    .rule-box.base {
+      background-color: #f0fdf4;
+      border-color: var(--accent-green);
+    }
+
+    .rule-box.recursive {
+      background-color: #f0f9ff;
+      border-color: var(--primary);
+    }
+
+    .rule-box h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    pre {
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: "Fira Code", Consolas, Monaco, monospace;
+      font-size: 0.95rem;
+      margin: 1rem 0;
+    }
+
+    .keyword { color: #f43f5e; }
+    .type { color: #38bdf8; }
+    .function { color: #a7f3d0; }
+    .number { color: #fb923c; }
+    .comment { color: #64748b; font-style: italic; }
+
+    /* Interactive Visualizer */
+    .visualizer-area {
+      background-color: #f1f5f9;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    button:disabled {
+      background-color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    .stack-container {
+      display: flex;
+      flex-direction: column-reverse;
+      align-items: center;
+      min-height: 220px;
+      gap: 8px;
+      padding: 10px;
+      background: white;
+      border: 2px dashed #cbd5e1;
+      border-radius: 8px;
+    }
+
+    .stack-frame {
+      width: 80%;
+      padding: 10px;
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #7dd3fc;
+      border-radius: 6px;
+      font-weight: bold;
+      font-family: monospace;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .stack-frame.active {
+      background: #dcfce7;
+      color: #15803d;
+      border-color: #86efac;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .info-box {
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Recursion in Java</h1>
+    <p>Learn how methods solve complex problems by calling themselves</p>
+  </header>
+
+  <div class="container">
+
+    <!-- Section 1: Overview -->
+    <section class="card">
+      <h2>1. What is Recursion?</h2>
+      <p>
+        <strong>Recursion</strong> is a programming technique where a method calls itself to solve a smaller instance of the same problem. Think of it like a set of Russian nesting dolls—each doll contains a smaller version of itself inside until you reach the smallest, solid doll.
+      </p>
+
+      <div class="two-column">
+        <div class="rule-box base">
+          <h3>1. Base Case (Stop Condition)</h3>
+          <p>The condition that terminates the recursion. Without a base case, your program will execute infinitely until it triggers a <code>StackOverflowError</code>.</p>
+        </div>
+        <div class="rule-box recursive">
+          <h3>2. Recursive Work (Step)</h3>
+          <p>The part where the method calls itself with modified parameters that move closer to the base case.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Code Example -->
+    <section class="card">
+      <h2>2. Java Implementation: Factorial</h2>
+      <p>Calculating the factorial of a number ($n! = n \times (n-1) \times \dots \times 1$) is the classic example of recursion.</p>
+
+<pre><code><span class="keyword">class</span> <span class="type">RecursionDemo</span> {
+
+    <span class="comment">// Recursive (non-static) function to calculate factorial</span>
+    <span class="keyword">public</span> <span class="type">int</span> <span class="function">factorial</span>(<span class="type">int</span> n) {
+        <span class="comment">// 1. Base Case</span>
+        <span class="keyword">if</span> (n &lt;= <span class="number">1</span>) {
+            <span class="keyword">return</span> <span class="number">1</span>;
+        }
+        
+        <span class="comment">// 2. Recursive Case</span>
+        <span class="keyword">return</span> n * <span class="function">factorial</span>(n - <span class="number">1</span>);
+    }
+}
+
+<span class="keyword">public class</span> <span class="type">Main</span> {
+
+    <span class="keyword">public static void</span> <span class="function">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">RecursionDemo</span> demo = <span class="keyword">new</span> <span class="type">RecursionDemo</span>();
+
+        <span class="type">int</span> number = <span class="number">4</span>;
+        <span class="type">int</span> result = demo.<span class="function">factorial</span>(number);
+        <span class="type">System</span>.out.println(<span class="string">"Factorial of "</span> + number + <span class="string">" is: "</span> + result);
+    }
+}</code></pre>
+    </section>
+
+    
+</body>
+</html>
