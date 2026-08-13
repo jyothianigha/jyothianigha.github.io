@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Inheritance Tutorial</title>
+    <style>
+        :root {
+            --primary-color: #2b5c8f;
+            --secondary-color: #f7931e;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #334155;
+            --heading-color: #0f172a;
+            --border-color: #e2e8f0;
+            --code-bg: #1e293b;
+            --code-text: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .intro-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+
+        .intro-card h2 {
+            color: var(--heading-color);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--secondary-color);
+            display: inline-block;
+            padding-bottom: 4px;
+        }
+
+        .key-points {
+            margin-top: 1rem;
+            padding-left: 1.2rem;
+        }
+
+        .key-points li {
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--heading-color);
+            margin: 3rem 0 1.5rem;
+        }
+
+        .inheritance-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .inheritance-card {
+                grid-template-columns: 1fr 1fr;
+                align-items: center;
+            }
+        }
+
+        .card-details h3 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-details p {
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .diagram-container {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .diagram-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            padding: 1rem;
+            border-radius: 6px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+            grid-column: 1 / -1;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 12px;
+            margin-left: 8px;
+        }
+
+        .badge-supported {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-interface {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        /* SVG Specific Styling */
+        .svg-box {
+            fill: #ffffff;
+            stroke: #2b5c8f;
+            stroke-width: 2;
+            rx: 6;
+        }
+        .svg-box-interface {
+            fill: #ffffff;
+            stroke: #d97706;
+            stroke-width: 2;
+            stroke-dasharray: 4;
+            rx: 6;
+        }
+        .svg-text {
+            font-family: sans-serif;
+            font-weight: bold;
+            font-size: 14px;
+            fill: #0f172a;
+            text-anchor: middle;
+            dominant-baseline: middle;
+        }
+        .svg-arrow {
+            stroke: #64748b;
+            stroke-width: 2;
+            marker-end: url(#arrow);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Java Inheritance Guide</h1>
+        <p>Learn Object-Oriented Programming principles with diagrams and code examples</p>
+    </header>
+
+    <div class="container">
+        <!-- SVG Definitions for Arrowheads -->
+        <svg style="display:none;">
+            <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+                </marker>
+            </defs>
+        </svg>
+
+        <!-- What is Inheritance -->
+        <section class="intro-card">
+            <h2>What is Inheritance?</h2>
+            <p>
+                <strong>Inheritance</strong> in Java is a mechanism in which one object acquires all the properties and behaviors of a parent object. It is an important part of Object-Oriented Programming (OOPs).
+            </p>
+            <ul class="key-points">
+                <li><strong>Superclass (Parent):</strong> The class whose features are inherited.</li>
+                <li><strong>Subclass (Child):</strong> The class that inherits the features of the superclass.</li>
+                <li><strong>Key Keyword:</strong> The <code>extends</code> keyword is used to inherit a class.</li>
+                <li><strong>Primary Benefits:</strong> Code reusability and method overriding (Runtime Polymorphism).</li>
+            </ul>
+        </section>
+
+        <h2 class="section-title">Types of Inheritance in Java</h2>
+
+        <!-- 1. Single Inheritance -->
+        <div class="inheritance-card">
+            <div class="card-details">
+                <h3>1. Single Inheritance <span class="badge badge-supported">Supported</span></h3>
+                <p>In single inheritance, a subclass inherits features from a single superclass. It creates a simple 1-to-1 parent-child hierarchy.</p>
+            </div>
+            <div class="diagram-container">
+                <svg width="200" height="160" viewBox="0 0 200 160">
+                    <rect x="50" y="20" width="100" height="40" class="svg-box" />
+                    <text x="100" y="40" class="svg-text">Class A</text>
+                    
+                    <line x1="100" y1="100" x2="100" y2="65" class="svg-arrow" />
+                    
+                    <rect x="50" y="100" width="100" height="40" class="svg-box" />
+                    <text x="100" y="120" class="svg-text">Class B</text>
+                </svg>
+            </div>
+            <div class="code-block">
+<pre><code>// Superclass
+class Animal {
+    void eat() { System.out.println("Eating..."); }
+}
+
+// Subclass inheriting from Animal
+class Dog extends Animal {
+    void bark() { System.out.println("Barking..."); }
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- 2. Multilevel Inheritance -->
+        <div class="inheritance-card">
+            <div class="card-details">
+                <h3>2. Multilevel Inheritance <span class="badge badge-supported">Supported</span></h3>
+                <p>In multilevel inheritance, a class extends another class, which is already extending another class, forming a chain of inheritance.</p>
+            </div>
+            <div class="diagram-container">
+                <svg width="200" height="220" viewBox="0 0 200 220">
+                    <rect x="50" y="10" width="100" height="40" class="svg-box" />
+                    <text x="100" y="30" class="svg-text">Class A</text>
+                    
+                    <line x1="100" y1="90" x2="100" y2="55" class="svg-arrow" />
+                    
+                    <rect x="50" y="90" width="100" height="40" class="svg-box" />
+                    <text x="100" y="110" class="svg-text">Class B</text>
+                    
+                    <line x1="100" y1="170" x2="100" y2="135" class="svg-arrow" />
+                    
+                    <rect x="50" y="170" width="100" height="40" class="svg-box" />
+                    <text x="100" y="190" class="svg-text">Class C</text>
+                </svg>
+            </div>
+            <div class="code-block">
+<pre><code>class Animal {
+    void eat() { System.out.println("Eating..."); }
+}
+
+class Dog extends Animal {
+    void bark() { System.out.println("Barking..."); }
+}
+
+// Inherits properties from both Dog and Animal
+class BabyDog extends Dog {
+    void weep() { System.out.println("Weeping..."); }
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- 3. Hierarchical Inheritance -->
+        <div class="inheritance-card">
+            <div class="card-details">
+                <h3>3. Hierarchical Inheritance <span class="badge badge-supported">Supported</span></h3>
+                <p>In hierarchical inheritance, multiple subclasses inherit from a single superclass.</p>
+            </div>
+            <div class="diagram-container">
+                <svg width="260" height="160" viewBox="0 0 260 160">
+                    <rect x="80" y="10" width="100" height="40" class="svg-box" />
+                    <text x="130" y="30" class="svg-text">Class A</text>
+                    
+                    <line x1="50" y1="100" x2="110" y2="55" class="svg-arrow" />
+                    <line x1="210" y1="100" x2="150" y2="55" class="svg-arrow" />
+                    
+                    <rect x="10" y="100" width="100" height="40" class="svg-box" />
+                    <text x="60" y="120" class="svg-text">Class B</text>
+
+                    <rect x="150" y="100" width="100" height="40" class="svg-box" />
+                    <text x="200" y="120" class="svg-text">Class C</text>
+                </svg>
+            </div>
+            <div class="code-block">
+<pre><code>class Animal {
+    void eat() { System.out.println("Eating..."); }
+}
+
+class Dog extends Animal {
+    void bark() { System.out.println("Barking..."); }
+}
+
+class Cat extends Animal {
+    void meow() { System.out.println("Meowing..."); }
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- 4. Multiple Inheritance -->
+        <div class="inheritance-card">
+            <div class="card-details">
+                <h3>4. Multiple Inheritance <span class="badge badge-interface">Via Interfaces Only</span></h3>
+                <p>Multiple inheritance occurs when a subclass extends more than one parent class. <strong>Java does not support this using classes</strong> to avoid ambiguity (the "Diamond Problem"), but supports it via <strong>Interfaces</strong>.</p>
+            </div>
+            <div class="diagram-container">
+                <svg width="260" height="160" viewBox="0 0 260 160">
+                    <rect x="10" y="10" width="100" height="40" class="svg-box-interface" />
+                    <text x="60" y="30" class="svg-text">Interface A</text>
+
+                    <rect x="150" y="10" width="100" height="40" class="svg-box-interface" />
+                    <text x="200" y="30" class="svg-text">Interface B</text>
+                    
+                    <line x1="130" y1="100" x2="60" y2="55" class="svg-arrow" />
+                    <line x1="130" y1="100" x2="200" y2="55" class="svg-arrow" />
+                    
+                    <rect x="80" y="100" width="100" height="40" class="svg-box" />
+                    <text x="130" y="120" class="svg-text">Class C</text>
+                </svg>
+            </div>
+            <div class="code-block">
+<pre><code>interface Printable {
+    void print();
+}
+
+interface Showable {
+    void show();
+}
+
+// Implementing multiple interfaces using the 'implements' keyword
+class Document implements Printable, Showable {
+    public void print() { System.out.println("Printing..."); }
+    public void show() { System.out.println("Showing..."); }
+}</code></pre>
+            </div>
+        </div>
+
+        <!-- 5. Hybrid Inheritance -->
+        <div class="inheritance-card">
+            <div class="card-details">
+                <h3>5. Hybrid Inheritance <span class="badge badge-interface">Via Interfaces Only</span></h3>
+                <p>Hybrid inheritance is a combination of two or more types of inheritance. Since it involves multiple inheritance, it is only achieved through <strong>Interfaces</strong> in Java.</p>
+            </div>
+            <div class="diagram-container">
+                <svg width="260" height="220" viewBox="0 0 260 220">
+                    <rect x="80" y="10" width="100" height="35" class="svg-box" />
+                    <text x="130" y="27" class="svg-text">Class A</text>
+                    
+                    <line x1="50" y1="85" x2="110" y2="50" class="svg-arrow" />
+                    <line x1="210" y1="85" x2="150" y2="50" class="svg-arrow" />
+                    
+                    <rect x="10" y="85" width="90" height="35" class="svg-box-interface" />
+                    <text x="55" y="102" class="svg-text">Interface B</text>
+
+                    <rect x="160" y="85" width="90" height="35" class="svg-box-interface" />
+                    <text x="205" y="102" class="svg-text">Interface C</text>
+
+                    <line x1="130" y1="160" x2="55" y2="125" class="svg-arrow" />
+                    <line x1="130" y1="160" x2="205" y2="125" class="svg-arrow" />
+
+                    <rect x="80" y="160" width="100" height="35" class="svg-box" />
+                    <text x="130" y="177" class="svg-text">Class D</text>
+                </svg>
+            </div>
+            <div class="code-block">
+<pre><code>class Grandparent {}
+
+interface Parent1 {}
+interface Parent2 {}
+
+// Combining Single + Multiple Inheritance
+class Child extends Grandparent implements Parent1, Parent2 {
+    // Implementation
+}</code></pre>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mastering Method Overriding & super Keyword in Java</title>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-override: #059669;
+      --accent-super: #7c3aed;
+      --border: #e2e8f0;
+      --code-bg: #0f172a;
+      --code-text: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding-bottom: 3rem;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a, #1e3a8a);
+      color: white;
+      text-align: center;
+      padding: 3rem 1rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: 2.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .box {
+      border-radius: 8px;
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+    }
+
+    .box.override-box {
+      border-left: 4px solid var(--accent-override);
+      background-color: #ecfdf5;
+    }
+
+    .box.super-box {
+      border-left: 4px solid var(--accent-super);
+      background-color: #f5f3ff;
+    }
+
+    .box h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Diagrams */
+    .diagram-container {
+      background-color: #f1f5f9;
+      border-radius: 8px;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px dashed #cbd5e1;
+      margin: 1rem 0;
+    }
+
+    .diagram-container svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* SVG Specific Styling */
+    .svg-box {
+      fill: #ffffff;
+      stroke: #2563eb;
+      stroke-width: 2;
+      rx: 6;
+    }
+
+    .svg-box-override {
+      fill: #ffffff;
+      stroke: #059669;
+      stroke-width: 2;
+      rx: 6;
+    }
+
+    .svg-text-title {
+      font-family: sans-serif;
+      font-weight: bold;
+      font-size: 14px;
+      fill: #0f172a;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .svg-text-method {
+      font-family: monospace;
+      font-size: 12px;
+      fill: #475569;
+      text-anchor: middle;
+      dominant-baseline: middle;
+    }
+
+    .svg-arrow {
+      stroke: #64748b;
+      stroke-width: 2;
+      marker-end: url(#arrow);
+    }
+
+    /* Code Blocks */
+    pre {
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      margin: 1rem 0;
+    }
+
+    .kw { color: #f43f5e; font-weight: bold; }
+    .cls { color: #38bdf8; }
+    .fn { color: #a855f7; }
+    .comment { color: #64748b; font-style: italic; }
+    .str { color: #34d399; }
+    .ann { color: #f59e0b; font-weight: bold; }
+
+    /* Interactive Demo */
+    .interactive-demo {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background-color: #e2e8f0;
+      color: var(--text-main);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .output-box {
+      background-color: var(--code-bg);
+      color: #38bdf8;
+      font-family: monospace;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      white-space: pre-wrap;
+      min-height: 60px;
+    }
+
+    /* Rules Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .badge-yes { color: #16a34a; font-weight: bold; }
+    .badge-no { color: #dc2626; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <!-- SVG Definition for Arrowheads -->
+  <svg style="display:none;">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+      </marker>
+    </defs>
+  </svg>
+
+  <header>
+    <h1>Java Method Overriding & <code>super</code> Keyword</h1>
+    <p>Learn Runtime Polymorphism and Superclass Referencing with Visual Diagrams & Code Examples</p>
+  </header>
+
+  <div class="container">
+
+    <!-- SECTION 1: Core Concepts Overview -->
+    <section class="card">
+      <h2>1. Overview</h2>
+      <div class="grid-2">
+        <div class="box override-box">
+          <h3>Method Overriding</h3>
+          <p>When a subclass provides a specific implementation of a method that is already defined in its parent class.</p>
+          <ul>
+            <li>Enables <strong>Runtime Polymorphism</strong> (Dynamic Method Dispatch).</li>
+            <li>Method signature (name + parameters) must be <strong>identical</strong>.</li>
+            <li>Uses <code>@Override</code> annotation for compiler safety.</li>
+          </ul>
+        </div>
+        <div class="box super-box">
+          <h3>The <code>super</code> Keyword</h3>
+          <p>A reference variable used inside a child class to access members of its immediate parent class.</p>
+          <ul>
+            <li>Call parent methods: <code>super.methodName()</code></li>
+            <li>Access parent variables: <code>super.variableName</code></li>
+            <li>Invoke parent constructors: <code>super(...)</code></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Method Overriding Visual Diagram & Rules -->
+    <section class="card">
+      <h2>2. Understanding Method Overriding</h2>
+      <p>When an overridden method is called using a superclass reference pointing to a child object, Java decides which method to run <strong>at runtime</strong> based on the actual object type.</p>
+
+      <div class="diagram-container">
+        <svg width="340" height="180" viewBox="0 0 340 180">
+          <!-- Parent Class Box -->
+          <rect x="70" y="10" width="200" height="50" class="svg-box" />
+          <text x="170" y="27" class="svg-text-title">Animal (Superclass)</text>
+          <text x="170" y="45" class="svg-text-method">+ makeSound() ➜ "Generic sound"</text>
+
+          <!-- Inheritance Line -->
+          <line x1="170" y1="120" x2="170" y2="65" class="svg-arrow" />
+
+          <!-- Child Class Box -->
+          <rect x="70" y="120" width="200" height="50" class="svg-box-override" />
+          <text x="170" y="137" class="svg-text-title">Dog (Subclass)</text>
+          <text x="170" y="155" class="svg-text-method">+ makeSound() ➜ "Bark! Bark!"</text>
+        </svg>
+      </div>
+
+      <pre><code><span class="kw">class</span> <span class="cls">Animal</span> {
+    <span class="kw">void</span> <span class="fn">makeSound</span>() {
+        System.out.println(<span class="str">"Generic animal sound"</span>);
+    }
+}
+
+<span class="kw">class</span> <span class="cls">Dog</span> <span class="kw">extends</span> <span class="cls">Animal</span> {
+    <span class="ann">@Override</span> <span class="comment">// Ensures correct signature</span>
+    <span class="kw">void</span> <span class="fn">makeSound</span>() {
+        System.out.println(<span class="str">"Bark! Bark!"</span>);
+    }
+}
+
+<span class="comment">// Usage:</span>
+<span class="cls">Animal</span> myPet = <span class="kw">new</span> <span class="cls">Dog</span>(); 
+myPet.<span class="fn">makeSound</span>(); <span class="comment">// Output: Bark! Bark! (Runtime Polymorphism)</span></code></pre>
+    </section>
+
+    <!-- SECTION 3: The Three Uses of `super` -->
+    <section class="card">
+      <h2>3. The 3 Key Uses of the <code>super</code> Keyword</h2>
+      <p>The <code>super</code> keyword bridges the gap between child logic and parent logic.</p>
+
+      <div class="diagram-container">
+        <svg width="450" height="200" viewBox="0 0 450 200">
+          <!-- Parent Class Box -->
+          <rect x="120" y="10" width="210" height="60" class="svg-box" />
+          <text x="225" y="27" class="svg-text-title">Parent Class</text>
+          <text x="225" y="43" class="svg-text-method">int speed = 100</text>
+          <text x="225" y="58" class="svg-text-method">Parent() / display()</text>
+
+          <!-- Arrow Connections -->
+          <line x1="80" y1="130" x2="160" y2="75" class="svg-arrow" />
+          <line x1="225" y1="130" x2="225" y2="75" class="svg-arrow" />
+          <line x1="370" y1="130" x2="290" y2="75" class="svg-arrow" />
+
+          <!-- Use Case Boxes -->
+          <rect x="10" y="130" width="130" height="50" class="svg-box-override" />
+          <text x="75" y="150" class="svg-text-title">1. Variable</text>
+          <text x="75" y="166" class="svg-text-method">super.speed</text>
+
+          <rect x="160" y="130" width="130" height="50" class="svg-box-override" />
+          <text x="225" y="150" class="svg-text-title">2. Method</text>
+          <text x="225" y="166" class="svg-text-method">super.display()</text>
+
+          <rect x="310" y="130" width="130" height="50" class="svg-box-override" />
+          <text x="375" y="150" class="svg-text-title">3. Constructor</text>
+          <text x="375" y="166" class="svg-text-method">super()</text>
+        </svg>
+      </div>
+
+      <pre><code><span class="kw">class</span> <span class="cls">Vehicle</span> {
+    <span class="kw">int</span> maxSpeed = <span class="num">120</span>;
+
+    <span class="cls">Vehicle</span>(String type) {
+        System.out.println(<span class="str">"Vehicle Constructor: "</span> + type);
+    }
+
+    <span class="kw">void</span> <span class="fn">start</span>() {
+        System.out.println(<span class="str">"Vehicle is starting..."</span>);
+    }
+}
+
+<span class="kw">class</span> <span class="cls">Car</span> <span class="kw">extends</span> <span class="cls">Vehicle</span> {
+    <span class="kw">int</span> maxSpeed = <span class="num">200</span>; <span class="comment">// Hides parent maxSpeed</span>
+
+    <span class="cls">Car</span>() {
+        <span class="kw">super</span>(<span class="str">"Four-Wheeler"</span>); <span class="comment">// 1. Calls Parent Constructor (MUST be first line!)</span>
+    }
+
+    <span class="ann">@Override</span>
+    <span class="kw">void</span> <span class="fn">start</span>() {
+        <span class="kw">super</span>.<span class="fn">start</span>(); <span class="comment">// 2. Calls Parent Method</span>
+        System.out.println(<span class="str">"Car engine roaring!"</span>);
+    }
+
+    <span class="kw">void</span> <span class="fn">showSpeeds</span>() {
+        System.out.println(<span class="str">"Car speed: "</span> + maxSpeed);       <span class="comment">// 200</span>
+        System.out.println(<span class="str">"Vehicle speed: "</span> + <span class="kw">super</span>.maxSpeed); <span class="comment">// 3. Accesses Parent Variable (120)</span>
+    }
+}</code></pre>
+    </section>
+
+    <!-- SECTION 4: Interactive Code Explorer -->
+    <section class="card">
+      <h2>4. Interactive Execution Explorer</h2>
+      <p>Click through the tabs below to simulate how method overriding and <code>super</code> operate in real Java scenarios.</p>
+
+      <div class="interactive-demo">
+        <div class="tab-buttons">
+          <button class="tab-btn active" onclick="switchTab('override')">Basic Overriding</button>
+          <button class="tab-btn" onclick="switchTab('superMethod')">super.method()</button>
+          <button class="tab-btn" onclick="switchTab('superCtor')">super() Constructor</button>
+        </div>
+
+        <!-- Tab 1: Basic Overriding -->
+        <div id="tab-override" class="tab-content active">
+<pre><code><span class="cls">Animal</span> a = <span class="kw">new</span> <span class="cls">Cat</span>();
+a.<span class="fn">sound</span>(); <span class="comment">// Calls Cat's sound() method at runtime</span></code></pre>
+          <button class="tab-btn active" onclick="runSnippet('Cat meows: Meow Meow!')">Run Simulation</button>
+        </div>
+
+        <!-- Tab 2: super.method() -->
+        <div id="tab-superMethod" class="tab-content">
+<pre><code><span class="kw">class</span> <span class="cls">Employee</span> {
+    <span class="kw">void</span> <span class="fn">work</span>() { System.out.println(<span class="str">"Working on general tasks..."</span>); }
+}
+<span class="kw">class</span> <span class="cls">Developer</span> <span class="kw">extends</span> <span class="cls">Employee</span> {
+    <span class="ann">@Override</span>
+    <span class="kw">void</span> <span class="fn">work</span>() {
+        <span class="kw">super</span>.<span class="fn">work</span>(); <span class="comment">// Execute base logic first</span>
+        System.out.println(<span class="str">"Writing Java Code!"</span>);
+    }
+}</code></pre>
+          <button class="tab-btn active" onclick="runSnippet('Working on general tasks...\nWriting Java Code!')">Run Simulation</button>
+        </div>
+
+        <!-- Tab 3: super() Constructor -->
+        <div id="tab-superCtor" class="tab-content">
+<pre><code><span class="kw">class</span> <span class="cls">Person</span> {
+    <span class="cls">Person</span>(String name) { System.out.println(<span class="str">"Person name: "</span> + name); }
+}
+<span class="kw">class</span> <span class="cls">Student</span> <span class="kw">extends</span> <span class="cls">Person</span> {
+    <span class="cls">Student</span>(String name, <span class="kw">int</span> id) {
+        <span class="kw">super</span>(name); <span class="comment">// Passes name to Person constructor</span>
+        System.out.println(<span class="str">"Student ID: "</span> + id);
+    }
+}</code></pre>
+          <button class="tab-btn active" onclick="runSnippet('Person name: Alice\nStudent ID: 101')">Run Simulation</button>
+        </div>
+
+        <div class="output-box" id="consoleOutput">> Click "Run Simulation" to see execution output...</div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: Overriding Rules & Constraints Table -->
+    <section class="card">
+      <h2>5. Rules & Constraints Matrix</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Rule / Constraint</th>
+            <th>Can be Overridden?</th>
+            <th>Reason / Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Instance Methods</strong></td>
+            <td><span class="badge-yes">YES</span></td>
+            <td>Standard target for dynamic runtime overriding.</td>
+          </tr>
+          <tr>
+            <td><strong><code>static</code> Methods</strong></td>
+            <td><span class="badge-no">NO</span></td>
+            <td>Static methods belong to the class, not instances (Method Hiding, not overriding).</td>
+          </tr>
+          <tr>
+            <td><strong><code>final</code> Methods</strong></td>
+            <td><span class="badge-no">NO</span></td>
+            <td>The <code>final</code> modifier prevents child classes from changing the method logic.</td>
+          </tr>
+          <tr>
+            <td><strong><code>private</code> Methods</strong></td>
+            <td><span class="badge-no">NO</span></td>
+            <td>Private methods are not visible to child classes, so they cannot be overridden.</td>
+          </tr>
+          <tr>
+            <td><strong>Constructors</strong></td>
+            <td><span class="badge-no">NO</span></td>
+            <td>Constructors are not inherited; invoked via <code>super()</code> instead.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <script>
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById('tab-' + tabName).classList.add('active');
+
+      document.getElementById('consoleOutput').textContent = '> Click "Run Simulation" to see execution output...';
+    }
+
+    function runSnippet(output) {
+      document.getElementById('consoleOutput').textContent = '> Output:\n' + output;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mastering Java Inner Classes</title>
+  <style>
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent-member: #2563eb;
+      --accent-static: #059669;
+      --accent-local: #d97706;
+      --accent-anon: #7c3aed;
+      --border: #e2e8f0;
+      --code-bg: #0f172a;
+      --code-text: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    header h1 {
+      font-size: 2.25rem;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+    }
+
+    /* Grid Layouts */
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .box {
+      border-radius: 8px;
+      padding: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    .box.member-box { border-left: 4px solid var(--accent-member); background-color: #eff6ff; }
+    .box.static-box { border-left: 4px solid var(--accent-static); background-color: #ecfdf5; }
+    .box.local-box { border-left: 4px solid var(--accent-local); background-color: #fffbeb; }
+    .box.anon-box { border-left: 4px solid var(--accent-anon); background-color: #f5f3ff; }
+
+    .box h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Code Syntax Highlighting */
+    pre {
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 1.25rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.92rem;
+      margin: 1rem 0;
+    }
+
+    .kw { color: #f43f5e; font-weight: bold; }
+    .cls { color: #38bdf8; }
+    .fn { color: #a855f7; }
+    .comment { color: #64748b; font-style: italic; }
+    .str { color: #34d399; }
+
+    /* Interactive Simulator */
+    .interactive-demo {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .tab-buttons {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background-color: #e2e8f0;
+      color: var(--text-main);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .output-box {
+      background-color: var(--code-bg);
+      color: #38bdf8;
+      font-family: monospace;
+      padding: 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .badge-yes { color: #16a34a; font-weight: bold; }
+    .badge-no { color: #dc2626; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Java Inner Classes</h1>
+      <p>Mastering nested structures: Member, Static Nested, Local, and Anonymous classes</p>
+    </header>
+
+    <!-- SECTION 1: Overview -->
+    <section class="card">
+      <h2>1. What is an Inner Class?</h2>
+      <p>An <strong>Inner Class</strong> (or Nested Class) is a class declared inside another class or interface. It allows you to logically group classes that are only used in one place, enhancing encapsulation and readability.</p>
+      
+      <div class="grid-4">
+        <div class="box member-box">
+          <h3>1. Member Inner</h3>
+          <p>Declared inside a class, outside methods. Needs an outer object instance to exist.</p>
+        </div>
+        <div class="box static-box">
+          <h3>2. Static Nested</h3>
+          <p>Declared with <code>static</code>. Independent of outer class instances.</p>
+        </div>
+        <div class="box local-box">
+          <h3>3. Local Inner</h3>
+          <p>Declared inside a method body. Scope is restricted to that method.</p>
+        </div>
+        <div class="box anon-box">
+          <h3>4. Anonymous</h3>
+          <p>A class without a name declared and instantiated in a single expression.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Interactive Explorer -->
+    <section class="card">
+      <h2>2. Interactive Code & Instantiation Explorer</h2>
+      <p>Click through the tabs to see how each inner class type is instantiated and how it accesses outer members.</p>
+
+      <div class="interactive-demo">
+        <div class="tab-buttons">
+          <button class="tab-btn active" onclick="switchTab('member')">Member Inner</button>
+          <button class="tab-btn" onclick="switchTab('static')">Static Nested</button>
+          <button class="tab-btn" onclick="switchTab('local')">Local Inner</button>
+          <button class="tab-btn" onclick="switchTab('anonymous')">Anonymous Class</button>
+        </div>
+
+        <!-- Member Inner Tab -->
+        <div id="tab-member" class="tab-content active">
+<pre><code><span class="kw">class</span> <span class="cls">Outer</span> {
+    <span class="kw">private String</span> secret = <span class="str">"Outer Private Secret"</span>;
+
+    <span class="comment">// Member Inner Class</span>
+    <span class="kw">class</span> <span class="cls">Inner</span> {
+        <span class="kw">void</span> <span class="fn">reveal</span>() {
+            System.out.println(secret); <span class="comment">// Directly accesses private outer field!</span>
+        }
+    }
+}
+
+<span class="comment">// Instantiation Syntax: Requires Outer Instance</span>
+<span class="cls">Outer</span> outer = <span class="kw">new</span> <span class="cls">Outer</span>();
+<span class="cls">Outer.Inner</span> inner = outer.<span class="kw">new</span> <span class="cls">Inner</span>();
+inner.<span class="fn">reveal</span>();</code></pre>
+          <button onclick="runSnippet('Member Inner Output: Outer Private Secret')">Simulate Code</button>
+        </div>
+
+        <!-- Static Nested Tab -->
+        <div id="tab-static" class="tab-content">
+<pre><code><span class="kw">class</span> <span class="cls">Outer</span> {
+    <span class="kw">static String</span> appName = <span class="str">"JavaApp"</span>;
+
+    <span class="comment">// Static Nested Class</span>
+    <span class="kw">static class</span> <span class="cls">Nested</span> {
+        <span class="kw">void</span> <span class="fn">display</span>() {
+            System.out.println(<span class="str">"App Name: "</span> + appName);
+            <span class="comment">// Cannot access non-static outer members directly!</span>
+        }
+    }
+}
+
+<span class="comment">// Instantiation Syntax: No Outer Instance Needed!</span>
+<span class="cls">Outer.Nested</span> nested = <span class="kw">new</span> <span class="cls">Outer.Nested</span>();
+nested.<span class="fn">display</span>();</code></pre>
+          <button onclick="runSnippet('Static Nested Output: App Name: JavaApp')">Simulate Code</button>
+        </div>
+
+        <!-- Local Inner Tab -->
+        <div id="tab-local" class="tab-content">
+<pre><code><span class="kw">class</span> <span class="cls">Outer</span> {
+    <span class="kw">void</span> <span class="fn">processData</span>() {
+        <span class="kw">int</span> factor = <span class="num">2</span>; <span class="comment">// Must be effectively final</span>
+
+        <span class="comment">// Local Class defined inside method</span>
+        <span class="kw">class</span> <span class="cls">Calculator</span> {
+            <span class="kw">int</span> <span class="fn">multiply</span>(<span class="kw">int</span> val) { <span class="kw">return</span> val * factor; }
+        }
+
+        <span class="cls">Calculator</span> calc = <span class="kw">new</span> <span class="cls">Calculator</span>();
+        System.out.println(<span class="str">"Result: "</span> + calc.<span class="fn">multiply</span>(<span class="num">10</span>));
+    }
+}</code></pre>
+          <button onclick="runSnippet('Local Class Output: Result: 20')">Simulate Code</button>
+        </div>
+
+        <!-- Anonymous Inner Tab -->
+        <div id="tab-anonymous" class="tab-content">
+<pre><code><span class="kw">interface</span> <span class="cls">Greeting</span> {
+    <span class="kw">void</span> <span class="fn">sayHello</span>();
+}
+
+<span class="kw">class</span> <span class="cls">Main</span> {
+    <span class="kw">public static void</span> <span class="fn">main</span>(String[] args) {
+        <span class="comment">// Anonymous Class implementing Greeting interface on the fly</span>
+        <span class="cls">Greeting</span> g = <span class="kw">new</span> <span class="cls">Greeting</span>() {
+            <span class="kw">public void</span> <span class="fn">sayHello</span>() {
+                System.out.println(<span class="str">"Hello from Anonymous Class!"</span>);
+            }
+        };
+        g.<span class="fn">sayHello</span>();
+    }
+}</code></pre>
+          <button onclick="runSnippet('Anonymous Class Output: Hello from Anonymous Class!')">Simulate Code</button>
+        </div>
+
+        <div class="output-box" id="consoleOutput">
+          > Click "Simulate Code" to see the output here...
+        </div>
+      </div>
+    </section>
+
+    
+
+    <!-- SECTION 4: Why Use Inner Classes? -->
+    
+  </div>
+
+
+</body>
+</html>
