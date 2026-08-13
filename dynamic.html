@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Dynamic Method Dispatch Interactive Guide</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --text-heading: #f0f6fc;
+            --text-muted: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-amber: #d29922;
+            --accent-purple: #bc8cff;
+            --border-color: #30363d;
+            --code-bg: #010409;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 850px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            color: var(--text-heading);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Formula / Key Rules */
+        .golden-rule {
+            background-color: rgba(88, 166, 255, 0.1);
+            border-left: 4px solid var(--accent-blue);
+            padding: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin-bottom: 1rem;
+        }
+
+        .golden-rule h3 {
+            color: var(--accent-blue);
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .rule-list {
+            list-style: none;
+            counter-reset: rule-counter;
+        }
+
+        .rule-list li {
+            counter-increment: rule-counter;
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .rule-list li::before {
+            content: counter(rule-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: var(--border-color);
+            color: var(--accent-blue);
+            font-weight: bold;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        /* Code display */
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: "Fira Code", Consolas, Monaco, monospace;
+            font-size: 0.88rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .hl-keyword { color: #ff7b72; }
+        .hl-type { color: #79c0ff; }
+        .hl-string { color: #a5d6ff; }
+        .hl-method { color: #d2a8ff; }
+
+        /* Visual Interactive Canvas */
+        .selector-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+
+        select {
+            background-color: var(--code-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        button {
+            background-color: var(--accent-green);
+            color: #0d1117;
+            border: none;
+            padding: 0.55rem 1.2rem;
+            font-weight: 600;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: var(--code-bg);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .memory-box {
+            border: 2px dashed var(--border-color);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            position: relative;
+        }
+
+        .memory-title {
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            background-color: var(--code-bg);
+            padding: 0 0.5rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stack-ref {
+            color: var(--accent-amber);
+            font-weight: bold;
+        }
+
+        .heap-obj {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        .dispatch-arrow {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+
+        .console-output {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--accent-green);
+            min-height: 50px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Java Dynamic Method Dispatch</h1>
+        <p>Learn how Java resolves overridden methods at runtime using reference types and object instances.</p>
+    </header>
+
+    <div class="golden-rule">
+        <h3>The Golden Dispatch Rule:</h3>
+        <p><strong>Reference Type</strong> (Type on the left) determines <em>what methods are accessible</em> at compile time.<br>
+        <strong>Actual Object Type</strong> (Type on the right) determines <em>which implementation runs</em> at runtime.</p>
+    </div>
+
+    <div class="grid">
+        <!-- Concepts Card -->
+        <div class="card">
+            <h2>📜 Core Rules of Dispatch</h2>
+            <ol class="rule-list">
+                <li>
+                    <strong>Reference Assignment</strong><br>
+                    A superclass reference can refer to a subclass object: <code>SuperClass obj = new SubClass();</code>
+                </li>
+                <li>
+                    <strong>Runtime Resolution</strong><br>
+                    When an overridden method is called, Java inspects the actual object on the heap at runtime (not the reference type) to decide which method version to execute.
+                </li>
+                <li>
+                    <strong>Compile-Time Constraint</strong><br>
+                    You can only call methods that exist in the reference type class. If a method exists <em>only</em> in the child class, calling it using a parent reference causes a compilation error.
+                </li>
+            </ol>
+        </div>
+
+        <!-- Source Code View -->
+        <div class="card">
+            <h2>💻 Class Hierarchy Code</h2>
+            <pre><code><span class="hl-keyword">class</span> <span class="hl-type">Animal</span> {
+    <span class="hl-keyword">void</span> <span class="hl-method">makeSound</span>() {
+        System.out.println(<span class="hl-string">"Some generic sound"</span>);
+    }
+}
+
+<span class="hl-keyword">class</span> <span class="hl-type">Dog</span> <span class="hl-keyword">extends</span> <span class="hl-type">Animal</span> {
+    <span class="hl-keyword">void</span> <span class="hl-method">makeSound</span>() {
+        System.out.println(<span class="hl-string">"Woof! Woof!"</span>);
+    }
+}
+
+<span class="hl-keyword">class</span> <span class="hl-type">Cat</span> <span class="hl-keyword">extends</span> <span class="hl-type">Animal</span> {
+    <span class="hl-keyword">void</span> <span class="hl-method">makeSound</span>() {
+        System.out.println(<span class="hl-string">"Meow! Meow!"</span>);
+    }
+}</code></pre>
+        </div>
+    </div>
+
+    <!-- Interactive Visualizer -->
+    <div class="card" style="margin-top: 1.5rem;">
+        <h2>⚙️ Dynamic Dispatch Simulator</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">
+            Select an object type to instantiate under the <code>Animal</code> reference, then dispatch <code>makeSound()</code>.
+        </p>
+
+        <div class="selector-group">
+            <label for="objectSelect">Execute statement: <code>Animal myAnimal = new </code></label>
+            <select id="objectSelect" onchange="updateDiagram()">
+                <option value="Animal">Animal();</option>
+                <option value="Dog">Dog();</option>
+                <option value="Cat">Cat();</option>
+            </select>
+            <button onclick="runDispatch()">myAnimal.makeSound();</button>
+        </div>
+
+        <div class="diagram">
+            <div class="memory-box">
+                <div class="memory-title">Stack Memory (Compile Time)</div>
+                <div>Reference Name: <code>myAnimal</code></div>
+                <div>Reference Type: <span class="stack-ref">Animal</span></div>
+            </div>
+
+            <div class="dispatch-arrow">
+                ⬇️ Points to object on Heap at runtime
+            </div>
+
+            <div class="memory-box">
+                <div class="memory-title">Heap Memory (Runtime)</div>
+                <div>Actual Instance: <span class="heap-obj" id="heapDisplay">new Animal()</span></div>
+                <div>Resolved Method: <code id="methodDisplay">Animal.makeSound()</code></div>
+            </div>
+        </div>
+
+        <div class="console-output" id="console">
+            > Console Output will appear here when you click "myAnimal.makeSound();"
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateDiagram() {
+        const selected = document.getElementById("objectSelect").value;
+        const heapDisplay = document.getElementById("heapDisplay");
+        const methodDisplay = document.getElementById("methodDisplay");
+        const consoleElem = document.getElementById("console");
+
+        heapDisplay.textContent = `new ${selected}()`;
+        methodDisplay.textContent = `${selected}.makeSound()`;
+        consoleElem.textContent = `> Ready to execute myAnimal.makeSound()...`;
+    }
+
+    function runDispatch() {
+        const selected = document.getElementById("objectSelect").value;
+        const consoleElem = document.getElementById("console");
+
+        let output = "";
+        switch (selected) {
+            case "Animal":
+                output = '"Some generic sound"';
+                break;
+            case "Dog":
+                output = '"Woof! Woof!"';
+                break;
+            case "Cat":
+                output = '"Meow! Meow!"';
+                break;
+        }
+
+        consoleElem.innerHTML = `> Executing: <strong>myAnimal.makeSound()</strong><br>> Output: <span style="color: #a5d6ff;">${output}</span>`;
+    }
+
+    // Initialize state
+    updateDiagram();
+</script>
+
+</body>
+</html>
