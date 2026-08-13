@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Constructor Execution Order</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-amber: #fbbf24;
+            --accent-purple: #c084fc;
+            --border-color: #334155;
+            --code-bg: #090d16;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (min-width: 850px) {
+            .grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Order List Rules */
+        .rule-list {
+            list-style: none;
+            counter-reset: rule-counter;
+        }
+
+        .rule-list li {
+            counter-increment: rule-counter;
+            position: relative;
+            padding-left: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .rule-list li::before {
+            content: counter(rule-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: var(--border-color);
+            color: var(--accent-blue);
+            font-weight: bold;
+            width: 1.75rem;
+            height: 1.75rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        /* Code display */
+        pre {
+            background-color: var(--code-bg);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            font-family: "Fira Code", Consolas, Monaco, monospace;
+            font-size: 0.88rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .highlight-static { color: var(--accent-amber); }
+        .highlight-instance { color: var(--accent-purple); }
+        .highlight-parent { color: var(--accent-green); }
+        .highlight-child { color: var(--accent-blue); }
+
+        /* Interactive Simulator */
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            background-color: var(--accent-blue);
+            color: #0f172a;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .console-output {
+            background-color: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            min-height: 220px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .console-line {
+            margin-bottom: 0.4rem;
+            opacity: 0;
+            transform: translateX(-10px);
+            animation: slideIn 0.3s forwards;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .badge-static { background: rgba(251, 191, 36, 0.2); color: var(--accent-amber); }
+        .badge-instance { background: rgba(192, 132, 252, 0.2); color: var(--accent-purple); }
+        .badge-parent { background: rgba(74, 222, 128, 0.2); color: var(--accent-green); }
+        .badge-child { background: rgba(56, 189, 248, 0.2); color: var(--accent-blue); }
+
+        .key-concept {
+            margin-top: 1.5rem;
+            background: rgba(56, 189, 248, 0.1);
+            border-left: 4px solid var(--accent-blue);
+            padding: 1rem;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Java Constructor Execution Ordering</h1>
+        <p>Understanding initialization order across class loading, inheritance, and instance instantiation.</p>
+    </header>
+
+    <div class="grid">
+        <!-- Rule Explanation Section -->
+        <div class="card">
+            <h2>📜 The Golden Rule Sequence</h2>
+            <ol class="rule-list">
+                <li>
+                    <strong class="highlight-static">Static Initializers & Fields</strong><br>
+                    Parent static blocks/fields execute first, followed by Child static blocks/fields (runs once per class load).
+                </li>
+                <li>
+                    <strong class="highlight-parent">Parent Instance Initializers & Fields</strong><br>
+                    Parent non-static blocks and variable initializations run sequentially top-to-bottom.
+                </li>
+                <li>
+                    <strong class="highlight-parent">Parent Constructor Body</strong><br>
+                    The body of the Parent constructor executes (via implicit or explicit <code>super()</code> call).
+                </li>
+                <li>
+                    <strong class="highlight-child">Child Instance Initializers & Fields</strong><br>
+                    Child non-static blocks and variable initializations run sequentially top-to-bottom.
+                </li>
+                <li>
+                    <strong class="highlight-child">Child Constructor Body</strong><br>
+                    The body of the Child constructor finally executes.
+                </li>
+            </ol>
+        </div>
+
+        <!-- Source Code View -->
+        <div class="card">
+            <h2>💻 Example Java Classes</h2>
+            <pre><code><span class="highlight-parent">class Parent {</span>
+    <span class="highlight-static">static { System.out.println("1. Parent Static Block"); }</span>
+    
+    <span class="highlight-parent">{ System.out.println("3. Parent Instance Block"); }</span>
+    
+    <span class="highlight-parent">Parent() {
+        System.out.println("4. Parent Constructor");
+    }</span>
+}
+
+<span class="highlight-child">class Child extends Parent {</span>
+    <span class="highlight-static">static { System.out.println("2. Child Static Block"); }</span>
+    
+    <span class="highlight-child">{ System.out.println("5. Child Instance Block"); }</span>
+    
+    <span class="highlight-child">Child() {
+        // implicit super();
+        System.out.println("6. Child Constructor");
+    }</span>
+}</code></pre>
+        </div>
+    </div>
+
+    <!-- Interactive Execution Section -->
+    <div class="card" style="margin-top: 1.5rem;">
+        <h2>⚙️ Step-by-Step Execution Simulator</h2>
+        <p style="color: var(--text-muted); margin-bottom: 1rem;">
+            Click <strong>Step Execution</strong> to simulate running <code>new Child()</code>.
+        </p>
+
+        <div class="controls">
+            <button id="stepBtn" onclick="nextStep()">Step Execution</button>
+            <button id="resetBtn" onclick="resetTrace()" style="background-color: var(--border-color); color: var(--text-color);">Reset</button>
+        </div>
+
+        <div class="console-output" id="console">
+            <span style="color: var(--text-muted);">// Console output will appear here...</span>
+        </div>
+
+        <div class="key-concept">
+            <strong>Key Takeaway:</strong> Constructors do not run in isolation. Before a child constructor runs its body, it invokes <code>super()</code> to fully construct the parent object first. Static elements only run once when the class is loaded into the JVM.
+        </div>
+    </div>
+</div>
+
+<script>
+    const executionSteps = [
+        { text: "1. Parent Static Block", type: "static" },
+        { text: "2. Child Static Block", type: "static" },
+        { text: "3. Parent Instance Block", type: "parent" },
+        { text: "4. Parent Constructor Body", type: "parent" },
+        { text: "5. Child Instance Block", type: "child" },
+        { text: "6. Child Constructor Body", type: "child" }
+    ];
+
+    let currentStep = 0;
+
+    function nextStep() {
+        if (currentStep >= executionSteps.length) return;
+
+        const consoleElem = document.getElementById("console");
+        if (currentStep === 0) {
+            consoleElem.innerHTML = "";
+        }
+
+        const step = executionSteps[currentStep];
+        const line = document.createElement("div");
+        line.className = "console-line";
+
+        let badgeClass = "";
+        let badgeLabel = "";
+
+        switch (step.type) {
+            case "static":
+                badgeClass = "badge-static";
+                badgeLabel = "STATIC";
+                break;
+            case "parent":
+                badgeClass = "badge-parent";
+                badgeLabel = "PARENT";
+                break;
+            case "child":
+                badgeClass = "badge-child";
+                badgeLabel = "CHILD";
+                break;
+        }
+
+        line.innerHTML = `<span class="badge ${badgeClass}">${badgeLabel}</span> ${step.text}`;
+        consoleElem.appendChild(line);
+
+        currentStep++;
+
+        if (currentStep >= executionSteps.length) {
+            document.getElementById("stepBtn").disabled = true;
+        }
+    }
+
+    function resetTrace() {
+        currentStep = 0;
+        document.getElementById("console").innerHTML = '<span style="color: var(--text-muted);">// Console output will appear here...</span>';
+        document.getElementById("stepBtn").disabled = false;
+    }
+</script>
+
+</body>
+</html>
